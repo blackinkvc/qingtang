@@ -1,8 +1,8 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><link rel='icon' href='favicon.ico'>
+<!doctype html><html lang="zh-CN" class="qt-legacy"><head><meta charset="utf-8"><link rel='icon' href='../favicon.ico'>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>青棠宗 · 头像提示词册（125 人）</title>
 <style>
-:root{--bg:#080b14;--panel:#111827;--panel2:#161f33;--line:#26324d;--ink:#e6e9f2;--dim:#8b96ad;--gold:#caa24a;--red:#d05757}
+:root{--bg:#EAE3D3;--panel:#F2ECDF;--panel2:#E7DDC7;--line:#C3B69D;--ink:#1D1B17;--dim:#6E6656;--gold:#A5764F;--red:#9C3B31}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100%}
 body{padding:22px 26px 60px;max-width:1180px;margin:0 auto}
 h1{font-size:22px;margin:0 0 6px;color:var(--gold);letter-spacing:1px}
@@ -11,26 +11,27 @@ h1{font-size:22px;margin:0 0 6px;color:var(--gold);letter-spacing:1px}
 #q{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line);border-radius:9px;color:var(--ink);padding:9px 12px;outline:none;font-size:13px}
 #q:focus{border-color:var(--gold)}
 .chip{border:1px solid var(--line);background:var(--panel);color:var(--dim);border-radius:20px;padding:6px 13px;cursor:pointer;font-size:12px;white-space:nowrap}
-.chip:hover{color:var(--ink)}.chip.on{background:var(--gold);color:#1a1305;font-weight:700;border-color:var(--gold)}
+.chip:hover{color:var(--ink)}.chip.on{background:var(--gold);color:#F2ECDF;font-weight:700;border-color:var(--gold)}
 .cnt{color:var(--dim);font-size:12px;margin:0 0 12px}
 .card{display:flex;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:10px}
-.card img{width:54px;height:54px;border-radius:50%;object-fit:cover;object-position:center 18%;border:2px solid var(--gold);background:#0a0e1a;flex:none}
+.card img{width:54px;height:54px;border-radius:50%;object-fit:cover;object-position:center 18%;border:2px solid var(--gold);background:#EAE3D3;flex:none}
 .body{flex:1;min-width:0}
 .hd{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;margin-bottom:3px}
 .hd b{font-size:15px}.hd .id{color:var(--dim);font-size:11px;font-family:monospace}.hd .ti{color:var(--gold);font-size:12px}
 .meta{color:var(--dim);font-size:11px;margin-bottom:7px}
-.bio{color:#aab4c8;font-size:12px;margin-bottom:7px}
-.pers{color:#9fb0d0;font-size:11px;margin-bottom:6px;word-break:break-word}
-pre{background:#0a0e1a;border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin:0;color:#c9d3e8;font:11px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-word;max-height:110px;overflow:auto}
+.bio{color:#3B372F;font-size:12px;margin-bottom:7px}
+.pers{color:#3B372F;font-size:11px;margin-bottom:6px;word-break:break-word}
+pre{background:#EAE3D3;border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin:0;color:#3B372F;font:11px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;word-break:break-word;max-height:110px;overflow:auto}
 .ops{display:flex;flex-direction:column;gap:7px;flex:none}
 .btn{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:12px;white-space:nowrap}
-.btn:hover{border-color:var(--gold);color:var(--gold)}.btn.ok{color:#7ee787;border-color:#7ee787}
+.btn:hover{border-color:var(--gold);color:var(--gold)}.btn.ok{color:#5C7D74;border-color:#5C7D74}
 .tag{display:inline-block;border:1px solid var(--line);border-radius:5px;padding:0 5px;font-size:10px;color:var(--dim)}
-.tag.red{color:var(--red);border-color:#5a2b2b}
+.tag.red{color:var(--red);border-color:#C3B69D}
 .stylebox{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin-bottom:16px}
 .stylebox h3{margin:0 0 6px;font-size:13px;color:var(--gold)}
 .note{color:var(--dim);font-size:12px;line-height:1.8}
-</style></head><body>
+</style><link rel='stylesheet' href='../qt-ink.css'>
+</head><body>
 <h1>青棠宗 · 人物专属头像提示词册</h1>
 <div class="sub">125 人逐人提示词 · 离线可用 · 点「复制」直接取用 · AI 生图已取消，本页不含图片</div>
 <div class="stylebox">
@@ -77,7 +78,7 @@ function render(){
     var bits=[r.sex,r.realm];if(r.dept)bits.push(r.dept);
     var tg=r.god?'<span class="tag red">魔染 · '+esc(r.god)+'</span>':'<span class="tag">未魔染</span>';
     return '<div class="card">'+
-      (r.img?'<img src="'+r.img+'" alt="" onerror="this.style.display=\'none\'">':'<div style="width:54px;height:54px;border-radius:50%;background:#0a0e1a;flex:none"></div>')+
+      (r.img?'<img src="'+r.img+'" alt="" onerror="this.style.display=\'none\'">':'<div style="width:54px;height:54px;border-radius:50%;background:#EAE3D3;flex:none"></div>')+
       '<div class="body"><div class="hd"><b>'+esc(r.name)+'</b><span class="id">'+esc(r.id)+'</span><span class="ti">'+esc(r.title)+'</span>'+tg+'</div>'+
       '<div class="meta">'+esc(bits.join(' · '))+(r.groupName?' · '+esc(r.groupName):'')+'</div>'+
       (r.bio?'<div class="bio">'+esc(r.bio)+'</div>':'')+
@@ -88,4 +89,5 @@ function render(){
   }).join('');
 }
 render();
-</script></body></html>
+</script><a class="qt-back" href="../index.html">← 回到目次</a>
+</body></html>

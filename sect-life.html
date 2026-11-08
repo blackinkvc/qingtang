@@ -1,17 +1,17 @@
-<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><link rel='icon' href='favicon.ico'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<!doctype html><html lang='zh-CN' class="qt-legacy"><head><meta charset='utf-8'><link rel='icon' href='favicon.ico'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>青棠宗 · 轮回</title>
 <style>
-  :root{--bg:#0b0f1a;--card:#121826;--card2:#0f1626;--line:#26304a;--line2:#1d263c;--jade:#5fd6c2;--gold:#e9c46a;--red:#ff6b6b;--ink:#dfe8ff;--dim:#8294b8;--blue:#5b9dff;--purple:#b08cff;--r:12px;--gap:12px}
+  :root{--bg:#EAE3D3;--card:#F2ECDF;--card2:#E7DDC7;--line:#C3B69D;--line2:#D6CBB6;--jade:#5C7D74;--gold:#A5764F;--red:#9C3B31;--ink:#1D1B17;--dim:#6E6656;--blue:#4C6B7D;--purple:#7A5F76;--r:12px;--gap:12px}
   *{box-sizing:border-box}
   html,body{margin:0}
-  body{background:radial-gradient(1200px 700px at 70% -10%,#16223e 0%,var(--bg) 60%);color:var(--ink);font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;font-size:14px;line-height:1.5;padding-bottom:40px}
+  body{background:radial-gradient(1200px 700px at 70% -10%,#E7DDC7 0%,var(--bg) 60%);color:var(--ink);font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;font-size:14px;line-height:1.5;padding-bottom:40px}
   .wrap{max-width:1180px;margin:0 auto;padding:14px}
   header{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px;flex-wrap:wrap}
   header h1{margin:0;font-size:20px;letter-spacing:2px;color:var(--gold)}
   header .sub{color:var(--dim);font-size:12px}
   header .hint{margin-left:auto;color:var(--dim);font-size:12px}
   /* 顶部常驻状态条：一屏可见的核心状态 */
-  #topbar{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(18,24,38,.97),rgba(18,24,38,.9));backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+  #topbar{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(242,236,223,.97),rgba(242,236,223,.9));backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
   .vit{display:flex;flex-direction:column;gap:3px;min-width:88px}
   .vit .lab{font-size:10px;color:var(--dim);letter-spacing:.5px}
   .vit .val{font-size:13px;font-weight:600;white-space:nowrap}
@@ -20,7 +20,7 @@
   .vsep{width:1px;align-self:stretch;background:var(--line)}
   .need{display:flex;align-items:center;gap:4px;font-size:11px}
   .need .ic{width:14px;text-align:center}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;margin-bottom:var(--gap);box-shadow:0 2px 10px rgba(0,0,0,.18)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;margin-bottom:var(--gap);box-shadow:0 2px 10px rgba(29,27,23,.18)}
   h3{margin:0 0 8px;font-size:13px;color:var(--gold);letter-spacing:1px;border-left:3px solid var(--gold);padding-left:8px}
   .row{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line2);font-size:13px}
   .row b{font-weight:600}
@@ -28,16 +28,16 @@
   .bar>i{display:block;height:100%;border-radius:4px}
   .btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
   .btns.center{justify-content:center}
-  button{background:#1a2236;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;cursor:pointer;transition:transform .08s,border-color .15s,color .15s,box-shadow .15s}
+  button{background:#F2ECDF;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;cursor:pointer;transition:transform .08s,border-color .15s,color .15s,box-shadow .15s}
   button:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
   button:active{transform:translateY(0)}
   button:disabled{opacity:.4;cursor:not-allowed;transform:none}
-  button.gold{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;border-color:var(--gold);font-weight:700}
-  button.gold:hover{color:#1a1305;box-shadow:0 0 0 2px rgba(233,196,106,.3)}
+  button.gold{background:linear-gradient(180deg,#A5764F,#8E6342);color:#F2ECDF;border-color:var(--gold);font-weight:700}
+  button.gold:hover{color:#F2ECDF;box-shadow:0 0 0 2px rgba(165,118,79,.3)}
   button.jade{border-color:var(--jade);color:var(--jade)}
   button.purple{border-color:var(--purple);color:var(--purple)}
-  button.rec{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 2px rgba(233,196,106,.25);animation:pulse 1.6s ease-in-out infinite}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 2px rgba(233,196,106,.2)}50%{box-shadow:0 0 0 3px rgba(233,196,106,.45)}}
+  button.rec{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 2px rgba(165,118,79,.25);animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 2px rgba(165,118,79,.2)}50%{box-shadow:0 0 0 3px rgba(165,118,79,.45)}}
   /* 动作分组 */
   .agroups{display:flex;flex-direction:column;gap:10px}
   .agroup{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
@@ -45,19 +45,19 @@
   .agroup .gh::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--jade)}
   .abtns{display:flex;flex-wrap:wrap;gap:7px}
   /* 建议横幅 */
-  .recbar{margin:2px 0 12px;padding:9px 12px;border-radius:10px;background:linear-gradient(90deg,rgba(233,196,106,.12),rgba(95,214,194,.06));border:1px solid rgba(233,196,106,.35);font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .recbar{margin:2px 0 12px;padding:9px 12px;border-radius:10px;background:linear-gradient(90deg,rgba(165,118,79,.12),rgba(92,125,116,.06));border:1px solid rgba(165,118,79,.35);font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px}
   .recbar .ic{font-size:16px}
   .recbar b{color:var(--gold)}
-  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;background:#1a2236;border:1px solid var(--line);margin:2px}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;background:#F2ECDF;border:1px solid var(--line);margin:2px}
   .event{background:var(--card2);border:1px solid var(--line);border-left:3px solid var(--jade);border-radius:10px;padding:12px;margin:10px 0}
   .event .cat{color:var(--jade);font-size:11px;letter-spacing:1px}
-  .event .desc{margin:7px 0 11px;color:#cdd8f0}
+  .event .desc{margin:7px 0 11px;color:#3B372F}
   .opt{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 11px}
   .opt small{color:var(--dim);display:block;margin-top:2px}
   .log{max-height:240px;overflow:auto;font-size:12px;color:var(--dim)}
   .log div{padding:3px 0;border-bottom:1px dashed var(--line2)}
   .tag{font-size:11px;padding:1px 7px;border-radius:6px;margin-left:4px}
-  .t-good{background:#16331f;color:#7ee787}.t-bad{background:#3a1820;color:#ff8a8a}.t-info{background:#16223e;color:#9fb6ff}
+  .t-good{background:#DDE4DE;color:#5C7D74}.t-bad{background:#F0DEDB;color:#9C3B31}.t-info{background:#E7DDC7;color:#4C6B7D}
   .big{font-size:18px;color:var(--gold);font-weight:700}
   .muted{color:var(--dim);font-size:12px}
   .rel{display:flex;align-items:center;gap:6px;font-size:12px;margin:3px 0}
@@ -71,10 +71,10 @@
   .tech .t{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:12px;max-width:230px}
   .tech .t.locked{opacity:.55}
   #overlay{position:fixed;inset:0;background:rgba(5,8,16,.86);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
-  #overlay .box{background:var(--card);border:1px solid var(--gold);border-radius:14px;padding:22px 26px;max-width:600px;width:100%;text-align:center;max-height:90vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+  #overlay .box{background:var(--card);border:1px solid var(--gold);border-radius:14px;padding:22px 26px;max-width:600px;width:100%;text-align:center;max-height:90vh;overflow:auto;box-shadow:0 12px 40px rgba(29,27,23,.5)}
   #overlay h2{color:var(--gold);margin:0 0 8px}
   .dept-pick{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
-  .dept-pick button.on{border-color:var(--jade);color:var(--jade);background:rgba(95,214,194,.1)}
+  .dept-pick button.on{border-color:var(--jade);color:var(--jade);background:rgba(92,125,116,.1)}
   /* 折叠/展开：默认收起次要信息，点标题展开 */
   .ch{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between}
   .ch::after{content:'▾';color:var(--dim);font-size:12px;margin-left:10px;font-weight:400}
@@ -87,13 +87,14 @@
   .reslink:hover{border-color:var(--blue);color:var(--blue)}
   .cx-flt{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
   .cx-flt button{font-size:11px;padding:3px 8px}
-  .cx-flt select{background:#1a2236;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:3px 6px;font-size:11px}
+  .cx-flt select{background:#F2ECDF;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:3px 6px;font-size:11px}
   .codex{border-bottom:1px dashed var(--line2);padding:5px 0}
   .codex .cx{font-size:13px}
-  .codex .cx-d{font-size:11px;color:#aab8d6;margin:2px 0}
+  .codex .cx-d{font-size:11px;color:#3B372F;margin:2px 0}
   @media(max-width:980px){.org{grid-template-columns:1fr 1fr}#topbar{position:static}}
   @media(max-width:620px){.org{grid-template-columns:1fr}.vit{min-width:72px}}
-</style></head>
+</style><link rel='stylesheet' href='qt-ink.css'>
+</head>
 <body>
 <div class='wrap'>
   <header>
@@ -764,7 +765,7 @@ function renderTopbar(){
   h+=vit('心魔',Math.round(P.demon),P.demon,'var(--red)');
   h+=sep;
   h+='<div class="vit"><span class="lab">起居</span><div style="display:flex;gap:8px;margin-top:3px">'
-     +need('🍚',P.needs.food,'#e9c46a')+need('😴',P.needs.tire,'#5b9dff')+need('🤝',P.needs.social,'#b08cff')+need('🛁',P.needs.clean,'#7ee787')+'</div></div>';
+     +need('🍚',P.needs.food,'#A5764F')+need('😴',P.needs.tire,'#4C6B7D')+need('🤝',P.needs.social,'#7A5F76')+need('🛁',P.needs.clean,'#5C7D74')+'</div></div>';
   h+=sep;
   h+=chip('天气',WORLD.weather.name);
   h+=chip('天赋','★'+META.talent);
@@ -785,10 +786,10 @@ function renderPanel(){
     '<div class="row"><span>道心</span><b style="color:var(--jade)">'+P.dao+'</b></div>'+bar(P.dao,'var(--jade)')+
     '<div class="row"><span>心魔</span><b style="color:var(--red)">'+P.demon+'</b></div>'+bar(P.demon,'var(--red)')+
     '<h3 style="margin-top:12px">需求 · 起居</h3>'+
-    '<div class="row"><span>饥馁</span><b>'+Math.round(P.needs.food)+'</b></div>'+bar(P.needs.food,'#e9c46a')+
-    '<div class="row"><span>倦惫</span><b>'+Math.round(P.needs.tire)+'</b></div>'+bar(P.needs.tire,'#5b9dff')+
-    '<div class="row"><span>孤寂</span><b>'+Math.round(P.needs.social)+'</b></div>'+bar(P.needs.social,'#b08cff')+
-    '<div class="row"><span>尘俗</span><b>'+Math.round(P.needs.clean)+'</b></div>'+bar(P.needs.clean,'#7ee787');
+    '<div class="row"><span>饥馁</span><b>'+Math.round(P.needs.food)+'</b></div>'+bar(P.needs.food,'#A5764F')+
+    '<div class="row"><span>倦惫</span><b>'+Math.round(P.needs.tire)+'</b></div>'+bar(P.needs.tire,'#4C6B7D')+
+    '<div class="row"><span>孤寂</span><b>'+Math.round(P.needs.social)+'</b></div>'+bar(P.needs.social,'#7A5F76')+
+    '<div class="row"><span>尘俗</span><b>'+Math.round(P.needs.clean)+'</b></div>'+bar(P.needs.clean,'#5C7D74');
 }
 function renderActions(){
   const R=REALMS[P.realm];const canBreak=R.need&&P.xp>=R.xpMax&&P.res>=40;
@@ -873,8 +874,8 @@ function renderWorld(){
     '<div class="muted" style="font-size:11px;margin:-2px 0 6px">'+WORLD.climate.note+'</div>'+
     '<div class="row"><span>天气（由因素判定）</span><b>'+w.name+'</b></div>'+
     '<div class="muted" style="font-size:11px;margin:-2px 0 6px">'+w.eff.note+'</div>'+
-    fac('温度',f.temp,tc)+fac('湿度',f.moist,'var(--blue)')+fac('气压',f.press,'#e9c46a')+
-    fac('风速',f.wind,'#5b9dff')+fac('日照',f.solar,'#e9c46a')+fac('灵气场',f.qi,'var(--jade)');
+    fac('温度',f.temp,tc)+fac('湿度',f.moist,'var(--blue)')+fac('气压',f.press,'#A5764F')+
+    fac('风速',f.wind,'#4C6B7D')+fac('日照',f.solar,'#A5764F')+fac('灵气场',f.qi,'var(--jade)');
 }
 function setCodexFilter(t,c){if(t!==undefined)CODEX_FILTER.type=t;if(c!==undefined)CODEX_FILTER.climate=c;renderCodex();}
 function renderCodex(){

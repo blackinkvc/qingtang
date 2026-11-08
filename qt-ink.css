@@ -489,3 +489,84 @@ input::placeholder{color:var(--ink-4)}
   .hbar .hv{grid-column:2/-1;font-size:9px;white-space:normal;line-height:1.5}
   .donut-wrap{gap:16px}
 }
+
+
+/* ============================================================
+   历史页桥接 · .qt-legacy
+   旧页只需 <html class="qt-legacy"> + 引入本文件；
+   深色霓虹配色在此统一褪为纸墨。
+   ============================================================ */
+.qt-legacy{
+  --bg:#EAE3D3; --bg2:#E0D6C1; --panel:#F2ECDF; --panel2:#E7DDC7;
+  --card:#F2ECDF; --card2:#E7DDC7; --line:#C3B69D; --line2:#D6CBB6;
+  --ink:#1D1B17; --txt:#1D1B17; --dim:#6E6656;
+  --gold:#A5764F; --jade:#5C7D74; --green:#5C7D74; --red:#9C3B31;
+  --blue:#4C6B7D; --violet:#7A5F76; --purple:#7A5F76; --r:0px; --gap:14px;
+  background:#EAE3D3;
+}
+.qt-legacy body{
+  background:#EAE3D3 !important; color:#1D1B17;
+  font-family:var(--sans); font-size:13.5px; line-height:1.78;
+  padding:24px 22px 76px !important;
+}
+.qt-legacy h1,.qt-legacy h2,.qt-legacy h3,.qt-legacy h4,
+.qt-legacy .mtitle,.qt-legacy .title-sec h1{
+  font-family:var(--serif); font-weight:600; letter-spacing:.06em; color:#1D1B17 !important;
+}
+.qt-legacy *{text-shadow:none !important; box-shadow:none !important}
+.qt-legacy .top,.qt-legacy .panel,.qt-legacy .card,.qt-legacy .kpi,.qt-legacy .chip,
+.qt-legacy .biz-card,.qt-legacy .params,.qt-legacy .badge,.qt-legacy .modal,
+.qt-legacy .thumb,.qt-legacy .mprompt,.qt-legacy .stylebox,.qt-legacy .agroup,
+.qt-legacy .pill,.qt-legacy #topbar{
+  background:#F2ECDF !important; background-image:none !important;
+  border:1px solid var(--rule) !important; border-radius:0 !important; color:#1D1B17;
+}
+.qt-legacy #topbar{backdrop-filter:none !important; -webkit-backdrop-filter:none !important}
+.qt-legacy .pill-ok{background:#EAE3D3 !important;color:#5C7D74 !important;border-color:#5C7D74 !important}
+.qt-legacy .pill-warn{background:#EAE3D3 !important;color:#9C3B31 !important;border-color:#9C3B31 !important}
+.qt-legacy .pill-dim{background:#E0D6C1 !important;color:#6E6656 !important;border-color:#C3B69D !important}
+.qt-legacy button,.qt-legacy .navbtn,.qt-legacy .btn{
+  background:#F2ECDF !important; background-image:none !important; color:#1D1B17 !important;
+  border:1px solid var(--rule) !important; border-radius:0 !important; font-weight:500;
+  transform:none !important; animation:none !important;
+}
+.qt-legacy button:hover,.qt-legacy .navbtn:hover,.qt-legacy .btn:hover{
+  border-color:#9C3B31 !important; color:#9C3B31 !important; filter:none !important;
+}
+.qt-legacy button.primary,.qt-legacy .navbtn.gold,.qt-legacy .chip.on,
+.qt-legacy button.gold,.qt-legacy .btn.ok{
+  background:#9C3B31 !important; color:#F2ECDF !important; border-color:#9C3B31 !important;
+}
+.qt-legacy input,.qt-legacy select,.qt-legacy textarea,#q{
+  background:#F2ECDF !important; border:1px solid var(--rule) !important;
+  border-radius:0 !important; color:#1D1B17 !important; font-family:var(--sans);
+}
+.qt-legacy pre{
+  background:#E0D6C1 !important; border:1px solid var(--rule) !important;
+  border-radius:0 !important; color:#3B372F !important;
+}
+.qt-legacy table{font-variant-numeric:tabular-nums}
+.qt-legacy th{color:#6E6656;font-weight:600}
+.qt-legacy .hbar .htrack,.qt-legacy .hbar .hfill,.qt-legacy .split,.qt-legacy .split div,
+.qt-legacy .pyr-bar,.qt-legacy .mini,.qt-legacy .mini>i,
+.qt-legacy .bar,.qt-legacy .btns button{border-radius:0 !important}
+.qt-legacy .phone{background:#F2ECDF !important;border-color:#C3B69D !important;border-radius:0 !important}
+.qt-legacy .phone .notch{background:#D6CBB6 !important;color:#6E6656 !important;border-radius:0 !important}
+.qt-legacy .phone .scr{background:#E7DDC7 !important}
+.qt-legacy .thumb.empty{background:#E0D6C1 !important;color:#6E6656 !important}
+.qt-legacy .mask{background:rgba(29,27,23,.52) !important}
+.qt-legacy .card img,.qt-legacy .thumb img{background:#E0D6C1}
+.qt-legacy code{font-family:var(--mono);background:rgba(29,27,23,.06);border-radius:0}
+
+/* 页脚回目次 */
+.qt-back{display:inline-block;margin:34px 0 0;padding:7px 16px;border:1px solid var(--rule);
+  color:var(--ink-2);font-size:12.5px;letter-spacing:.12em}
+.qt-back:hover{border-color:var(--zhu);color:var(--zhu)}
+
+
+/* —— 二遍：浮层与 390 修正 —— */
+.qt-legacy #overlay{background:rgba(29,27,23,.55) !important}
+.qt-legacy .grid>*,.qt-legacy .grid2>*,.qt-legacy .kpis>*,.qt-legacy .chips>*{min-width:0}
+.qt-legacy .panel,.qt-legacy .card{min-width:0;max-width:100%}
+.qt-legacy .panel{overflow-x:auto}
+.qt-legacy code,.qt-legacy pre{word-break:break-all}

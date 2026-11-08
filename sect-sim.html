@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="qt-legacy">
 <head>
 <meta charset="UTF-8"><link rel='icon' href='favicon.ico'>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>修仙宗门 · 经济结构模型</title>
 <style>
   :root{
-    --bg:#0a0e1a; --bg2:#121a30; --panel:#16203a; --panel2:#1b2746;
-    --line:#2a3a5e; --ink:#dfe8ff; --dim:#8aa0c8; --gold:#e9c46a;
-    --jade:#5fd6c2; --red:#ff6b6b; --violet:#9d7bff; --blue:#5b9dff;
+    --bg:#EAE3D3; --bg2:#E0D6C1; --panel:#F2ECDF; --panel2:#E7DDC7;
+    --line:#C3B69D; --ink:#1D1B17; --dim:#6E6656; --gold:#A5764F;
+    --jade:#5C7D74; --red:#9C3B31; --violet:#7A5F76; --blue:#4C6B7D;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:"PingFang SC","Microsoft YaHei",-apple-system,system-ui,sans-serif;
-    background:radial-gradient(1200px 800px at 70% -10%,#1a2750 0%,var(--bg) 60%);
+    background:radial-gradient(1200px 800px at 70% -10%,#E7DDC7 0%,var(--bg) 60%);
     color:var(--ink);min-height:100vh;padding:14px;font-size:13px}
   h1,h2,h3{font-weight:600;letter-spacing:.5px}
   .top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(90deg,var(--panel),var(--panel2));
     border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-bottom:12px}
   .title-sec{margin-right:auto}
-  .title-sec h1{font-size:20px;color:var(--gold);text-shadow:0 0 12px rgba(233,196,106,.4)}
+  .title-sec h1{font-size:20px;color:var(--gold);text-shadow:0 0 12px rgba(165,118,79,.4)}
   .title-sec .sub{color:var(--dim);font-size:12px;margin-top:2px}
   .chips{display:flex;gap:12px;flex-wrap:wrap}
   .chip{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 14px;text-align:center;min-width:92px}
@@ -33,7 +33,7 @@
   /* 金字塔 */
   .pyr{display:flex;flex-direction:column;gap:6px;align-items:center;padding:6px 0}
   .pyr-row{display:flex;flex-direction:column;align-items:center;width:100%}
-  .pyr-bar{display:flex;align-items:center;justify-content:space-between;padding:5px 12px;border-radius:8px;color:#0a0e1a;font-weight:700;min-width:120px}
+  .pyr-bar{display:flex;align-items:center;justify-content:space-between;padding:5px 12px;border-radius:8px;color:#EAE3D3;font-weight:700;min-width:120px}
   .pyr-bar .nm{font-size:12px} .pyr-bar .ct{font-size:12px}
   .pyr-arrow{color:var(--dim);font-size:11px;margin:1px 0}
   /* 表格 */
@@ -46,18 +46,18 @@
   .ctrl{margin:10px 0}
   .ctrl label{display:flex;justify-content:space-between;color:var(--dim);font-size:12px;margin-bottom:4px}
   .ctrl input[type=range]{width:100%;accent-color:var(--jade)}
-  button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:linear-gradient(180deg,#27407a,#1a2b52);
+  button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:linear-gradient(180deg,#F2ECDF,#E0D6C1);
     color:var(--ink);padding:8px 14px;border-radius:9px;font-size:12px;transition:.15s}
   button:hover{filter:brightness(1.2);border-color:var(--gold)}
-  button.primary{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;font-weight:700;border-color:var(--gold)}
+  button.primary{background:linear-gradient(180deg,#A5764F,#8E6342);color:#F2ECDF;font-weight:700;border-color:var(--gold)}
   .ledger .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:12px}
   .ledger .row b{color:var(--ink)}
   .assume{font-size:11px;color:var(--dim);line-height:1.7}
   .assume li{margin:3px 0 3px 16px}
   .hint{color:var(--dim);font-size:11px;line-height:1.6;margin-top:8px}
   .stat-pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;margin:2px 0}
-  .pill-ok{background:rgba(95,214,194,.15);color:var(--jade);border:1px solid var(--jade)}
-  .pill-warn{background:rgba(255,107,107,.15);color:var(--red);border:1px solid var(--red)}
+  .pill-ok{background:rgba(92,125,116,.15);color:var(--jade);border:1px solid var(--jade)}
+  .pill-warn{background:rgba(156,59,49,.15);color:var(--red);border:1px solid var(--red)}
   /* 商业账 */
   .biz-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
   @media(max-width:680px){.biz-cards{grid-template-columns:repeat(2,1fr)}}
@@ -65,9 +65,10 @@
   .biz-card .k{color:var(--dim);font-size:10px}
   .biz-card .v{font-size:16px;font-weight:700;margin-top:3px}
   .biz-card .v.gold{color:var(--gold)}
-  .portrait{margin-top:8px;padding:7px 10px;border-radius:8px;background:rgba(157,123,255,.12);
-    border:1px solid rgba(157,123,255,.4);color:var(--ink);font-size:11px}
+  .portrait{margin-top:8px;padding:7px 10px;border-radius:8px;background:rgba(122,95,118,.12);
+    border:1px solid rgba(122,95,118,.4);color:var(--ink);font-size:11px}
 </style>
+<link rel='stylesheet' href='qt-ink.css'>
 </head>
 <body>
 
@@ -212,9 +213,9 @@
    资源：灵气(qi) / 灵石(stone) / 进贡(tribute)
    ========================================================= */
 const REALMS = [
-  {name:"练气", color:"#5b9dff"},{name:"筑基", color:"#5fd6c2"},
-  {name:"金丹", color:"#7ee787"},{name:"元婴", color:"#e9c46a"},
-  {name:"化神", color:"#ff9f43"},{name:"炼虚", color:"#ff6b6b"},
+  {name:"练气", color:"#4C6B7D"},{name:"筑基", color:"#5C7D74"},
+  {name:"金丹", color:"#5C7D74"},{name:"元婴", color:"#A5764F"},
+  {name:"化神", color:"#A5764F"},{name:"炼虚", color:"#9C3B31"},
 ];
 // 1000 修士的境界分布（金字塔：低阶多、高阶少，炼虚仅 2 人，无合体；和=1000）
 const DIST = [600,250,100,35,13,2];
@@ -238,10 +239,10 @@ const DEF_AURA_FRAC = 0.08; // 灵气原料从业者占凡人总数比例（默�
 
 // 商业账：青棠宗对外业务线（营收占比，和为 1）
 const BIZ = [
-  {key:"hospital", name:"棠医连锁",    sub:"大型医院联锁（凡人医疗）",     market:"凡人·世俗货币", share:0.40, color:"#5fd6c2"},
-  {key:"app",      name:"红鸾交友",    sub:"恋爱交友平台 App",             market:"凡人·世俗货币", share:0.30, color:"#ff6b6b"},
-  {key:"match",    name:"红线仙·姻缘", sub:"高端姻缘斡旋（含修士客户）",   market:"混合",          share:0.15, color:"#e9c46a"},
-  {key:"trade",    name:"仙门贸易",    sub:"灵植/灵宠/灵气产品外销",       market:"仙门·灵石",      share:0.15, color:"#9d7bff"},
+  {key:"hospital", name:"棠医连锁",    sub:"大型医院联锁（凡人医疗）",     market:"凡人·世俗货币", share:0.40, color:"#5C7D74"},
+  {key:"app",      name:"红鸾交友",    sub:"恋爱交友平台 App",             market:"凡人·世俗货币", share:0.30, color:"#9C3B31"},
+  {key:"match",    name:"红线仙·姻缘", sub:"高端姻缘斡旋（含修士客户）",   market:"混合",          share:0.15, color:"#A5764F"},
+  {key:"trade",    name:"仙门贸易",    sub:"灵植/灵宠/灵气产品外销",       market:"仙门·灵石",      share:0.15, color:"#7A5F76"},
 ];
 
 const state = {consMult:1, labMult:1, labCount:null, willMult:1, auraFrac:DEF_AURA_FRAC}; // labCount=null 表示自动
@@ -329,7 +330,7 @@ function render(){
   const maxImm = Math.max(...immRows.map(r=>r.n));
   const pyrRows = [
     ...immRows.map(r=>({name:r.name,count:r.n,color:r.color, w:Math.max(16, r.n/maxImm*100)})),
-    {name:"凡人社会",count:m.L,color:"#e9c46a", w:100}
+    {name:"凡人社会",count:m.L,color:"#A5764F", w:100}
   ];
   document.getElementById("pyramid").innerHTML = pyrRows.map((r,idx)=>{
     const arrow = idx<pyrRows.length-1 ? '<div class="pyr-arrow">▲ 资源上输</div>' : '';
@@ -449,5 +450,6 @@ document.getElementById("autoBtn").addEventListener("click",()=>{
 
 render();
 </script>
+<a class="qt-back" href="index.html">← 回到目次</a>
 </body>
 </html>

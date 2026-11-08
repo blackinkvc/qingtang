@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html lang='zh-CN'>
+<html lang='zh-CN' class="qt-legacy">
 <head>
 <meta charset='UTF-8'><link rel='icon' href='favicon.ico'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 <title>青棠宗 · 凡人群体政治经济人口模型</title>
 <style>
   :root{
-    --bg:#0a0e1a; --bg2:#121a30; --panel:#16203a; --panel2:#1b2746;
-    --line:#2a3a5e; --ink:#dfe8ff; --dim:#8aa0c8; --gold:#e9c46a;
-    --jade:#5fd6c2; --red:#ff6b6b; --violet:#9d7bff; --blue:#5b9dff;
+    --bg:#EAE3D3; --bg2:#E0D6C1; --panel:#F2ECDF; --panel2:#E7DDC7;
+    --line:#C3B69D; --ink:#1D1B17; --dim:#6E6656; --gold:#A5764F;
+    --jade:#5C7D74; --red:#9C3B31; --violet:#7A5F76; --blue:#4C6B7D;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
-    background:radial-gradient(1200px 800px at 70% -10%,#1a2750 0%,var(--bg) 60%);
+    background:radial-gradient(1200px 800px at 70% -10%,#E7DDC7 0%,var(--bg) 60%);
     color:var(--ink);min-height:100vh;padding:14px;font-size:13px}
   h1,h2,h3{font-weight:600;letter-spacing:.5px}
   .top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(90deg,var(--panel),var(--panel2));
     border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-bottom:12px}
   .title-sec{margin-right:auto}
-  .title-sec h1{font-size:20px;color:var(--gold);text-shadow:0 0 12px rgba(233,196,106,.4)}
+  .title-sec h1{font-size:20px;color:var(--gold);text-shadow:0 0 12px rgba(165,118,79,.4)}
   .title-sec .sub{color:var(--dim);font-size:12px;margin-top:2px}
   .nav{display:flex;gap:10px;flex-wrap:wrap}
   .navbtn{text-decoration:none;padding:8px 14px;border:1px solid var(--line);border-radius:9px;
-    background:linear-gradient(180deg,#27407a,#1a2b52);color:var(--ink);font-size:12px;transition:.15s}
+    background:linear-gradient(180deg,#F2ECDF,#E0D6C1);color:var(--ink);font-size:12px;transition:.15s}
   .navbtn:hover{filter:brightness(1.2);border-color:var(--gold)}
-  .navbtn.gold{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;font-weight:700;border-color:var(--gold)}
+  .navbtn.gold{background:linear-gradient(180deg,#A5764F,#8E6342);color:#F2ECDF;font-weight:700;border-color:var(--gold)}
   .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px}
   @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
   @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
@@ -48,29 +48,29 @@
   td.r,th.r{text-align:right}
   .note{color:var(--dim);font-size:11px;line-height:1.6;margin-top:8px}
   .pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px}
-  .pill-ok{background:rgba(95,214,194,.15);color:var(--jade);border:1px solid var(--jade)}
-  .pill-warn{background:rgba(255,107,107,.15);color:var(--red);border:1px solid var(--red)}
-  .pill-dim{background:rgba(138,160,200,.12);color:var(--dim);border:1px solid var(--line)}
+  .pill-ok{background:rgba(92,125,116,.15);color:var(--jade);border:1px solid var(--jade)}
+  .pill-warn{background:rgba(156,59,49,.15);color:var(--red);border:1px solid var(--red)}
+  .pill-dim{background:rgba(110,102,86,.12);color:var(--dim);border:1px solid var(--line)}
   .ctrl{margin:8px 0}
   .ctrl label{display:flex;justify-content:space-between;font-size:12px;color:var(--dim);margin-bottom:3px}
   .ctrl label b{color:var(--gold)}
   input[type=range]{width:100%;accent-color:var(--gold)}
   .params{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
   /* 手机原型 */
-  .phone{width:248px;background:#0c1322;border:7px solid #2a3550;border-radius:26px;padding:0;
-    box-shadow:0 12px 40px rgba(0,0,0,.5);position:relative;flex:none}
-  .phone .notch{height:18px;background:#2a3550;border-bottom-left-radius:14px;border-bottom-right-radius:14px;
+  .phone{width:248px;background:#E0D6C1;border:7px solid #C3B69D;border-radius:26px;padding:0;
+    box-shadow:0 12px 40px rgba(29,27,23,.5);position:relative;flex:none}
+  .phone .notch{height:18px;background:#C3B69D;border-bottom-left-radius:14px;border-bottom-right-radius:14px;
     width:120px;margin:0 auto;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:9px}
-  .phone .scr{background:linear-gradient(180deg,#1a1330,#241a3a);padding:10px;min-height:430px}
+  .phone .scr{background:linear-gradient(180deg,#E7DDC7,#E0D6C1);padding:10px;min-height:430px}
   .app-h{display:flex;align-items:center;gap:6px;color:var(--gold);font-weight:700;font-size:14px;margin-bottom:8px}
   .app-h .red{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red)}
-  .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:8px;margin:7px 0}
+  .card{background:rgba(29,27,23,.06);border:1px solid rgba(29,27,23,.12);border-radius:12px;padding:8px;margin:7px 0}
   .card .nm{font-weight:600;font-size:13px}
   .card .meta{color:var(--dim);font-size:10px;margin:2px 0}
-  .card .tag{display:inline-block;background:rgba(233,196,106,.18);color:var(--gold);font-size:10px;padding:1px 6px;border-radius:5px;margin-right:4px}
-  .matchbtn{width:100%;background:linear-gradient(90deg,var(--red),#ff9f43);color:#fff;border:none;border-radius:9px;
+  .card .tag{display:inline-block;background:rgba(165,118,79,.18);color:var(--gold);font-size:10px;padding:1px 6px;border-radius:5px;margin-right:4px}
+  .matchbtn{width:100%;background:linear-gradient(90deg,var(--red),#A5764F);color:#fff;border:none;border-radius:9px;
     padding:7px;font-weight:700;font-size:12px;margin-top:4px}
-  .badge{background:rgba(10,14,26,.55);border:1px solid var(--line);border-radius:9px;padding:7px 9px;margin-top:8px;font-size:10px;color:var(--dim)}
+  .badge{background:rgba(224,214,193,.55);border:1px solid var(--line);border-radius:9px;padding:7px 9px;margin-top:8px;font-size:10px;color:var(--dim)}
   .badge b{color:var(--jade)}
   .prototype-note{font-size:10px;color:var(--dim);text-align:center;margin-top:6px}
   .flex{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
@@ -79,6 +79,7 @@
   .split{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:6px 0}
   .split div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
 </style>
+<link rel='stylesheet' href='qt-ink.css'>
 </head>
 <body>
 <div class='top'>
@@ -197,7 +198,7 @@
     <svg viewBox='0 0 760 420' width='100%' style='max-width:760px'>
       <defs>
         <marker id='ar' markerWidth='9' markerHeight='9' refX='7' refY='4.5' orient='auto'>
-          <path d='M0,0 L9,4.5 L0,9 Z' fill='#5a6b8c'/>
+          <path d='M0,0 L9,4.5 L0,9 Z' fill='#6E6656'/>
         </marker>
       </defs>
       <g id='polInner'></g>
@@ -209,11 +210,11 @@
 <script>
 // ============== 数据 / 配置 ==============
 const APPS = [
-  {key:'hongluan',name:'红鸾交友',owner:'青棠宗（伪装）',arpu:62,base:1.30,immortal:true,color:'#e9c46a',tag:'高端姻缘·红线算法'},
-  {key:'yuelao',  name:'月老',    owner:'凡人·月老科技', arpu:48,base:1.00,immortal:false,color:'#5b9dff',tag:'大众社交'},
-  {key:'queqiao',name:'鹊桥',    owner:'凡人·鹊桥网络', arpu:40,base:0.92,immortal:false,color:'#5fd6c2',tag:'轻量交友'},
-  {key:'xindong',name:'心动',    owner:'凡人·心动互娱', arpu:35,base:0.85,immortal:false,color:'#9d7bff',tag:'年轻潮玩'},
-  {key:'zhixin', name:'知心',    owner:'凡人·知心婚恋', arpu:55,base:1.05,immortal:false,color:'#ff6b6b',tag:'成熟婚恋'},
+  {key:'hongluan',name:'红鸾交友',owner:'青棠宗（伪装）',arpu:62,base:1.30,immortal:true,color:'#A5764F',tag:'高端姻缘·红线算法'},
+  {key:'yuelao',  name:'月老',    owner:'凡人·月老科技', arpu:48,base:1.00,immortal:false,color:'#4C6B7D',tag:'大众社交'},
+  {key:'queqiao',name:'鹊桥',    owner:'凡人·鹊桥网络', arpu:40,base:0.92,immortal:false,color:'#5C7D74',tag:'轻量交友'},
+  {key:'xindong',name:'心动',    owner:'凡人·心动互娱', arpu:35,base:0.85,immortal:false,color:'#7A5F76',tag:'年轻潮玩'},
+  {key:'zhixin', name:'知心',    owner:'凡人·知心婚恋', arpu:55,base:1.05,immortal:false,color:'#9C3B31',tag:'成熟婚恋'},
 ];
 
 const state = {pop:400, single:32, net:78, use:55, edge:1.35, reg:0.20, regime:0}; // pop 单位：百万；regime：政体索引
@@ -371,25 +372,25 @@ function box(x,y,w,label,sub,fill,stroke,tf){
 }
 function renderPol(){
   const r=REGIMES[state.regime];
-  const g=GEO, I='#dfe8ff', N='#1b2746',Ns='#2a3a5e',
-    G='#caa24a',Gs='#e9c46a',Gt='#1a1305',
-    A='#241a3a',As='#9d7bff';
-  const edges=`<g stroke='#5a6b8c' stroke-width='1.4' fill='none' marker-end='url(#ar)'>`+
+  const g=GEO, I='#1D1B17', N='#E7DDC7',Ns='#C3B69D',
+    G='#A5764F',Gs='#A5764F',Gt='#F2ECDF',
+    A='#E0D6C1',As='#7A5F76';
+  const edges=`<g stroke='#6E6656' stroke-width='1.4' fill='none' marker-end='url(#ar)'>`+
     `<line x1='380' y1='60' x2='140' y2='120'/><line x1='380' y1='60' x2='580' y2='120'/>`+
     `<line x1='140' y1='180' x2='140' y2='250'/><line x1='580' y1='180' x2='580' y2='250'/>`+
     `<line x1='140' y1='310' x2='140' y2='360'/><line x1='380' y1='310' x2='380' y2='360'/><line x1='580' y1='310' x2='580' y2='360'/>`+
-    `<line x1='600' y1='280' x2='640' y2='200' stroke='#e9c46a' stroke-dasharray='4 3'/>`+
+    `<line x1='600' y1='280' x2='640' y2='200' stroke='#A5764F' stroke-dasharray='4 3'/>`+
     `</g>`;
   const inner = edges
-    + box(g.apex.x,g.apex.y,g.apex.w, r.apex,'', '#27407a','#5b9dff', I)
+    + box(g.apex.x,g.apex.y,g.apex.w, r.apex,'', '#F2ECDF','#4C6B7D', I)
     + box(g.l2L.x,g.l2L.y,g.l2L.w, r.l2[0],'', N,Ns,I)
     + box(g.l2R.x,g.l2R.y,g.l2R.w, r.l2[1],'', N,Ns,I)
     + box(g.l3L.x,g.l3L.y,g.l3L.w, r.l3[0],'', N,Ns,I)
     + box(g.l3C.x,g.l3C.y,g.l3C.w, r.l3[1],'', N,Ns,I)
     + box(g.l3R.x,g.l3R.y,g.l3R.w, r.l3[2],'棠医/红鸾/红线仙·隐于工商', G,Gs,Gt)
-    + box(g.l4L.x,g.l4L.y,g.l4L.w, r.l4[0],'', '#16203a','#2a3a5e',I)
-    + box(g.l4C.x,g.l4C.y,g.l4C.w, r.l4[1],'', '#16203a','#2a3a5e',I)
-    + box(g.l4R.x,g.l4R.y,g.l4R.w, r.l4[2],'', '#16203a','#2a3a5e',I)
+    + box(g.l4L.x,g.l4L.y,g.l4L.w, r.l4[0],'', '#F2ECDF','#C3B69D',I)
+    + box(g.l4C.x,g.l4C.y,g.l4C.w, r.l4[1],'', '#F2ECDF','#C3B69D',I)
+    + box(g.l4R.x,g.l4R.y,g.l4R.w, r.l4[2],'', '#F2ECDF','#C3B69D',I)
     + box(600,170,150,'宗门下派凡人','仙裔/退仙 · 代掌产业', A,As,I);
   document.getElementById('polInner').innerHTML=inner;
   document.getElementById('regimeDesc').innerHTML=r.desc;
@@ -436,11 +437,11 @@ function render(){
   const pmax=m.P;
   const row=(l,v,c)=>`<div class='hbar'><div class='hl'>${l}</div><div class='htrack'><div class='hfill' style='width:${(v/pmax*100).toFixed(1)}%;background:${c}'></div></div><div class='hv'>${fmtN(v)}</div></div>`;
   document.getElementById('popStruct').innerHTML =
-    row('城镇人口',m.urban,'#5b9dff')+row('乡村人口',m.rural,'#5fd6c2')+
-    row('劳动年龄',m.working,'#e9c46a')+row('老年',m.elderly,'#9d7bff')+row('青少年',m.youth,'#ff6b6b')+
+    row('城镇人口',m.urban,'#4C6B7D')+row('乡村人口',m.rural,'#5C7D74')+
+    row('劳动年龄',m.working,'#A5764F')+row('老年',m.elderly,'#7A5F76')+row('青少年',m.youth,'#9C3B31')+
     `<div class='split' style='margin-top:8px'>`+
-      `<div style='flex:${m.urban/m.P*100};background:#5b9dff'>城 ${(m.urban/m.P*100).toFixed(0)}%</div>`+
-      `<div style='flex:${m.rural/m.P*100};background:#5fd6c2'>乡 ${(m.rural/m.P*100).toFixed(0)}%</div></div>`;
+      `<div style='flex:${m.urban/m.P*100};background:#4C6B7D'>城 ${(m.urban/m.P*100).toFixed(0)}%</div>`+
+      `<div style='flex:${m.rural/m.P*100};background:#5C7D74'>乡 ${(m.rural/m.P*100).toFixed(0)}%</div></div>`;
 
   // 经济
   document.getElementById('econ').innerHTML =
@@ -448,9 +449,9 @@ function render(){
     `<div class='hbar'><div class='hl'>人均 GDP</div><div class='hv' style='width:auto;flex:1'>${fmtMoney(m.gdpPc)}</div></div>`+
     `<div class='hbar'><div class='hl'>人均可支配收入</div><div class='hv' style='width:auto;flex:1'>${fmtMoney(m.medianInc)}</div></div>`+
     `<table style='margin-top:8px'><thead><tr><th>世俗巨头</th><th class='r'>年营收</th><th class='r'>性质</th></tr></thead><tbody>`+
-    `<tr><td><span class='dot' style='background:#e9c46a'></span><b>青棠系（棠医/红鸾/红线仙）</b></td><td class='r'>${fmtMoney(m.qingtangRev)}</td><td class='r'><span class='pill pill-warn'>仙人伪装</span></td></tr>`+
-    `<tr><td><span class='dot' style='background:#5b9dff'></span>月老科技</td><td class='r'>${fmtMoney(m.apps[1].rev)}</td><td class='r'><span class='pill pill-dim'>凡人</span></td></tr>`+
-    `<tr><td><span class='dot' style='background:#ff6b6b'></span>知心婚恋</td><td class='r'>${fmtMoney(m.apps[4].rev)}</td><td class='r'><span class='pill pill-dim'>凡人</span></td></tr>`+
+    `<tr><td><span class='dot' style='background:#A5764F'></span><b>青棠系（棠医/红鸾/红线仙）</b></td><td class='r'>${fmtMoney(m.qingtangRev)}</td><td class='r'><span class='pill pill-warn'>仙人伪装</span></td></tr>`+
+    `<tr><td><span class='dot' style='background:#4C6B7D'></span>月老科技</td><td class='r'>${fmtMoney(m.apps[1].rev)}</td><td class='r'><span class='pill pill-dim'>凡人</span></td></tr>`+
+    `<tr><td><span class='dot' style='background:#9C3B31'></span>知心婚恋</td><td class='r'>${fmtMoney(m.apps[4].rev)}</td><td class='r'><span class='pill pill-dim'>凡人</span></td></tr>`+
     `</tbody></table>`;
   document.getElementById('econNote').innerHTML =
     `青棠系以约 <b style='color:var(--red)'>${(m.qingtangShare*100).toFixed(3)}%</b> 的 GDP 占比，隐于凡人经济之中——`+
@@ -469,7 +470,7 @@ function render(){
       const h=(f.mau/fmax*120).toFixed(0);
       return `<div style='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%'>`+
         `<div style='font-size:9px;color:var(--gold)'>${fmtN(f.mau)}</div>`+
-        `<div style='width:60%;background:linear-gradient(180deg,#e9c46a,#a8802f);border-radius:4px 4px 0 0;height:${h}px'></div>`+
+        `<div style='width:60%;background:linear-gradient(180deg,#A5764F,#8E6342);border-radius:4px 4px 0 0;height:${h}px'></div>`+
         `<div style='font-size:10px;color:var(--dim);margin-top:3px'>${f.y}年</div></div>`;
     }).join('')+`</div>`;
   const growth=(m.fc[5].mau/m.hongluan.mau-1)*100;
