@@ -653,3 +653,27 @@ body.sub .hx-wrap,body.sub .mk-wrap{flex:1 1 auto;width:100%}
   .m2 .hx-fig .coc,.m3 .hx-fig .coc,.m3 .hx-fig .glow{animation:none}
   .toast.on{animation-duration:2.4s}
 }
+
+/* ============================================================
+   缝势扩展 · 阶段一：缝势 / 意志 / 境界
+   ============================================================ */
+
+/* 顶栏缝势：数字 + 一枚细条 */
+.res .cell.rift-cell{flex-wrap:wrap;max-width:92px;row-gap:3px}
+.rift-cell .rbar{flex:0 0 100%;height:2px;background:var(--rule-2);display:block}
+.rift-cell .rbar i{display:block;height:100%;background:var(--zhe);
+  transition:width .5s linear}
+.rift-cell .v small{margin-left:5px;font-size:10.5px;letter-spacing:.08em}
+
+/* 境界一行 */
+.rank-line{font-size:11px;letter-spacing:.12em;color:var(--ink-3);margin:-7px 0 0}
+.rank-line b{font-family:var(--serif);font-weight:400;font-size:12.5px;
+  letter-spacing:.16em;color:var(--ink-2)}
+
+/* 魔染：纸色压暗，不配文字 */
+body.tainted{--paper:#E5DCC9;--paper-hi:#EDE5D5;--paper-warm:#E0D6C1;--paper-lo:#DDD3BE}
+body.tainted .rift{filter:saturate(.68) contrast(1.08) brightness(.94)}
+
+@media (max-width:900px){
+  .res .cell.rift-cell{display:none}
+}

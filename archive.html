@@ -70,15 +70,37 @@
     </div>
   </div>
 
+  <div class="arch-grp">
+    <h2>本 地 调 试</h2>
+    <div class="d">只在本机生效，不入线上；倍率只快时间流，不改生茧曲线。</div>
+    <div id="demo-list" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"></div>
+  </div>
+
   <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:14px;border-top:1px solid var(--rule-2);font-size:11.5px;color:var(--ink-4);letter-spacing:.08em">
     <span>维内页面不设互链，回此处再往别处。</span>
     <button class="btn" type="button" id="quit" style="font-size:12px">退 出 维</button>
   </div>
 </div>
 
+<script src="store.js"></script>
 <script>
 (function(){
   document.getElementById('quit').onclick = function(){ location.href = 'index.html'; };
+
+  var host = document.getElementById('demo-list');
+  if(!window.QT || !QT.isLocal()){
+    host.innerHTML = '<span style="font-size:11.5px;color:var(--ink-4);letter-spacing:.08em">线上不生效</span>';
+    return;
+  }
+  var cur = +localStorage.getItem('qt.demo') || 1;
+  [1, 4, 8].forEach(function(v){
+    var b = document.createElement('button');
+    b.className = 'btn'; b.type = 'button'; b.textContent = '×' + v;
+    b.style.fontSize = '12px';
+    if(v === cur){ b.style.borderColor = 'var(--zhu)'; b.style.color = 'var(--zhu)'; }
+    b.onclick = function(){ QT.setDemo(v); location.reload(); };
+    host.appendChild(b);
+  });
 })();
 </script>
 </body>

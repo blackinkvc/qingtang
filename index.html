@@ -15,17 +15,20 @@
     <div class="who">
       <span class="sect">青棠宗</span>
       <span class="name">拾茧者 · 沈砚</span>
-      <span class="rank">筑基三层 · 外门</span>
+      <span class="rank" id="v-rank">筑基 · 外门</span>
     </div>
     <div class="res">
       <div class="cell"><span class="k" data-a="石">灵石</span><span class="v" id="v-stone">480</span></div>
       <div class="cell"><span class="k" data-a="识">神识</span><span class="v"><span id="v-shen">72</span><small>/100</small></span></div>
       <div class="cell"><span class="k" data-a="茧">囊中茧</span><span class="v" id="v-pod">0</span></div>
+      <div class="cell rift-cell"><span class="k" data-a="缝">缝势</span><span class="v"><span id="v-rift">34.2</span><small id="v-rift-n">平静</small></span><span class="rbar"><i id="v-rift-i" style="width:34%"></i></span></div>
       <button class="seal-maint" id="seal" type="button" title="双击进入">维</button>
     </div>
     <div class="m-stat">
       <span>神识 <b id="m-shen">72</b></span>
       <span>体力 <b id="m-ti">64</b></span>
+      <span>意志 <b id="m-will">62</b></span>
+      <span>缝势 <b id="m-rift">34.2</b></span>
       <span>囊中茧 <b id="m-bag">0</b></span>
       <span>育茧畦 <b id="m-plots">2/9</b></span>
     </div>
@@ -43,6 +46,11 @@
         <div class="lab"><span>体力</span><b><span id="s-ti">64</span> / 100</b></div>
         <div class="meter"><i id="bar-ti" style="width:64%;background:var(--qing)"></i></div>
       </div>
+      <div class="stat">
+        <div class="lab"><span>意志</span><b><span id="s-will">62</span> / <span id="s-willmax">75</span></b></div>
+        <div class="meter"><i id="bar-will" style="width:83%"></i></div>
+      </div>
+      <div class="rank-line">境界 <b id="s-rank">筑基</b></div>
 
       <div class="pane-h" style="margin-top:16px"><span>囊 中 茧</span><span class="mono" id="bag-n">0 枚</span></div>
       <div class="bag-dots" id="bag-dots"><span class="none">空</span></div>
@@ -50,6 +58,12 @@
       <div class="pane-h"><span>育 茧 畦</span><a class="mini-link" href="#" data-sheet="plots">细看</a></div>
       <div class="plots-line" id="plots-line">2/9 已种 · 0 可孵</div>
       <div class="ops-note">不明之茧需种入畦中，方显品阶与倾向。</div>
+
+      <div class="pane-h" style="margin-top:14px"><span>缝 势</span><span class="mono" id="rift-seg">平静</span></div>
+      <div class="stat" style="margin-bottom:0">
+        <div class="lab"><span>缝势</span><b><span id="rift-num">34.2</span> / 100</b></div>
+        <div class="meter"><i id="bar-rift" style="width:34%;background:var(--zhe)"></i></div>
+      </div>
     </aside>
 
     <section class="rift" id="rift" aria-label="时空裂缝">
@@ -125,6 +139,10 @@
           <span class="op-n">偷 取</span><span class="op-c">体力 −8 · 四至七成</span>
           <span class="op-why" id="why-steal"></span>
         </button>
+        <button class="op" id="op-mend" type="button">
+          <span class="op-n">弥 合</span><span class="op-c" id="mend-c">缝势 −9 · 意志 10</span>
+          <span class="op-why" id="why-mend"></span>
+        </button>
       </div>
 
       <div class="alert" id="alert" hidden>
@@ -162,9 +180,10 @@
       </div>
       <div class="lm">
         <div class="lm-h">裂 缝</div>
+        <div class="row"><span class="k">缝势</span><span class="n" id="r-rift">34.2</span></div>
         <div class="row"><span class="k">缝口生茧</span><span class="n" id="r-pod">1 / 3</span></div>
-        <div class="row"><span class="k">距下一枚</span><span class="n" id="r-next">01:28</span></div>
-        <div class="row"><span class="k">今日异动</span><span class="n">2</span></div>
+        <div class="row"><span class="k">距下一枚</span><span class="n" id="r-next">00:12</span></div>
+        <div class="row"><span class="k">意志</span><span class="n" id="r-will">62 / 75</span></div>
       </div>
       <div class="lm">
         <div class="lm-h">传 闻</div>
@@ -242,12 +261,14 @@
 <script src="store.js"></script>
 <script>
 (function(){
-  var REGEN_MS = 12000;
   var RAR = ["", "凡", "良", "珍", "秘", "绝"];
   var S = QT.load();
   S.hasPod = true; S.state = 'ready';   /* 缝口状态不跨页保存 */
   QT.save();
-  var regenT = null, regenAt = 0, formT = null, readyT = null;
+  var regenT = null, regenAt = 0, formT = null, readyT = null, regenMs = 12000;
+  var wasTaint = QT.riftStage().tainted;
+
+  function nextMs(){ return Math.max(1200, Math.round(QT.intervalSec() * 1000)); }
 
   function ripeN(){ var t = Date.now(); return S.plots.filter(function(p){ return p.ripeAt <= t; }).length; }
   function nearCocoon(){
@@ -285,7 +306,26 @@
     $('r-pick').textContent = S.pick;
     $('r-ripe').textContent = ripeN();
     $('r-pod').textContent  = S.hasPod ? '1 / 3' : '0 / 3';
-    if(S.hasPod) $('r-next').textContent = '01:28';
+    if(S.hasPod) $('r-next').textContent = QT.fmt(nextMs());
+
+    var rs = QT.riftStage(), wv = Math.floor(QT.willNow()), RK = QT.RANKS[S.rank];
+    $('v-rift').textContent = rs.r.toFixed(1);
+    $('v-rift-n').textContent = rs.n;
+    $('v-rift-i').style.width = rs.r + '%';
+    $('rift-num').textContent = rs.r.toFixed(1);
+    $('rift-seg').textContent = rs.n;
+    $('bar-rift').style.width = rs.r + '%';
+    $('r-rift').textContent = rs.r.toFixed(1);
+    $('m-rift').textContent = rs.r.toFixed(1);
+    $('s-will').textContent = wv;
+    $('s-willmax').textContent = RK.willMax;
+    $('bar-will').style.width = Math.max(0, wv / RK.willMax * 100) + '%';
+    $('m-will').textContent = wv;
+    $('r-will').textContent = wv + ' / ' + RK.willMax;
+    $('s-rank').textContent = RK.n;
+    $('v-rank').textContent = RK.n + ' · 外门';
+    $('mend-c').textContent = '缝势 −' + RK.dr + ' · 意志 10';
+    document.body.classList.toggle('tainted', rs.tainted);
 
     $('op-pick').disabled = !(S.hasPod && S.shen >= 2);
     why('pick', !S.hasPod
@@ -302,17 +342,21 @@
 
     $('op-steal').disabled = S.ti < 8;
     why('steal', S.ti < 8 ? '体力不足（需 8）' : '');
+
+    $('op-mend').disabled = wv < 10;
+    why('mend', wv < 10 ? '意志不足' : '');
   }
 
   /* —— 茧再生：空位 → 进度 → 聚光 → 化形 → 落定 —— */
   function startRegen(){
     S.hasPod = false; S.state = 'regen';
+    regenMs = nextMs();
     var pod = $('pod');
     pod.classList.remove('forming');
     pod.classList.add('gone');
     $('rift-empty').hidden = false;
     $('rg-i').style.width = '0%';
-    $('regen-n').textContent = (REGEN_MS / 1000).toFixed(1) + 's';
+    $('regen-n').textContent = (regenMs / 1000).toFixed(1) + 's';
     regenAt = Date.now();
     $('rift-foot').textContent = '缝口空悬 · 正自再生';
     log('茧已拾走，裂缝正自行收拢。');
@@ -322,8 +366,8 @@
   }
 
   function tickRegen(){
-    var p = Math.min(1, (Date.now() - regenAt) / REGEN_MS);
-    var left = Math.max(0, (REGEN_MS - (Date.now() - regenAt)) / 1000);
+    var p = Math.min(1, (Date.now() - regenAt) / regenMs);
+    var left = Math.max(0, (regenMs - (Date.now() - regenAt)) / 1000);
     $('rg-i').style.width = (p * 100).toFixed(1) + '%';
     $('regen-n').textContent = left.toFixed(1) + 's';
     $('r-next').textContent = Math.ceil(left) + 's';
@@ -369,8 +413,8 @@
     $('pod').classList.remove('forming');
     $('spark').hidden = true; $('spark').classList.remove('on');
     S.hasPod = true; S.state = 'ready';
-    $('rift-foot').textContent = '缝口生茧 1 / 3 · 距下一枚 01:28';
-    $('r-next').textContent = '01:28';
+    $('rift-foot').textContent = '缝口生茧 1 / 3 · 距下一枚 ' + QT.fmt(nextMs());
+    $('r-next').textContent = QT.fmt(nextMs());
     log('裂缝微张，又生一茧。');
     paint();
   }
@@ -459,6 +503,13 @@
     paint();
   };
 
+  $('op-mend').onclick = function(){
+    var r = QT.mend();
+    if(!r.ok){ log('意志不足，弥合需十点。'); return; }
+    log('弥合 · 缝势 ' + r.after.toFixed(1) + '（−' + r.dr + '）');
+    paint();
+  };
+
   $('op-suppress').onclick = function(){
     S.shen = Math.max(0, S.shen - 30);
     $('alert').hidden = true;
@@ -541,8 +592,31 @@
   function tick(){
     var d = new Date();
     $('clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+
+    var rs = QT.riftStage(), wv = Math.floor(QT.willNow()), RK = QT.RANKS[S.rank];
+    $('v-rift').textContent = rs.r.toFixed(1);
+    $('v-rift-n').textContent = rs.n;
+    $('v-rift-i').style.width = rs.r + '%';
+    $('rift-num').textContent = rs.r.toFixed(1);
+    $('rift-seg').textContent = rs.n;
+    $('bar-rift').style.width = rs.r + '%';
+    $('r-rift').textContent = rs.r.toFixed(1);
+    $('m-rift').textContent = rs.r.toFixed(1);
+    $('s-will').textContent = wv;
+    $('bar-will').style.width = Math.max(0, wv / RK.willMax * 100) + '%';
+    $('m-will').textContent = wv;
+    $('r-will').textContent = wv + ' / ' + RK.willMax;
+    document.body.classList.toggle('tainted', rs.tainted);
+
+    if(rs.tainted && !wasTaint) log('缝势 100 · 魔染。');
+    if(!rs.tainted && wasTaint) log('缝势回落 · ' + rs.n + '。');
+    wasTaint = rs.tainted;
+
+    if(S.state === 'ready' && S.hasPod)
+      $('rift-foot').textContent = '缝口生茧 1 / 3 · 距下一枚 ' + QT.fmt(nextMs());
   }
   tick(); paint();
+  setInterval(tick, 1000);
 
   // 图鉴底栏指向本页的分卷
   var h = location.hash.replace('#', '');

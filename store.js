@@ -25,6 +25,28 @@
   /* 同门基础成交率（按建议价挂出时） */
   var BASE_P = [0, .90, .82, .72, .62, .50];
 
+  /* —— 缝势四段：增速（点/分钟）与区间名 —— */
+  var RIFT = [
+    { max: 39,  rate: .28, n: '平静' },
+    { max: 69,  rate: .38, n: '扩张' },
+    { max: 89,  rate: .50, n: '将启' },
+    { max: 99,  rate: .65, n: '欲开' },
+    { max: 100, rate: 0,   n: '魔染' }
+  ];
+
+  /* —— 六境：意志上限 / 单次弥合 / 回复间隔（秒） —— */
+  var RANKS = [
+    null,
+    { n: '凡俗', willMax: 40,  dr: 4,  regen: 90 },
+    { n: '引气', willMax: 55,  dr: 6,  regen: 80 },
+    { n: '筑基', willMax: 75,  dr: 9,  regen: 70 },
+    { n: '开光', willMax: 100, dr: 13, regen: 60 },
+    { n: '结丹', willMax: 135, dr: 18, regen: 50 },
+    { n: '化神', willMax: 180, dr: 24, regen: 40 }
+  ];
+
+  var DEMO_KEY = 'qt.demo';
+
   var STAGES = [
     { k: '初敛', d: '茧衣新结，尚在收气；触之微凉，丝线未紧。' },
     { k: '温热', d: '内里生温，隔衣可觉；丝线渐松，隐约有气。' },
@@ -54,8 +76,13 @@
   function seed() {
     var t = now(), D = 90 * 60000;
     S = {
-      v: 1, seq: 0,
+      v: 2, seq: 0,
       stone: 480, shen: 72, shenMax: 100, ti: 64, tiMax: 100,
+      rank: 3, will: 62, willMax: 75, willAt: t,
+      rift: { r: 34.2, at: t, tainted: false },
+      clarity: 100,
+      secrets: { p: 0, stolen: 0, hidden: 0, fines: 0 },
+      gods: { g1: { favor: 0, kin: false }, g2: { favor: 0, kin: false }, g3: { favor: 0, kin: false } },
       pick: 0,
       bag: [], plots: [], house: [], listings: [], vault: { edge: 1, shell: 2, dan: 0 }
     };
@@ -77,19 +104,34 @@
     return S;
   }
 
+  function migrate(d) {
+    d.v = 2;
+    d.rank = d.rank || 3;
+    d.willMax = RANKS[d.rank].willMax;
+    if (typeof d.will !== 'number') d.will = 62;
+    if (!d.willAt) d.willAt = now();
+    if (!d.rift) d.rift = { r: 34.2, at: now(), tainted: false };
+    if (typeof d.clarity !== 'number') d.clarity = 100;
+    if (!d.secrets) d.secrets = { p: 0, stolen: 0, hidden: 0, fines: 0 };
+    if (!d.gods) d.gods = { g1: { favor: 0, kin: false }, g2: { favor: 0, kin: false }, g3: { favor: 0, kin: false } };
+    return d;
+  }
+
   function load() {
     if (S) return S;
     try {
       var raw = w.localStorage.getItem(KEY);
       if (raw) {
         var d = JSON.parse(raw);
-        if (d && d.v === 1) { S = d; return S; }
+        if (d && d.v === 2) { S = d; return S; }
+        if (d && d.v === 1) { S = migrate(d); return S; }
       }
     } catch (e) {}
     return seed();
   }
 
   function save() {
+    if (S) { riftSync(); willSync(); }
     try { w.localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
   }
 
@@ -110,6 +152,104 @@
     var h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
     var p2 = function (n) { return ('0' + n).slice(-2); };
     return h ? h + ':' + p2(m) + ':' + p2(x) : p2(m) + ':' + p2(x);
+  }
+
+  /* —— 演示倍率：只在本地生效，线上恒为 1 —— */
+  function isLocal() {
+    var h = w.location.hostname;
+    return w.location.protocol === 'file:' || h === 'localhost' || h === '127.0.0.1' || h === '';
+  }
+  function demo() {
+    if (!isLocal()) return 1;
+    var v = +(w.localStorage.getItem(DEMO_KEY) || 1);
+    return (v >= 1 && v <= 12) ? v : 1;
+  }
+  function setDemo(v) {
+    try { w.localStorage.setItem(DEMO_KEY, String(v)); } catch (e) {}
+  }
+
+  /* —— 缝势 —— */
+  function rateAt(r) {
+    if (r >= 100) return 0;
+    if (r < 40) return .28;
+    if (r < 70) return .38;
+    if (r < 90) return .50;
+    return .65;
+  }
+  function applyRate(r, mins) {
+    var guard = 0;
+    while (mins > 1e-9 && r < 100 && guard++ < 20) {
+      var rt = rateAt(r);
+      if (!rt) break;
+      var bound = r < 40 ? 40 : r < 70 ? 70 : r < 90 ? 90 : 100;
+      var need = (bound - r) / rt;
+      if (mins >= need) { r = bound; mins -= need; }
+      else { r += rt * mins; mins = 0; }
+    }
+    return Math.min(100, r);
+  }
+  function riftNow() {
+    var mins = (now() - S.rift.at) / 60000 * demo();
+    return applyRate(S.rift.r, mins);
+  }
+  function riftSync() {
+    if (!S || !S.rift) return;
+    S.rift.r = +riftNow().toFixed(2);
+    S.rift.at = now();
+    S.rift.tainted = S.rift.r >= 100 ? true : (S.rift.tainted && S.rift.r >= 70);
+  }
+  function isTainted() {
+    var r = riftNow();
+    return r >= 100 || (S.rift.tainted && r >= 70);
+  }
+  function riftStage() {
+    var r = riftNow();
+    var n = r >= 100 ? '魔染' : r >= 90 ? '欲开' : r >= 70 ? '将启' : r >= 40 ? '扩张' : '平静';
+    return { r: +r.toFixed(1), n: n, tainted: isTainted() };
+  }
+  /* 茧速：只由缝势决定；魔染时再快一档 */
+  function intervalSec() {
+    var r = riftNow();
+    var s = 12 * (1 - .62 * Math.pow(r / 100, 1.15));
+    if (isTainted()) s = Math.max(4.2, s / 1.25);
+    return s;
+  }
+
+  /* —— 意志与弥合 —— */
+  function willNow() {
+    var R = RANKS[S.rank] || RANKS[3];
+    if (S.will >= R.willMax) return R.willMax;
+    var iv = R.regen * 1000 / demo();
+    var g = Math.floor((now() - (S.willAt || now())) / iv);
+    return Math.min(R.willMax, S.will + g);
+  }
+  function willSync() {
+    if (!S) return;
+    var R = RANKS[S.rank] || RANKS[3];
+    S.willMax = R.willMax;
+    S.will = Math.floor(willNow());
+    S.willAt = now();
+  }
+  function mend() {
+    var R = RANKS[S.rank] || RANKS[3];
+    var w0 = Math.floor(willNow());
+    if (w0 < 10) return { ok: false, why: '意志不足' };
+    var before = +riftNow().toFixed(1);
+    S.rift.r = before; S.rift.at = now();
+    S.will = w0 - 10; S.willAt = now();
+    S.rift.r = Math.max(0, +(S.rift.r - R.dr).toFixed(2));
+    S.rift.tainted = S.rift.r >= 100 ? true : (S.rift.tainted && S.rift.r >= 70);
+    save();
+    return { ok: true, before: before, after: +S.rift.r.toFixed(1), dr: R.dr, will: S.will };
+  }
+  function setRank(n) {
+    n = clamp(Math.round(n), 1, 6);
+    S.rank = n;
+    S.willMax = RANKS[n].willMax;
+    if (S.will > S.willMax) S.will = S.willMax;
+    S.willAt = now();
+    save();
+    return S.rank;
   }
 
   /* —— 风险 —— */
@@ -182,9 +322,13 @@
 
   w.QT = {
     KINDS: KINDS, RAR: RAR, PRICE: PRICE, SUGGEST: SUGGEST, STAGES: STAGES,
+    RIFT: RIFT, RANKS: RANKS,
     load: load, save: save, reset: reset, seed: seed,
     mk: mk, prog: prog, stageOf: stageOf, fmt: fmt, riskOf: riskOf,
     quote: quote, svg: svg,
+    isLocal: isLocal, demo: demo, setDemo: setDemo,
+    riftNow: riftNow, riftStage: riftStage, intervalSec: intervalSec,
+    willNow: willNow, mend: mend, setRank: setRank,
     get s() { return load(); }
   };
 })(window);
