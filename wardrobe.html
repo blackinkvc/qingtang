@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青棠宗 · 衣服素材库</title>
+<style>
+  :root{--bg:#0b0f1a;--card:#121826;--line:#26304a;--gold:#d8b46a;--dim:#8a93a8;--txt:#e7ecf6;--green:#5fd39a;}
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#16203a 0%,var(--bg) 60%);color:var(--txt);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;padding:26px 22px 60px}
+  h1{font-size:22px;margin:0 0 4px;letter-spacing:1px}
+  h1 b{color:var(--gold)}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:18px;line-height:1.6}
+  .stat{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px}
+  .pill b{color:var(--gold)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;transition:.18s;position:relative;display:flex;flex-direction:column}
+  .card:hover{border-color:var(--gold);transform:translateY(-3px)}
+  .thumb{height:280px;background:#0c1019;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb.empty{background:repeating-linear-gradient(45deg,#10141f,#10141f 12px,#0c1019 12px,#0c1019 24px);color:var(--dim);font-size:13px;text-align:center;padding:20px}
+  .badge{position:absolute;top:10px;right:10px;font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:rgba(8,12,22,.7)}
+  .badge.done{color:var(--gold);border-color:var(--gold)}
+  .badge.todo{color:var(--dim)}
+  .meta{padding:12px 13px;display:flex;flex-direction:column;gap:7px;flex:1}
+  .cname{font-size:15px;font-weight:600}
+  .ctag{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:6px;padding:2px 8px;align-self:flex-start}
+  .cfoot{margin-top:auto;font-size:12px;color:var(--gold)}
+  /* modal */
+  .mask{position:fixed;inset:0;background:rgba(4,7,14,.78);display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
+  .mask.on{display:flex}
+  .modal{background:var(--card);border:1px solid var(--line);border-radius:16px;max-width:760px;width:100%;max-height:88vh;overflow:auto;display:flex;flex-direction:column}
+  .mimg{width:100%;max-height:420px;object-fit:contain;background:#0c1019;border-bottom:1px solid var(--line)}
+  .mimg.empty{height:200px;display:flex;align-items:center;justify-content:center;color:var(--dim)}
+  .mbody{padding:18px 22px 24px}
+  .mtitle{font-size:20px;font-weight:700;margin:0 0 4px}
+  .mrow{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+  .mlabel{color:var(--dim);font-size:12px;min-width:64px}
+  .mprompt{background:#0c1019;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.7;color:#cfd7e6;white-space:pre-wrap;word-break:break-word;position:relative}
+  .copy{position:absolute;top:8px;right:8px;font-size:11px;color:var(--gold);background:rgba(216,180,106,.12);border:1px solid var(--gold);border-radius:6px;padding:3px 10px;cursor:pointer}
+  .mdesc{font-size:13.5px;line-height:1.8;color:#dde3ee;margin-top:14px}
+  .close{margin-top:20px;text-align:right}
+  .close button{background:var(--gold);color:#1a1206;border:none;border-radius:8px;padding:8px 18px;font-size:13px;cursor:pointer;font-weight:600}
+  .tip{margin-top:26px;color:var(--dim);font-size:12px;line-height:1.7;border-top:1px dashed var(--line);padding-top:14px}
+  code{color:var(--gold);background:rgba(216,180,106,.1);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+  <h1>🧵 青棠宗 · <b>衣服素材库</b></h1>
+  <div class="sub">每套衣服存为一个<b>素材</b>：含成图、生图 Prompt、文字简介。已生成的存档于此；空缺项待补图或生图填空。</div>
+  <div class="stat" id="stat"></div>
+  <div class="grid" id="grid"></div>
+  <div class="tip">
+    <b>如何新增素材：</b>把衣服图片放入 <code>clothes/</code> 目录，并在本文件 <code>WARDROBE</code> 数组追加一条
+    <code>{id,name,cat,status:'done',img:'clothes/xx.jpg',prompt,desc}</code>；空缺项用 <code>status:'todo',img:null</code> 占位即可。
+  </div>
+
+  <div class="mask" id="mask">
+    <div class="modal" id="modal"></div>
+  </div>
+
+<script>
+const WARDROBE=[
+  {id:'C01',name:'雾灰甜酷蓬蓬裙',cat:'甜酷少女',status:'done',img:'clothes/c01.jpg',
+   prompt:"Full-body fashion design sheet of a slender young woman, front view, standing calmly, soft neutral studio backdrop. Outfit: fitted grayish-blue knit spaghetti-strap crop camisole with deep U-neck and thin straps, vertical seam lines; short white multilayer tulle tutu skirt, puffed tulle peplum with ruffled hem; white wide choker with small metal pendant, thin silver chain pendant necklace, white beaded arm band on left upper arm, light-gray thigh-high socks, white flats. Straight long dark hair with blunt bangs, small stud earrings. Sweet-cool idol street fashion, muted cool palette, clean studio light, highly detailed, 8k.",
+   desc:"甜酷少女风。灰蓝针织细吊带上衣配深 U 领，外罩白色多层薄纱蓬蓬超短裙；白色宽 choker、银链吊坠、左臂白色珠串臂环、浅灰过膝袜，整体冷调干净。适合活泼、日常的少女系角色。"},
+  {id:'C02',name:'米杏新中式旗袍',cat:'新中式',status:'done',img:'clothes/c02.jpg',
+   prompt:"Full-body fashion plate of a woman in a cream-beige neoprene-knit fitted sleeveless qipao-style mini dress (above mid-thigh, bodycon), asymmetric black lace floral-vine embroidery climbing from right waist to hip, mandarin collar with black cord and frog buttons, teardrop chest cutout, black short gloves, beaded bracelet. Black beret, gold drop earrings. Slightly turned pose, one hand on doorframe. Elegant sexy modern-Chinese aesthetic, soft retro studio light, 8k detail.",
+   desc:"新中式改良旗袍短裙。奶油米色弹力针织包臀无袖，单侧黑色蕾丝花卉藤蔓刺绣由右腰蔓至胯部；中式小立领配盘扣、胸前水滴镂空，黑色贝雷帽、金耳饰、短手套与珠串手链。复古性感、现代东方韵味。"},
+  {id:'C03',name:'银灰运动两件套',cat:'运动休闲',status:'done',img:'clothes/c03.jpg',
+   prompt:"Full-body mirror-selfie pose, young woman in activewear: black cropped bralette sports top with U-neck, low-rise metallic silver-gray flared wide-leg trousers with glossy reflective fabric, white sneakers. Long loose hair, neutral calm expression. Clean cool-toned gym-studio light, sporty casual street style, highly detailed, 8k.",
+   desc:"运动休闲两件套。黑色短款运动抹胸上衣配 U 领，低腰银灰金属光泽微喇长裤，白色运动鞋；冷调干净，利落日常健身 / 街头风。"},
+  {id:'C04',name:'雾蓝仙气晚礼裙',cat:'晚礼服',status:'done',img:'clothes/c04.jpg',
+   prompt:"Ethereal evening gown, full-body: ice-blue sheer tulle mermaid gown with sweetheart V-neckline, fine silver sequin speckles scattered across bodice and skirt, high left front slit to upper thigh, floor-length train; detached translucent tulle sleevelets draping from upper arms; pointed pale-gold heels; large sapphire-blue teardrop earrings; short dark slicked-back hair. Dreamy fairy-tale ballroom, soft rim light, haute couture, 8k.",
+   desc:"雾蓝仙气晚礼裙。浅冰蓝半透欧根纱鱼尾长裙，心形深 V 抹胸，裙身散布细银闪片；左前高开叉及大腿、拖地裙摆，分离式薄纱袖套，浅金尖头高跟与蓝宝石水滴耳坠。优雅梦幻、轻盈飘逸。"},
+  {id:'C05',name:'翡翠金奢华礼裙',cat:'高定礼服',status:'done',img:'clothes/c05.jpg',
+   prompt:"Haute-couture fusion gown, full-body: emerald-green satin strapless bustier corset bodice richly embroidered with gold classical floral-vine patterns, paired with champagne-gold metallic bias-cut column skirt with high front slit and slight train. European classical interior with oil paintings and roman columns, red carpet. Elegant regal posture, luxurious East-meets-West aesthetic, editorial 8k.",
+   desc:"翡翠绿 × 香槟金新中式奢华礼服。上半身翡翠绿丝缎抹胸胸衣，金线古典花卉藤蔓刺绣；下半身香槟金金属光泽斜裁直筒长裙，高开叉微拖尾。结合古典油画与罗马柱背景，雍容复古、东西合璧的高级感。"},
+  /* ===== 已生成素材（生图补全，原空缺已填） ===== */
+  {id:'C06',name:'青瓷常服·日常',cat:'常服',status:'done',img:'clothes/c06.webp',
+   prompt:"Full-body fashion design sheet of a slender female cultivator of Qingtang Sect in daily casual robe, ancient Chinese xianxia style. Garment: light celadon-green cross-collar ruqun (short top + long flowing skirt), thin breathable fabric, simple cloud-pattern trim at hem, wide soft sash, loose practical sleeves, understated and elegant for daily chores. Soft natural light, misty mountain pavilion backdrop, highly detailed, 8k, clean composition, centered full body.",
+   desc:"青棠宗弟子日常常服。浅青瓷绿交领襦裙（短上衣 + 长流裙），轻薄透气，裙摆云纹滚边、宽软腰带、宽松便于行动的袖口，素雅内敛，适合宗门日常洒扫与行走。"},
+  {id:'C07',name:'靛蓝法袍·战袍',cat:'法袍',status:'done',img:'clothes/c07.webp',
+   prompt:"Full-body of a female immortal in ceremonial battle robe (fa-pao), xianxia grand style. Garment: deep indigo layered robe with gold cloud-and-thunder embroidery, armored shoulder guards, flowing battle sash, translucent outer veil, dignified and martial. Glowing rune accents, misty aura, dramatic light, centered full body, highly detailed, 8k, clean composition.",
+   desc:"仙人法袍·战袍。深靛蓝层叠长袍，金线云雷纹刺绣，护肩甲、飘扬战裙绶带，外罩半透纱氅，威仪兼具灵动；自带符文微光与薄雾灵气，适合法会或临敌。"},
+  {id:'C08',name:'暖纱寝衣·睡裙',cat:'寝衣',status:'done',img:'clothes/c08.webp',
+   prompt:"Full-body of a woman in a delicate nightgown and sleeping dress, xianxia intimate wear. Garment: sheer white-and-pale-pink thin silk slip dress, loosely draped, thin straps, translucent fabric showing soft silhouette, minimal ornament, cozy and ethereal. Soft warm lamplight, interior of a jade pavilion chamber, dreamy, centered full body, highly detailed, 8k, clean composition.",
+   desc:"居所寝衣·睡裙。白与浅粉薄绸吊带睡裙，松垮垂坠，半透面料隐现柔媚轮廓，极少装饰，温润烛光与玉阁内室烘托，居家安眠的朦胧仙气。"},
+  {id:'C09',name:'四季纱衣',cat:'纱衣',status:'done',img:'clothes/c09.webp',
+   prompt:"Full-body of a fairy (red-thread immortal) in translucent layered gauze attire, xianxia ethereal style. Garment: multiple overlapped sheer chiffon veils in pale rose and white, bare midriff wrap, floating thin ribbons, barely-there translucent fabric, immortal and cold-immune. Red thread accents, floating among clouds, luminous, centered full body, highly detailed, 8k, clean composition.",
+   desc:"四季纱衣（呼应苏绾红线仙司设定）。多层淡玫瑰与素白薄纱叠覆，露腰缠绕、飘带轻扬，近乎无形的半透面料——仙人寒不畏、以轻纱为美；红线点缀，浮于云霭间，通体流光。"},
+  {id:'C10',name:'绯金婚服·礼袍',cat:'礼袍',status:'done',img:'clothes/c10.webp',
+   prompt:"Full-body of a bride in grand xianxia wedding robe, luxurious. Garment: crimson-and-gold phoenix-embroidered hanfu, elaborate red veil headdress with gold phoenix crown, flowing train, red-thread immortal motifs, regal and radiant. Ornate classical hall, warm festive light, centered full body, highly detailed, 8k, clean composition.",
+   desc:"大婚礼袍。绯红描金凤凰刺绣汉服，繁复红纱凤冠，长拖尾曳地，红线仙司纹样点缀，雍容华贵、熠熠生辉；古典殿堂暖光烘托，喜庆而庄严。"}
+];
+
+const grid=document.getElementById('grid');
+const stat=document.getElementById('stat');
+const mask=document.getElementById('mask');
+const modal=document.getElementById('modal');
+
+let done=0,todo=0;
+WARDROBE.forEach(c=>{
+  if(c.status==='done')done++;else todo++;
+  const card=document.createElement('div');
+  card.className='card';
+  card.innerHTML=`
+    <div class="badge ${c.status}">${c.status==='done'?'已生成':'空缺'}</div>
+    <div class="thumb ${c.status==='todo'?'empty':''}">
+      ${c.status==='done'?`<img src="${c.img}" alt="${c.name}" loading="lazy">`:'未生成<br>待补图 / 生图'}
+    </div>
+    <div class="meta">
+      <div class="cname">${c.id} · ${c.name}</div>
+      <span class="ctag">${c.cat}</span>
+      <div class="cfoot">${c.status==='done'?'点击查看 Prompt / 简介':'点击查看空缺详情'}</div>
+    </div>`;
+  card.onclick=()=>openModal(c);
+  grid.appendChild(card);
+});
+stat.innerHTML=`<span class="pill">素材总数 <b>${WARDROBE.length}</b></span>
+  <span class="pill">已生成 <b style="color:var(--green)">${done}</b></span>
+  <span class="pill">空缺 <b>${todo}</b></span>`;
+
+function openModal(c){
+  modal.innerHTML=`
+    ${c.status==='done'
+      ?`<img class="mimg" src="${c.img}" alt="${c.name}">`
+      :`<div class="mimg empty">未生成 · 空缺素材</div>`}
+    <div class="mbody">
+      <div class="mtitle">${c.id} · ${c.name}</div>
+      <div class="mrow"><span class="mlabel">风格</span><span class="ctag">${c.cat}</span><span class="ctag">${c.status==='done'?'已生成':'空缺'}</span></div>
+      <div class="mlabel">生图 Prompt（英文）</div>
+      <div class="mprompt">${c.status==='done'?escapeHtml(c.prompt):'（空缺，待补全）'}${c.status==='done'?`<span class="copy" onclick="copyPrompt(this)">复制</span>`:''}</div>
+      <div class="mlabel" style="margin-top:14px">文字简介</div>
+      <div class="mdesc">${c.desc}</div>
+      <div class="close"><button onclick="closeModal()">关闭</button></div>
+    </div>`;
+  mask.classList.add('on');
+}
+function closeModal(){mask.classList.remove('on');}
+mask.onclick=e=>{if(e.target===mask)closeModal();};
+function copyPrompt(el){
+  const txt=el.parentElement.innerText.replace('复制','').trim();
+  navigator.clipboard.writeText(txt).then(()=>{el.textContent='已复制';setTimeout(()=>el.textContent='复制',1200);});
+}
+function escapeHtml(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>

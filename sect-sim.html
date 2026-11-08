@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>修仙宗门 · 经济结构模型</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#121a30; --panel:#16203a; --panel2:#1b2746;
+    --line:#2a3a5e; --ink:#dfe8ff; --dim:#8aa0c8; --gold:#e9c46a;
+    --jade:#5fd6c2; --red:#ff6b6b; --violet:#9d7bff; --blue:#5b9dff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei",-apple-system,system-ui,sans-serif;
+    background:radial-gradient(1200px 800px at 70% -10%,#1a2750 0%,var(--bg) 60%);
+    color:var(--ink);min-height:100vh;padding:14px;font-size:13px}
+  h1,h2,h3{font-weight:600;letter-spacing:.5px}
+  .top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(90deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-bottom:12px}
+  .title-sec{margin-right:auto}
+  .title-sec h1{font-size:20px;color:var(--gold);text-shadow:0 0 12px rgba(233,196,106,.4)}
+  .title-sec .sub{color:var(--dim);font-size:12px;margin-top:2px}
+  .chips{display:flex;gap:12px;flex-wrap:wrap}
+  .chip{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:8px 14px;text-align:center;min-width:92px}
+  .chip .k{color:var(--dim);font-size:11px}
+  .chip .v{font-size:17px;font-weight:700;margin-top:2px}
+  .chip.ok .v{color:var(--jade)} .chip.warn .v{color:var(--red)} .chip.gold .v{color:var(--gold)}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:start}
+  @media(max-width:1000px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+  .panel h2{font-size:14px;color:var(--jade);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .panel h2 .tag{font-size:10px;color:var(--dim);font-weight:400;margin-left:auto}
+  /* 金字塔 */
+  .pyr{display:flex;flex-direction:column;gap:6px;align-items:center;padding:6px 0}
+  .pyr-row{display:flex;flex-direction:column;align-items:center;width:100%}
+  .pyr-bar{display:flex;align-items:center;justify-content:space-between;padding:5px 12px;border-radius:8px;color:#0a0e1a;font-weight:700;min-width:120px}
+  .pyr-bar .nm{font-size:12px} .pyr-bar .ct{font-size:12px}
+  .pyr-arrow{color:var(--dim);font-size:11px;margin:1px 0}
+  /* 表格 */
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{padding:6px 8px;text-align:center;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:600;font-size:11px}
+  td.name{text-align:left;font-weight:600}
+  .pos{color:var(--jade)} .neg{color:var(--red)}
+  /* 滑块 */
+  .ctrl{margin:10px 0}
+  .ctrl label{display:flex;justify-content:space-between;color:var(--dim);font-size:12px;margin-bottom:4px}
+  .ctrl input[type=range]{width:100%;accent-color:var(--jade)}
+  button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:linear-gradient(180deg,#27407a,#1a2b52);
+    color:var(--ink);padding:8px 14px;border-radius:9px;font-size:12px;transition:.15s}
+  button:hover{filter:brightness(1.2);border-color:var(--gold)}
+  button.primary{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;font-weight:700;border-color:var(--gold)}
+  .ledger .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:12px}
+  .ledger .row b{color:var(--ink)}
+  .assume{font-size:11px;color:var(--dim);line-height:1.7}
+  .assume li{margin:3px 0 3px 16px}
+  .hint{color:var(--dim);font-size:11px;line-height:1.6;margin-top:8px}
+  .stat-pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;margin:2px 0}
+  .pill-ok{background:rgba(95,214,194,.15);color:var(--jade);border:1px solid var(--jade)}
+  .pill-warn{background:rgba(255,107,107,.15);color:var(--red);border:1px solid var(--red)}
+  /* 商业账 */
+  .biz-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+  @media(max-width:680px){.biz-cards{grid-template-columns:repeat(2,1fr)}}
+  .biz-card{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;text-align:center}
+  .biz-card .k{color:var(--dim);font-size:10px}
+  .biz-card .v{font-size:16px;font-weight:700;margin-top:3px}
+  .biz-card .v.gold{color:var(--gold)}
+  .portrait{margin-top:8px;padding:7px 10px;border-radius:8px;background:rgba(157,123,255,.12);
+    border:1px solid rgba(157,123,255,.4);color:var(--ink);font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="title-sec">
+    <h1 id="sectName">青棠宗 · 经济结构模型</h1>
+    <div class="sub">非回合制 · 人口与资源供需稳态测算</div>
+  </div>
+  <div class="chips">
+    <div class="chip gold"><div class="k">修士</div><div class="v" id="cImm">1000</div></div>
+    <div class="chip gold"><div class="k">凡人</div><div class="v" id="cLab">0</div></div>
+    <div class="chip"><div class="k">人修比</div><div class="v" id="ratio">—</div></div>
+    <div class="chip ok"><div class="k">经济状态</div><div class="v" id="status" style="font-size:13px">—</div></div>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- 左列：人口金字塔 + 参数 -->
+  <div>
+    <div class="panel">
+      <h2>人口结构金字塔 <span class="tag">资源自下向上输送</span></h2>
+      <div class="pyr" id="pyramid"></div>
+      <div class="hint">塔基为凡人与低阶修士（净产出），塔尖为高阶修士（净消耗，资源由下方供给）。</div>
+    </div>
+    <div class="panel">
+      <h2>模型参数 <span class="tag">拖动即时重算</span></h2>
+      <div class="ctrl">
+        <label>修士日常消耗强度 <span id="vCons">×1.0</span></label>
+        <input type="range" id="consMult" min="0.5" max="2" step="0.1" value="1">
+      </div>
+      <div class="ctrl">
+        <label>凡人产出强度 <span id="vLab">×1.0</span></label>
+        <input type="range" id="labMult" min="0.5" max="2" step="0.1" value="1">
+      </div>
+      <div class="ctrl">
+        <label>实际凡人总数 <span id="vCount">自动</span></label>
+        <input type="range" id="labCount" min="0" max="200000" step="1000" value="102600">
+      </div>
+      <div class="ctrl">
+        <label>灵气原料从业者占比 <span id="vAura">8%</span></label>
+        <input type="range" id="auraFrac" min="0.02" max="0.2" step="0.01" value="0.08">
+      </div>
+      <div class="ctrl">
+        <label>意志力强度 <span id="vWill">×1.0</span></label>
+        <input type="range" id="willMult" min="0.2" max="1.5" step="0.1" value="1">
+      </div>
+      <button class="primary" id="autoBtn" style="width:100%">⟳ 自动测算所需凡人</button>
+      <div class="hint">「自动」按灵气瓶颈推导所需凡人；手动拖动可观察盈余/赤字变化。灵气原料从业者占比越低，所需凡人总数越大。</div>
+    </div>
+  </div>
+
+  <!-- 右列：明细表 + 总账 + 假设 -->
+  <div>
+    <div class="panel">
+      <h2>各层级日常经济账 <span class="tag">人均 日耗 / 日产（份）</span></h2>
+      <table id="econTable">
+        <thead><tr>
+          <th class="name">层级</th><th>人数</th>
+          <th>日耗<br>灵气/灵石/进贡</th><th>日产<br>灵气/灵石/进贡</th>
+          <th>净供需</th><th>自给率</th><th>需下级供给</th>
+        </tr></thead>
+        <tbody id="econBody"></tbody>
+      </table>
+      <div class="hint">「综合自给率」越低，说明该层越依赖下级制造（高阶修士仅"少部分自己想办法"）。注意：<b style="color:var(--gold)">灵气</b>修士个人产出恒为 0，完全由高层垄断的生物制药产业配给；「需下级供给」= 灵气+石+贡中本级不自产的部分。</div>
+    </div>
+
+    <div class="panel">
+      <h2>资源总账 <span class="tag">修士赤字 vs 凡人供给</span></h2>
+      <div class="ledger" id="ledger"></div>
+      <div id="bindNote" class="hint"></div>
+    </div>
+
+    <div class="panel">
+      <h2>凡人社会 · 大公司伪装 <span class="tag">凡人不知仙，只当是大公司</span></h2>
+      <table>
+        <thead><tr><th class="name">构成</th><th>人数</th><th>占比</th></tr></thead>
+        <tbody id="mortalBody"></tbody>
+      </table>
+      <div id="mortalNote" class="hint"></div>
+    </div>
+
+    <div class="panel">
+      <h2>青棠宗商业账 <span class="tag">对外营收 · 世俗隐形巨企</span></h2>
+      <div class="biz-cards">
+        <div class="biz-card"><div class="k">日营收（折算）</div><div class="v gold" id="bizTotal">0</div></div>
+        <div class="biz-card"><div class="k">年营收（折算）</div><div class="v gold" id="bizAnnual">0</div></div>
+        <div class="biz-card"><div class="k">世俗货币（进贡）</div><div class="v" id="bizTrib">0</div></div>
+        <div class="biz-card"><div class="k">仙门货币（灵石）</div><div class="v" id="bizStone">0</div></div>
+      </div>
+      <table style="margin-top:8px">
+        <thead><tr><th class="name">业务线</th><th>形态</th><th>市场</th><th>日营收</th><th>年营收</th><th>占比</th></tr></thead>
+        <tbody id="bizBody"></tbody>
+      </table>
+      <div class="hint">青棠宗在世俗界以三家巨头示人：<b style="color:var(--gold)">棠医连锁</b>（大型医院）、<b style="color:var(--gold)">红鸾交友</b>（恋爱 App）、<b style="color:var(--gold)">红线仙</b>（姻缘定制）；在仙门间则外销灵植/灵宠/灵气产品。营收由内部盈余（灵石+进贡）折算，拖动左侧参数实时联动。</div>
+    </div>
+
+    <div class="panel">
+      <h2>灵气之源 · 玄幻壳 <span class="tag">生物制药 → 修仙叙事</span></h2>
+      <table>
+        <thead><tr><th class="name">真实机制（生物工程）</th><th>玄幻壳设定</th></tr></thead>
+        <tbody>
+          <tr><td class="name">生物 / 植物基因改造</td><td>灵植嫁接、妖兽血脉萃取、异种共生</td></tr>
+          <tr><td class="name">精炼提纯制药</td><td>丹鼎淬炼、灵枢阵法提纯</td></tr>
+          <tr><td class="name">神经兴奋剂·提升专注与活性</td><td>灵元·淬体灵液，服之<b style="color:var(--gold)">神识清明、道心通明、悟性大涨</b></td></tr>
+          <tr><td class="name">被高层垄断·定向配给</td><td>唯化神、炼虚可掌丹鼎；灵元配给由长老会裁定，凡人不得服</td></tr>
+        </tbody>
+      </table>
+      <div class="hint">即：所谓「灵气」并非天地自然之物，而是宗门以生物工程批量制造的<b style="color:var(--ink)">神经增强剂</b>，生产技术与配给权高度集中于高阶修士。</div>
+    </div>
+
+    <div class="panel">
+      <h2>修炼机制 · 玄幻壳 <span class="tag">耐受 + 基因解锁</span></h2>
+      <div class="assume" style="font-size:11px">
+        <li><b>其一·意志力耐受</b>：修炼即锤炼意志以<b style="color:var(--gold)">耐受更高剂量灵气</b>（神经兴奋剂），逼出人体潜能；若意志不足却摄入过量，则<b style="color:var(--red)">走火入魔</b>（神经毒性 / 精神失控）。</li>
+        <li><b>其二·基因锁</b>：逐层<b style="color:var(--gold)">解开基因锁、定向进化</b>，由低阶向高阶累积解锁，是实打实的体质跃迁。</li>
+        <li><b>其三·青棠特色「结缘·斩缘」</b>：门人<b style="color:var(--ink)">以情劫淬炼意志</b>——与他门修士结为道侣（结缘），再断情斩缘，于爱憎起落间固化心性，从而<b style="color:var(--gold)">抬升灵气耐受上限</b>。故青棠门人皆<b style="color:var(--ink)">俊男美女、才艺齐全</b>，既便于社交结缘，亦主司红线仙姻缘业务。</li>
+      </div>
+      <div class="portrait">门人画像：俊男美女 · 才艺齐全（琴棋书画 / 歌舞 / 辩才），乃社交结缘与红线业务的中坚。</div>
+      <table style="margin-top:8px">
+        <thead><tr><th class="name">层级</th><th>灵气日剂量</th><th>已解基因锁</th><th>状态</th></tr></thead>
+        <tbody id="cultBody"></tbody>
+      </table>
+      <div id="cultNote" class="hint"></div>
+    </div>
+
+    <div class="panel">
+      <h2>关键假设 <span class="tag">可调 / 待你确认</span></h2>
+      <ul class="assume">
+        <li><b style="color:var(--ink)">灵气 = 生物兴奋剂</b>（提升专注度、神经活性）：由<b style="color:var(--gold)">高层垄断的生物工程制药产业</b>经「灵植/灵兽基因改造 + 精炼」制得，修士个人产出为 0，凡人不服用。</li>
+        <li>各层级<b style="color:var(--ink)">消耗随境界指数增长</b>（×2 每阶），高阶修士消耗远高于产出。</li>
+        <li>低阶修士为<b style="color:var(--ink)">净产出</b>（石/贡），高阶修士为<b style="color:var(--ink)">净消耗</b>，形成自下而上的供养金字塔；灵气由垄断产业自上而下配给。</li>
+        <li><b style="color:var(--ink)">凡人社会</b>：绝大多数产出为正常生活物品；仅约一成从业灵植/灵宠（灵气原料），且不知仙人存在，只当宗门是来采购原料的大公司。</li>
+        <li>领地（灵脉）/ 灵兽暂<b style="color:var(--ink)">未计入</b>；纳入后可降低对凡人的灵气原料依赖，作为下一轮优化。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   经济结构模型（非回合制，稳态测算）
+   资源：灵气(qi) / 灵石(stone) / 进贡(tribute)
+   ========================================================= */
+const REALMS = [
+  {name:"练气", color:"#5b9dff"},{name:"筑基", color:"#5fd6c2"},
+  {name:"金丹", color:"#7ee787"},{name:"元婴", color:"#e9c46a"},
+  {name:"化神", color:"#ff9f43"},{name:"炼虚", color:"#ff6b6b"},
+];
+// 1000 修士的境界分布（金字塔：低阶多、高阶少，炼虚仅 2 人，无合体；和=1000）
+const DIST = [600,250,100,35,13,2];
+
+// 各层级「人均日耗」[灵气,灵石,进贡]
+// 灵气 = 生物兴奋剂（神经活性/专注度），由高层垄断的生物制药产业统一供给，修士个人不产
+const CONS = [
+  [2,1,0.5],[4,2,1],[8,4,2],[16,8,4],[32,16,8],[64,32,16]
+];
+// 各层级「人均日产」[灵气,灵石,进贡]
+// 修士个人灵气产出=0（灵气为垄断生物工程制品）；仅产灵石/进贡
+const PROD = [
+  [0,0.5,0.2],[0,1,0.3],[0,1.5,0.5],[0,2,1],[0,3,1.5],[0,5,2]
+];
+// 凡人社会（劳动者）：绝大多数生产正常生活物品；仅一小部分从事灵植/灵宠（灵气原料）
+const RES = ["灵气","灵石","进贡"];
+const AURA_OUT   = 0.5;    // 每名「灵气原料从业者」日产灵气生物质（经高阶精炼成灵元）
+const STONE_PER = 3;       // 每名凡人日产正常生活物资（灵石）
+const TRIB_PER  = 2;       // 每名凡人日产正常生活物资（进贡）
+const DEF_AURA_FRAC = 0.08; // 灵气原料从业者占凡人总数比例（默认 8%）
+
+// 商业账：青棠宗对外业务线（营收占比，和为 1）
+const BIZ = [
+  {key:"hospital", name:"棠医连锁",    sub:"大型医院联锁（凡人医疗）",     market:"凡人·世俗货币", share:0.40, color:"#5fd6c2"},
+  {key:"app",      name:"红鸾交友",    sub:"恋爱交友平台 App",             market:"凡人·世俗货币", share:0.30, color:"#ff6b6b"},
+  {key:"match",    name:"红线仙·姻缘", sub:"高端姻缘斡旋（含修士客户）",   market:"混合",          share:0.15, color:"#e9c46a"},
+  {key:"trade",    name:"仙门贸易",    sub:"灵植/灵宠/灵气产品外销",       market:"仙门·灵石",      share:0.15, color:"#9d7bff"},
+];
+
+const state = {consMult:1, labMult:1, labCount:null, willMult:1, auraFrac:DEF_AURA_FRAC}; // labCount=null 表示自动
+
+function compute(){
+  const cm=state.consMult, lm=state.labMult;
+  // 修士各类净供需（prod-cons 累加）
+  const cNet=[0,0,0];
+  const rows = REALMS.map((r,i)=>{
+    const n=DIST[i];
+    const c=CONS[i].map(x=>x*cm), p=PROD[i];
+    const consT=c[0]+c[1]+c[2], prodT=p[0]+p[1]+p[2];
+    const net=[p[0]-c[0],p[1]-c[1],p[2]-c[2]];
+    for(let k=0;k<3;k++) cNet[k]+=net[k]*n;
+    const selfRate = consT>0 ? prodT/consT : 1;
+    const needBelow = consT-prodT; // 人均需下级供给
+    return {name:r.name,color:r.color,n,cons:c,prod:p,consT,prodT,selfRate,needBelow,netT:net};
+  });
+  // 凡人社会供给
+  const af = state.auraFrac;
+  // 各资源所需「凡人总数」（瓶颈推导）
+  const reqRes = [
+    cNet[0]<0 ? Math.ceil(-cNet[0]/(af*AURA_OUT*lm)) : 0, // 灵气：仅灵气原料从业者供给
+    cNet[1]<0 ? Math.ceil(-cNet[1]/(STONE_PER*lm))    : 0, // 灵石：全体凡人
+    cNet[2]<0 ? Math.ceil(-cNet[2]/(TRIB_PER*lm))     : 0, // 进贡：全体凡人
+  ];
+  const required = Math.max(0,...reqRes);
+  const L = state.labCount!=null ? state.labCount : required;
+  const auraW = L * af;                          // 灵气原料从业者
+  const sup = [
+    auraW*AURA_OUT*lm,                           // 灵气供给（生物质经精炼）
+    L*STONE_PER*lm,                              // 灵石供给（正常生活物资）
+    L*TRIB_PER*lm,                               // 进贡供给（正常生活物资）
+  ];
+
+  // 修炼机制：意志力容量 W（耐受灵气剂量上限）；超过即走火入魔
+  const willMult = state.willMult;
+  const baseWill = 64;                 // ×1.0 时恰好可耐受炼虚满剂量
+  const W = baseWill * willMult;
+  const cult = REALMS.map((r,i)=>{
+    const dose = CONS[i][0];           // 灵气日剂量（即日耗灵气）
+    const lock = i;                    // 已解开的基因锁层级 0..5
+    const deviated = dose > W;         // 意志不足却过量 → 走火入魔
+    return {name:r.name,color:r.color,dose,lock,deviated};
+  });
+
+  // 总账：修士赤字(-cNet) + 凡人供给
+  const ledger = [0,1,2].map(k=>{
+    const deficit = -cNet[k];          // 修士净耗（正数=缺口）
+    const fromLab = sup[k];            // 凡人供给
+    const total = fromLab - deficit;   // 系统净账 >0 盈余, <0 赤字
+    return {res:RES[k], deficit, fromLab, total};
+  });
+
+  // 商业账：把内部盈余映射为青棠宗对外生意
+  const revTrib  = Math.max(0, ledger[2].total);  // 世俗货币（进贡）可变现
+  const revStone = Math.max(0, ledger[1].total);  // 仙门货币（灵石）可变现
+  const totalRev = revTrib + revStone;
+  const business = BIZ.map(b=>({
+    ...b,
+    daily: totalRev*b.share,
+    annual: totalRev*b.share*365
+  }));
+
+  return {rows, required, L, auraW, auraFrac:af, ledger, reqRes, cult, W,
+    business, totalRev, revTrib, revStone,
+    binding: required>0 ? RES[reqRes.indexOf(required)] : "—"};
+}
+
+function render(){
+  const m = compute();
+  if(state.labCount===null){ document.getElementById("labCount").value = m.L; }
+  document.getElementById("cImm").textContent = DIST.reduce((a,b)=>a+b,0);
+  document.getElementById("cLab").textContent = m.L.toLocaleString();
+  document.getElementById("ratio").textContent = (m.L/1000).toFixed(1)+" : 1";
+
+  // 经济状态
+  const allPos = m.ledger.every(l=>l.total>=0);
+  const st=document.getElementById("status");
+  if(allPos){ st.textContent="可维持"; st.className="v"; }
+  else { st.textContent="赤字"; st.className="v"; }
+
+  // 金字塔：修士按各自占比缩放（顶→底：炼虚…练气），凡人社会单列满宽
+  const immRows = m.rows.slice().reverse();
+  const maxImm = Math.max(...immRows.map(r=>r.n));
+  const pyrRows = [
+    ...immRows.map(r=>({name:r.name,count:r.n,color:r.color, w:Math.max(16, r.n/maxImm*100)})),
+    {name:"凡人社会",count:m.L,color:"#e9c46a", w:100}
+  ];
+  document.getElementById("pyramid").innerHTML = pyrRows.map((r,idx)=>{
+    const arrow = idx<pyrRows.length-1 ? '<div class="pyr-arrow">▲ 资源上输</div>' : '';
+    return `<div class="pyr-row"><div class="pyr-bar" style="width:${r.w}%;background:${r.color}">
+      <span class="nm">${r.name}</span><span class="ct">${r.count.toLocaleString()}</span></div>${arrow}</div>`;
+  }).join("");
+
+  // 经济表
+  const body = m.rows.map(r=>{
+    const fmt=v=>v.toFixed(1);
+    const consTxt=`${fmt(r.cons[0])}/${fmt(r.cons[1])}/${fmt(r.cons[2])}`;
+    const prodTxt=`${fmt(r.prod[0])}/${fmt(r.prod[1])}/${fmt(r.prod[2])}`;
+    const netT=r.netT[0]+r.netT[1]+r.netT[2];
+    const netCls=netT>=0?"pos":"neg";
+    const netStr=(netT>=0?"+":"")+netT.toFixed(1);
+    return `<tr>
+      <td class="name" style="color:${r.color}">${r.name}</td>
+      <td>${r.n}</td>
+      <td>${consTxt}</td><td>${prodTxt}</td>
+      <td class="${netCls}">${netStr}</td>
+      <td>${(r.selfRate*100).toFixed(0)}%</td>
+      <td class="neg">+${r.needBelow.toFixed(1)}</td>
+    </tr>`;
+  }).join("");
+  document.getElementById("econBody").innerHTML = body;
+
+  // 资源总账
+  document.getElementById("ledger").innerHTML = m.ledger.map(l=>{
+    const cls=l.total>=0?"pos":"neg";
+    const pill=l.total>=0
+      ? '<span class="stat-pill pill-ok">盈余</span>'
+      : '<span class="stat-pill pill-warn">赤字</span>';
+    return `<div class="row"><span>${l.res}</span>
+      <span>修士缺口 <b>${l.deficit.toFixed(0)}</b> ｜ 凡人供 <b>${l.fromLab.toFixed(0)}</b></span>
+      <span class="${cls}">总 ${l.total>=0?"+":""}${l.total.toFixed(0)} ${pill}</span></div>`;
+  }).join("");
+
+  document.getElementById("bindNote").innerHTML =
+    `当前 ${m.L.toLocaleString()} 名凡人下，` +
+    (allPos
+      ? `灵气为关键约束（恰好平衡），灵石/进贡充裕。瓶颈资源：<b style="color:var(--gold)">${m.binding}</b>。`
+      : `存在资源赤字，需增加凡人至约 <b style="color:var(--gold)">${m.required.toLocaleString()}</b> 人（瓶颈：${m.binding}）。`);
+
+  // 凡人社会（大公司伪装）
+  const surpStone = m.ledger[1].fromLab - m.ledger[1].deficit;
+  const surpTrib  = m.ledger[2].fromLab - m.ledger[2].deficit;
+  document.getElementById("mortalBody").innerHTML = [
+    ["凡人总人口", m.L, "100%"],
+    ["灵气原料从业者（灵植/灵宠）", m.auraW, (m.auraW/m.L*100).toFixed(1)+"%"],
+    ["正常生活物品生产者", m.L-m.auraW, ((m.L-m.auraW)/m.L*100).toFixed(1)+"%"],
+  ].map(r=>`<tr><td class="name">${r[0]}</td><td>${Math.round(r[1]).toLocaleString()}</td><td>${r[2]}</td></tr>`).join("");
+  document.getElementById("mortalNote").innerHTML =
+    `宗门在凡人眼中是一家<b style="color:var(--gold)">大型公司</b>：来采购灵植/灵宠等"原材料"，凡人只当正常生意，<b style="color:var(--ink)">不知仙人存在</b>。` +
+    `仙人日常起居由凡人生活物品供养（灵石盈余 ${Math.round(surpStone).toLocaleString()}、进贡盈余 ${Math.round(surpTrib).toLocaleString()}），绝大部分社会生产确用于正常生活。`;
+
+  // 商业账（青棠宗对外营收）
+  document.getElementById("bizTotal").textContent  = Math.round(m.totalRev).toLocaleString();
+  document.getElementById("bizAnnual").textContent = Math.round(m.totalRev*365).toLocaleString();
+  document.getElementById("bizTrib").textContent   = Math.round(m.revTrib).toLocaleString();
+  document.getElementById("bizStone").textContent   = Math.round(m.revStone).toLocaleString();
+  document.getElementById("bizBody").innerHTML = m.business.map(b=>`
+    <tr>
+      <td class="name" style="color:${b.color}">${b.name}</td>
+      <td style="text-align:left">${b.sub}</td>
+      <td>${b.market}</td>
+      <td>${Math.round(b.daily).toLocaleString()}</td>
+      <td>${Math.round(b.annual).toLocaleString()}</td>
+      <td>${(b.share*100).toFixed(0)}%</td>
+    </tr>`).join("");
+
+  // 修炼阶梯（意志力耐受 vs 灵气剂量）
+  document.getElementById("cultBody").innerHTML = m.cult.map(c=>{
+    const st = c.deviated
+      ? '<span class="stat-pill pill-warn">走火入魔</span>'
+      : '<span class="stat-pill pill-ok">稳固</span>';
+    return `<tr>
+      <td class="name" style="color:${c.color}">${c.name}</td>
+      <td>${c.dose}</td>
+      <td>第 ${c.lock} 道</td>
+      <td>${st}</td>
+    </tr>`;
+  }).join("");
+  const devList = m.cult.filter(c=>c.deviated).map(c=>c.name);
+  document.getElementById("cultNote").innerHTML =
+    `青棠宗以「结缘·斩缘」情劫淬炼出宗门意志力容量 <b style="color:var(--gold)">W = ${m.W.toFixed(0)}</b>（灵气耐受上限）。` +
+    (devList.length
+      ? ` <b style="color:var(--red)">${devList.join("、")}</b> 灵气剂量超过意志容量，已走火入魔——需提升意志力（多历情劫）或降低其灵气配给。`
+      : ` 各境界灵气剂量均未超意志容量，全员稳固。`);
+}
+
+/* 交互 */
+function bindSlider(id, key, labelId, fmt){
+  const el=document.getElementById(id);
+  el.addEventListener("input",()=>{
+    state[key]=parseFloat(el.value);
+    if(labelId) document.getElementById(labelId).textContent=fmt(state[key]);
+    render();
+  });
+}
+bindSlider("consMult","consMult","vCons",v=>"×"+v.toFixed(1));
+bindSlider("labMult","labMult","vLab",v=>"×"+v.toFixed(1));
+bindSlider("willMult","willMult","vWill",v=>"×"+v.toFixed(1));
+bindSlider("auraFrac","auraFrac","vAura",v=>Math.round(v*100)+"%");
+document.getElementById("labCount").addEventListener("input",e=>{
+  state.labCount=parseInt(e.target.value);
+  document.getElementById("vCount").textContent=state.labCount.toLocaleString();
+  render();
+});
+document.getElementById("autoBtn").addEventListener("click",()=>{
+  state.labCount=null;
+  const m=compute();
+  const sl=document.getElementById("labCount");
+  sl.value=Math.min(200000,m.required);
+  document.getElementById("vCount").textContent="自动";
+  render();
+});
+
+render();
+</script>
+</body>
+</html>

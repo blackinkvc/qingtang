@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>青棠宗 · 宗门地图（离线程序化地形 / 神念外放）</title>
+<!-- 全部本地依赖：断网、file:// 双击均可运行 -->
+<script src='vendor/three.min.js'></script>
+<script src='vendor/OrbitControls.js'></script>
+<style>
+  :root{
+    --bg:#070a14; --panel:#0e1626; --panel2:#121d33; --line:#1d2a44;
+    --ink:#dfe8ff; --dim:#8294b8; --jade:#5fd6c2; --gold:#e9c46a; --red:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  body{font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;min-height:100vh;font-size:13px}
+  .top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(90deg,var(--panel),#1b2746);border-bottom:1px solid var(--line);padding:11px 16px}
+  .title{font-size:16px;font-weight:800;color:var(--gold);letter-spacing:.5px}
+  .sub{font-size:11px;color:var(--dim);margin-top:2px}
+  .nav{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+  .ctrl{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .tg,.nav a{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;text-decoration:none;transition:.15s}
+  .tg:hover,.nav a:hover{border-color:var(--jade)}
+  .tg.on{background:linear-gradient(90deg,#1d3a36,#16314a);border-color:var(--jade);color:var(--jade)}
+  .wrap{display:grid;grid-template-columns:1fr 360px;gap:12px;padding:12px 16px;align-items:start}
+  #map{width:100%;height:74vh;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0a0e1a}
+  .side{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;max-height:74vh;overflow:auto}
+  .side h2{margin:0 0 8px;font-size:16px;color:var(--gold)}
+  .badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:700;color:#0a0e1a}
+  .meta{color:var(--dim);font-size:12px;line-height:1.7;margin:3px 0}
+  .design{margin-top:10px;font-size:12.5px;line-height:1.75;color:#cdd9f3}
+  .design .k{color:var(--jade);font-weight:700}
+  .note{margin-top:10px;font-size:11px;color:var(--dim);border-top:1px dashed var(--line);padding-top:8px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:11px;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .blist{margin-top:12px}
+  .blist .row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--line)}
+  .blist .row:hover{background:var(--panel2)}
+  .imgcard{margin-top:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .imgcard img{width:100%;display:block}
+  .imgcap{font-size:11px;color:var(--dim);padding:6px 9px;background:var(--panel2)}
+  .err{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(7,10,20,.92);color:#ffb3b3;font-size:14px;text-align:center;padding:30px;z-index:50}
+  #gothic{width:100%;height:74vh;border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative;background:#05070f}
+  #gothic canvas{display:block}
+  .ghint{position:absolute;left:12px;top:12px;z-index:3;background:rgba(7,10,20,.62);border:1px solid var(--line);border-radius:10px;padding:9px 13px;max-width:330px;pointer-events:none}
+  .ghint b{color:var(--gold)}
+  .ghint .meta{color:var(--dim);font-size:11px;line-height:1.65;margin-top:4px}
+  #real{width:100%;height:74vh;border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative;background:#070b16}
+  #real canvas{display:block}
+  .rhint{position:absolute;left:12px;top:12px;z-index:3;background:rgba(7,10,20,.62);border:1px solid var(--line);border-radius:10px;padding:9px 13px;max-width:340px;pointer-events:none}
+  .rhint b{color:var(--gold)}
+  .rhint .meta{color:var(--dim);font-size:11px;line-height:1.65;margin-top:4px}
+  #scene{width:100%;height:74vh;border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative;background:#0b1322}
+  #scene canvas{display:block}
+  .shint{position:absolute;left:12px;top:12px;z-index:3;background:rgba(7,10,20,.66);border:1px solid var(--line);border-radius:10px;padding:9px 13px;max-width:380px;pointer-events:none}
+  .shint b{color:var(--gold)}
+  .shint .meta{color:var(--dim);font-size:11px;line-height:1.65;margin-top:4px}
+  .shint .stat{color:var(--jade);font-size:11px;margin-top:6px}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}#map{height:56vh}#gothic{height:56vh}#real{height:56vh}#scene{height:56vh}.side{max-height:none}}
+</style>
+</head>
+<body>
+<div class='top'>
+  <div>
+    <div class='title'>青棠宗 · 宗门地图（离线）</div>
+    <div class='sub'>本地程序化地形 · 无需联网 · 神念外放范围 — 参照坐标：武当山金顶一带（里世界）</div>
+  </div>
+  <div class='nav'>
+    <a href='index.html'>🏠 首屏看板</a>
+    <a href='roster.html'>📜 活档</a>
+    <a href='sect-map.html'>🗺 宗门地图（示意）</a>
+  </div>
+</div>
+
+<div class='ctrl'>
+  <button class='tg on' id='btn2d'>🟰 平面（卫星俯视）</button>
+  <button class='tg' id='btn3d'>🏔 3D 地形</button>
+  <button class='tg' id='btnGothic'>🏛 哥特大理石</button>
+  <button class='tg' id='btnReal'>🏯 真实建筑（哥特）</button>
+  <button class='tg' id='btnScene'>🌄 实景全景（地形·建筑·众生）</button>
+  <button class='tg on' id='btnSense'>🔵 神念外放范围</button>
+  <button class='tg' id='btnLabels'>🏷 建筑标注</button>
+  <button class='tg on' id='btnBase'>🛰 地形底图</button>
+  <button class='tg' id='btnPeople'>👥 宗门众生</button>
+  <button class='tg on' id='btnFog'>🌫 云雾</button>
+  <button class='tg on' id='btnNight'>🌙 昼夜：昼</button>
+  <button class='tg' id='btnPop'>✨ 千人分布</button>
+  <span class='hint' style='color:var(--dim);font-size:11px'>点建筑看设计描写；「平面 / 3D / 哥特大理石 / 真实建筑（哥特） / 🌄实景全景」切换视角，全景含程序化山地+精细建筑+宗门弟子行走生活，高境圈极大＝神念笼罩范围。底图为本地生成的等高着色地形（1024²，无卫星瓦片），放大后按视口重采样，细节略软但完全离线。🌙可切夜景（彩窗内透发光），✨叠加千人实时分布光点。</span>
+</div>
+
+<div class='wrap'>
+  <div id='map'></div>
+  <div id='gothic' style='display:none'>
+    <div class='ghint'><b>🏛 哥特大理石 · 实景建筑</b><div class='meta'>纯几何体程序化搭建的哥特式大理石殿堂，按境界缩放。拖拽环视、滚轮缩放、点建筑看设计描写。地面光圈＝神念外放范围（境界越高圈越大＝居所退避越远）。</div></div>
+  </div>
+  <div id='real' style='display:none'>
+    <div class='rhint'><b>🏯 真实建筑（哥特）· 实景殿堂</b><div class='meta'>参考巴黎圣母院等真实哥特教堂的程序化建模：石灰岩砌体、双塔西立面、玫瑰窗、飞扶壁、中央尖塔与彩色玻璃。体量按「神念外放」放大——高境建筑巨大且远离。拖拽环视、滚轮缩放、点建筑看设计描写。</div></div>
+  </div>
+  <div id='scene' style='display:none'>
+    <div class='shint'><b>🌄 实景全景 · 地形·建筑·众生</b><div class='meta'>同一片真实山地（主峰之巅合道台、山脚弟子聚居）上落位 13 座精细哥特建筑，按境界缩放远隔；宗门弟子在地形上循路行走、于殿前驻留、入内生活（隐身）。拖拽环视、滚轮缩放、点建筑看设计描写。</div><div class='stat' id='sceneStat'></div></div>
+  </div>
+  <div class='side'>
+    <h2 id='sideTitle'>🗺 宗门总览</h2>
+    <div id='sideBody'>
+      <div class='meta'>本图以 <b style='color:var(--jade)'>真实坐标</b> 落位：弟子聚居区在山脚，合道台在主峰之巅，其余按「神念外放」半径层层退避。</div>
+      <div class='meta'>筑基及以上可 <b style='color:var(--gold)'>神念外放</b>，境界越高探测半径越大，故居所必大、必远、必隔；练气无神念，独可聚居成坊。</div>
+      <div class='imgcard'>
+        <img src='portraits/Photorealistic_aerial_drone_vi_2026-11-03T14-04-07.webp' alt='宗门山地实景概念图'>
+        <div class='imgcap'>宗门山地实景概念图（生图 MCP / ImageGen 生成）</div>
+      </div>
+      <div class='legend'>
+        <span><i class='dot' style='background:#e9c46a'></i>核心·修炼</span>
+        <span><i class='dot' style='background:#5fd6c2'></i>生产·资源</span>
+        <span><i class='dot' style='background:#ff6b6b'></i>姻缘·社交</span>
+        <span><i class='dot' style='background:#9d7bff'></i>起居·疗养</span>
+        <span><i class='dot' style='background:#5b9dff'></i>弟子聚居</span>
+      </div>
+    </div>
+    <div class='blist' id='blist'></div>
+  </div>
+</div>
+
+<div class='err' id='err'>⚠ 本地 3D 引擎（vendor/three.min.js）未能加载，哥特/实景视图不可用。<br>请确认 vendor 目录与本文件在同一层，未被移动或删除。</div>
+
+<script>
+/* ===== 神念外放模型（探测半径，单位：丈；1 丈≈3.33 m） ===== */
+const SENSE={lianqi:0,zhuji:30,jindan:90,yuanying:250,huashen:600,lianxu:1500,hedao:9999};
+const RNAME={lianqi:'练气',zhuji:'筑基',jindan:'金丹',yuanying:'元婴',huashen:'化神',lianxu:'炼虚',hedao:'合道'};
+const CAT={core:'#e9c46a',prod:'#5fd6c2',social:'#ff6b6b',rest:'#9d7bff',dorm:'#5b9dff'};
+const CATN={core:'核心·修炼',prod:'生产·资源',social:'姻缘·社交',rest:'起居·疗养',dorm:'弟子聚居'};
+
+/* ===== 落位：以武当山金顶为中心，按 (北向km, 东向km) 偏移 ===== */
+const CEN=[111.0044, 32.4466];           // [lng, lat]
+const KMLAT=0.00899, KMLNG=0.01066;      // 1km ≈ 度数
+function ll(dn,de){return [CEN[0]+de*KMLNG, CEN[1]+dn*KMLAT];}
+
+/* [id, 名, 类, 境界, 职能, 北km, 东km, 设计文案] */
+const RAW=[
+ ['heshi','合道台','core','hedao','合道圆满·镇守外神',7,0,
+  `<p><span class='k'>方位地形：</span>主峰之巅唯一平台，环以终年罡风与云海。</p><p><span class='k'>形制：</span>九重玉阶之上的圆形祭台，无墙无顶，台心嵌「道纹」阵眼。</p><p><span class='k'>神念/隐私：</span>合道真君神念等同法则、笼罩全宗，故<b>全宗仅此一台</b>，余者退避至其感知之外或受护持之界内；台周三千里设镇守之阵，既锁外神，亦屏蔽真君神念外溢扰民。</p><p><span class='k'>功能：</span>合道圆满、镇守图谋外神、显化道相。非炼虚圆满者不得登。</p>`],
+ ['zangjing','藏经阁','core','lianxu',"典藏功法·禁书",5,-3.5,
+  `<p><span class='k'>方位地形：</span>主峰上腹，锚定主灵脉上源节点，地火寒泉交融，恒润不蠹。</p><p><span class='k'>形制：</span>九层飞檐木石楼阁，悬满玉简；三层以上非核心弟子不得入。</p><p><span class='k'>神念/隐私：</span>炼虚级重地，周遭留白≥1500丈无居所，以禁制隔绝神念窥探阁内功法。</p><p><span class='k'>功能：</span>典藏功法、姻缘古谱与禁书；《三生簿》《火候真解》皆藏于此。</p>`],
+ ['yanfa','演法台','core','huashen','讲经·斗法·比试',4.5,2.5,
+  `<p><span class='k'>方位地形：</span>主峰上腹东侧，与藏经阁相望，台基下即主灵脉支脉。</p><p><span class='k'>形制：</span>汉白玉高台，周匝观礼席，台心嵌聚灵阵。</p><p><span class='k'>神念/隐私：</span>化神级，台周留白≥600丈。每逢突破论道金光腾起、全宗可见——此乃<b>刻意公开</b>的仪式空间，不惜神念外放。</p><p><span class='k'>功能：</span>讲经、斗法、比试；弟子扬名之所。</p>`],
+ ['wuku','珍物库','core','lianxu','藏法宝·灵石·重宝',3.5,0.5,
+  `<p><span class='k'>方位地形：</span>主峰腹心地下，多重禁制守护，锚定最稳灵脉节点。</p><p><span class='k'>形制：</span>地下金库；地表仅露一方无字碑为记。</p><p><span class='k'>神念/隐私：</span>神念探测在此被禁制全面吸收，外部不可知内中虚实。</p><p><span class='k'>功能：</span>宗门财货心脏，收储青鸾剑、绕指柔等重宝与历年分润。</p>`],
+ ['qindian','寝殿别院','rest','yuanying','起居·私居·结缘',2,-1.5,
+  `<p><span class='k'>方位地形：</span>主峰下台地，按洞府而建的私居多簇。</p><p><span class='k'>形制：</span>陈设随个人财力，道侣多于此相聚。</p><p><span class='k'>神念/隐私：</span><b>本宗隐私原则最集中之处。</b>每处私居皆独立别院，距邻里≥250丈（元婴级以上更远），并以「隔念阵」封院——仙人不怕冷、不喜挨挤，更不容神念相扰。</p><p><span class='k'>功能：</span>起居、私居、结缘；红线仙常于月下此间私会。</p>`],
+ ['hongxian','红线仙司','social','yuanying','斡旋姻缘·卜算观心',0.5,-2.5,
+  `<p><span class='k'>方位地形：</span>山门内缓坡，近南麓，便于暗中牵凡间与修士之缘。</p><p><span class='k'>形制：</span>满室垂红线与命盘，司中以三生石为凭。</p><p><span class='k'>神念/隐私：</span>元婴级。既要「观心」又需守秘——以三生石为枢，将外放神念收束为细丝，只牵命数不窥隐私；司周留白≥500丈，免他修士神念扰了牵缘。</p><p><span class='k'>功能：</span>斡旋姻缘、卜算观心，亦掌对外情报。</p>`],
+ ['hongluan','红鸾别院','social','yuanying','音律歌舞·宴饮雅集',-0.5,2.5,
+  `<p><span class='k'>方位地形：</span>沉香湖西水榭回廊。</p><p><span class='k'>形制：</span>临水楼台，四季有花，门下多俊男美女。</p><p><span class='k'>神念/隐私：</span>金丹/元婴级，宴饮雅集本就公开；独院散布湖畔（≥250丈），以水面与回廊柔化神念边界。</p><p><span class='k'>功能：</span>宗门结好外门的门面。</p>`],
+ ['keting','迎宾客堂','social','jindan','接见外门·凡间贵客',-3,0,
+  `<p><span class='k'>方位地形：</span>山门外第一进，最接凡尘。</p><p><span class='k'>形制：</span>金漆梁柱，名茶待客。</p><p><span class='k'>神念/隐私：</span>金丹级，外显型弟子于此周旋商贾高官；堂周留白适度（≥180丈），既显气派又不令来客被高阶神念震慑。</p><p><span class='k'>功能：</span>接见外门、凡间贵客；偶展仙迹。</p>`],
+ ['wenquan','凝香汤泉','rest','jindan','沐浴·疗养·静思',-3.5,3,
+  `<p><span class='k'>方位地形：</span>沉香湖东，引地火温热的灵泉。</p><p><span class='k'>形制：</span>半露天汤池连檐廊，水含香麝。</p><p><span class='k'>神念/隐私：</span>筑基/金丹级，沐浴更衣最忌被窥，故每池以屏扇与灵雾隔间，外放神念在此被水汽香雾吞没；仆役居所独户分散（≥60丈）。</p><p><span class='k'>功能：</span>沐浴、疗养、静思；亦为密谈之所。</p>`],
+ ['danfang','丹鼎房','prod','jindan','炼丹·淬炼灵药',-2,-4,
+  `<p><span class='k'>方位地形：</span>西支脉丹霞谷地火口，三十六座丹炉借地火而燃。</p><p><span class='k'>形制：</span>石砌大屋连排，墙挂炮制图谱，偶闻炸炉之响。</p><p><span class='k'>神念/隐私：</span>金丹级，匠人居所沿谷分散为独户小院（间距≥180丈），既避丹毒又互不窥炉。</p><p><span class='k'>功能：</span>炼丹、淬炼灵药。</p>`],
+ ['shouyuan','灵兽苑','prod','jindan','驯兽·灵语传讯',-4,5,
+  `<p><span class='k'>方位地形：</span>东支脉栖霞岭兽栏群。</p><p><span class='k'>形制：</span>以禁制划分的栏舍，饲青鸾、仙鹤、墨蛇等。</p><p><span class='k'>神念/隐私：</span>金丹级，驯兽弟子常与灵兽同息，居所独院分散（≥180丈）；兽吼本就破去细微神念，天然成障。</p><p><span class='k'>功能：</span>驯化灵兽、灵语传讯。</p>`],
+ ['yaopu','灵植苑','prod','jindan','植灵·御兽·育灵药',-5,-3,
+  `<p><span class='k'>方位地形：</span>丹霞谷缓坡梯田与暖房，借地火余温育灵植。</p><p><span class='k'>形制：</span>按品阶分区的灵雾梯田＋玻璃暖棚，深处有兽栏育灵宠幼崽。</p><p><span class='k'>神念/隐私：</span>筑基/金丹级，园丁居所嵌于梯田之间为独户小院（≥60–180丈），以灵雾天然降噪隔念。</p><p><span class='k'>功能：</span>植灵、御兽、培育灵药。</p>`],
+ ['dorms','弟子聚居区','dorm','lianqi','练气弟子起居·启蒙',-6.5,0,
+  `<p><span class='k'>方位地形：</span>山脚最大台地，离主峰灵脉末端，灵气最薄却最安稳。</p><p><span class='k'>形制：</span>排屋与合院群，栋距仅数丈，共用水井、膳堂、演武场。</p><p><span class='k'>神念/隐私：</span><b>唯练气可群居</b>——练气无神念外放，五感有限，群居不互扰；此区刻意远居高阶神念圈之外（≥数里），免被上境神念「覆盖」。</p><p><span class='k'>功能：</span>新晋弟子起居、修行启蒙；筑基后迁出，各自寻山头立院。</p>`]
+];
+
+const B=RAW.map(r=>{const [id,name,cat,rank,func,dn,de,design]=r;const c=ll(dn,de);return {id,name,cat,rank,func,design,dn,de,lng:c[0],lat:c[1]};});
+const BYID={};B.forEach(b=>BYID[b.id]=b);
+
+/* 神念圈半径（米） */
+function senseM(rank){const s=SENSE[rank];return s>=9999?9000:s*3.33;}
+
+/* 生成圆多边形 */
+function circlePoly(lng,lat,rM,steps=64){
+  const c=[],dLat=rM/111320;
+  for(let i=0;i<=steps;i++){const t=i/steps*2*Math.PI;
+    const dlng=(rM/(111320*Math.cos(lat*Math.PI/180)))*Math.cos(t);
+    const dlat=dLat*Math.sin(t);c.push([lng+dlng,lat+dlat]);}
+  return c;
+}
+
+/* ===== 离线地图：纯 Canvas 程序化渲染（零 CDN、零网络请求、file:// 直开） ===== */
+let map, mode3d=false, showSense=true, showLabels=false, showSat=true, selId=null;
+const MAPV={cx:0,cz:0,zoom:10.4,bearing:-18};
+const CAM3={yaw:-0.35,el:0.50,dist:19000};
+const mapReg={bldg:{visibility:'visible'},bldg3d:{visibility:'none'},'bldg-label':{visibility:'none'},
+             'sense-fill':{},'sense-line':{},'base-sat':{},'base-dark':{}};
+let mapCanvas,mapCtx,baseCanvas,baseReady=false,basePending=false,baseTip=null;
+let mapDrag=false,mapMoved=false,mapLast=null,mapAnim=null,mapRaf=0;
+
+/* 世界坐标：x=东(米)，z=北(米)，原点是武当山金顶参照点 */
+function ll2w(lng,lat){return {x:(lng-CEN[0])/KMLNG*1000,z:(lat-CEN[1])/KMLAT*1000};}
+function w2ll(x,z){return [CEN[0]+x/1000*KMLNG,CEN[1]+z/1000*KMLAT];}
+function mapBox(){return document.getElementById('map');}
+function mapSize(){const e=mapBox();return {w:Math.max(320,e.clientWidth||900),h:Math.max(240,e.clientHeight||600)};}
+function viewW(){return 26000/Math.pow(2,MAPV.zoom-10);}
+function mapS(){return mapSize().w/viewW();}
+function clampCenter(){MAPV.cx=Math.max(-9000,Math.min(9000,MAPV.cx));MAPV.cz=Math.max(-9000,Math.min(9000,MAPV.cz));}
+
+/* 光照与配色（与 3D 实景共用同一 heightAt/terraColor，保证平面与立体一致） */
+const SUN=(function(){const v=[-0.55,0.68,-0.48],l=Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);return [v[0]/l,v[1]/l,v[2]/l];})();
+function terrainRGB(h,wx,wz){
+  if(h<TERR.waterY){const t=Math.min(1,(TERR.waterY-h)/320);return [0.13-0.04*t,0.26-0.09*t,0.37-0.11*t];}
+  const w=TERR.waterY;
+  const soil=[0.58,0.50,0.36],grass=[0.23,0.38,0.19],rock=[0.45,0.43,0.39],snow=[0.90,0.92,0.96];
+  const t1=smoothstep(w+30,620,h),t2=smoothstep(620,1250,h),t3=smoothstep(1250,1750,h);
+  let r=soil[0]*(1-t1)+grass[0]*t1,g=soil[1]*(1-t1)+grass[1]*t1,b=soil[2]*(1-t1)+grass[2]*t1;
+  r=r*(1-t2)+rock[0]*t2;g=g*(1-t2)+rock[1]*t2;b=b*(1-t2)+rock[2]*t2;
+  r=r*(1-t3)+snow[0]*t3;g=g*(1-t3)+snow[1]*t3;b=b*(1-t3)+snow[2]*t3;
+  const n=(fbm(wx*0.006+37,wz*0.006)-0.5)*0.055;
+  return [Math.min(1,Math.max(0,r+n)),Math.min(1,Math.max(0,g+n)),Math.min(1,Math.max(0,b+n))];
+}
+function shade(h,wx,wz,e){
+  const hx=heightAt(wx+e,wz),hz=heightAt(wx,wz+e);
+  const nx=-(hx-h)/e,ny=1,nz=-(hz-h)/e;
+  const il=1/Math.sqrt(nx*nx+1+nz*nz);
+  return 0.70+0.60*Math.max(0,(nx*SUN[0]+ny*SUN[1]+nz*SUN[2])*il);
+}
+function c255(v){return v<0?0:(v>255?255:v|0);}
+
+/* 一次性生成 1024² 地形底图（分帧生成，不阻塞交互；断网可用） */
+function buildBaseMap(done){
+  if(basePending)return;basePending=true;
+  /* 底图覆盖 24km，比建筑分布范围大一圈，避免看见贴图边缘 */
+  const N=1024,S=24000,e=S/(N-1),hs=new Float32Array(N*N),hb=new Float32Array(N*N);
+  const cv=document.createElement('canvas');cv.width=cv.height=N;
+  const cx=cv.getContext('2d'),img=cx.createImageData(N,N),d=img.data;
+  let r=0,q=0;
+  /* 约 160m 半径的盒式平滑：地形细节保留，逐像素噪声压掉 */
+  function blur(){
+    const R=10,K=2*R+1;
+    for(let row=0;row<N;row++){
+      const base=row*N;let sum=0;
+      for(let c=-R;c<=R;c++)sum+=hs[base+Math.max(0,Math.min(N-1,c))];
+      for(let c=0;c<N;c++){
+        hb[base+c]=sum/K;
+        sum+=hs[base+Math.min(N-1,c+R+1)]-hs[base+Math.max(0,c-R)];
+      }
+    }
+    for(let c=0;c<N;c++){
+      let sum=0;
+      for(let rr=-R;rr<=R;rr++)sum+=hb[Math.max(0,Math.min(N-1,rr))*N+c];
+      for(let rr=0;rr<N;rr++){
+        hs[rr*N+c]=sum/K;
+        sum+=hb[Math.min(N-1,rr+R+1)*N+c]-hb[Math.max(0,rr-R)*N+c];
+      }
+    }
+  }
+  function heights(){
+    const stop=Math.min(N,r+24);
+    for(;r<stop;r++){const z=(r/(N-1)-0.5)*S;
+      for(let c=0;c<N;c++)hs[r*N+c]=heightAt((c/(N-1)-0.5)*S,z);}
+    if(r<N){setTimeout(heights,0);}else{blur();setTimeout(colors,0);}
+  }
+  function colors(){
+    const stop=Math.min(N,q+24);
+    for(;q<stop;q++){
+      const z=(q/(N-1)-0.5)*S;
+      for(let c=0;c<N;c++){
+        const wx=(c/(N-1)-0.5)*S,h=hs[q*N+c],cc=terrainRGB(h,wx,z);
+        /* 用 ±16 格（≈250m）跨度求坡向，压制程序噪声带来的逐像素斑点 */
+        const sp=16;
+        const hL=hs[q*N+Math.max(0,c-sp)],hR=hs[q*N+Math.min(N-1,c+sp)];
+        const hD=hs[Math.max(0,q-sp)*N+c],hU=hs[Math.min(N-1,q+sp)*N+c];
+        const nx=-(hR-hL)/(2*sp*e),ny=1,nz=-(hU-hD)/(2*sp*e),il=1/Math.sqrt(nx*nx+1+nz*nz);
+        let k=0.66+0.66*Math.max(0,(nx*SUN[0]+ny*SUN[1]+nz*SUN[2])*il);
+        k*=(1+(fbm(wx*0.0028+71,z*0.0028)-0.5)*0.16);
+        k=Math.max(0.62,Math.min(1.38,k));
+        /* 每 100m 一条等高线，强化山体可读性 */
+        const band=Math.floor(h/100);
+        const bR=Math.floor(hs[q*N+Math.min(N-1,c+1)]/100),bU=Math.floor(hs[Math.min(N-1,q+1)*N+c]/100);
+        if(band!==bR||band!==bU)k*=0.84;
+        const i=(q*N+c)*4;
+        d[i]=c255(cc[0]*k*255);d[i+1]=c255(cc[1]*k*255);d[i+2]=c255(cc[2]*k*255);d[i+3]=255;
+      }
+    }
+    if(q<N){setTimeout(colors,0);return;}
+    cx.putImageData(img,0,0);baseCanvas=cv;baseReady=true;basePending=false;
+    if(done)done();drawMap();
+  }
+  setTimeout(heights,0);
+}
+
+/* 平面投影（含旋转方位角） */
+function proj2(x,z,w,h,s,b){
+  const dx=x-MAPV.cx,dz=z-MAPV.cz,c=Math.cos(b),si=Math.sin(b);
+  return {x:w/2+s*(dx*c+dz*si),y:h/2+s*(dx*si-dz*c)};
+}
+function scheduleDraw(){if(mapRaf)return;mapRaf=requestAnimationFrame(()=>{mapRaf=0;drawMap();});}
+
+function drawMap(){
+  if(!mapCanvas)return;
+  const {w,h}=mapSize();
+  if(mapCanvas.width!==w||mapCanvas.height!==h){mapCanvas.width=w;mapCanvas.height=h;}
+  if(mode3d)draw3D(w,h);else draw2D(w,h);
+}
+
+function draw2D(w,h){
+  const g=mapCtx,s=w/viewW(),b=MAPV.bearing*Math.PI/180;
+  g.setTransform(1,0,0,1,0,0);g.fillStyle='#070c16';g.fillRect(0,0,w,h);
+  g.save();
+  g.translate(w/2,h/2);g.rotate(b);g.scale(s,-s);g.translate(-MAPV.cx,-MAPV.cz);
+  if(baseReady){
+    if(!showSat)g.filter='grayscale(1) brightness(.62) contrast(1.12)';
+    g.imageSmoothingEnabled=true;
+    g.drawImage(baseCanvas,-12000,-12000,24000,24000);
+    g.filter='none';
+  }else{
+    g.fillStyle='#0d1524';g.fillRect(-8000,-8000,16000,16000);
+    g.strokeStyle='rgba(93,214,194,.16)';g.lineWidth=10/s;
+    for(let i=-8000;i<=8000;i+=1000){
+      g.beginPath();g.moveTo(i,-8000);g.lineTo(i,8000);g.stroke();
+      g.beginPath();g.moveTo(-8000,i);g.lineTo(8000,i);g.stroke();
+    }
+  }
+  if(showSense){
+    B.forEach(bb=>{
+      const rr=senseM(bb.rank);if(!rr)return;
+      g.beginPath();g.arc(bb.de*1000,bb.dn*1000,rr,0,Math.PI*2);
+      g.globalAlpha=0.10;g.fillStyle=CAT[bb.cat];g.fill();
+      g.globalAlpha=0.85;g.strokeStyle=CAT[bb.cat];g.lineWidth=1.3/s;
+      g.setLineDash([5/s,7/s]);g.stroke();g.setLineDash([]);g.globalAlpha=1;
+    });
+  }
+  g.restore();
+  const zk=Math.max(0.8,Math.min(1.6,(MAPV.zoom-9)/4));
+  B.forEach(bb=>{
+    const p=proj2(bb.de*1000,bb.dn*1000,w,h,s,b);
+    const sel=bb.id===selId,rad=(sel?9:6)*zk;
+    g.beginPath();g.arc(p.x,p.y,rad+2.5,0,Math.PI*2);g.fillStyle='rgba(5,8,15,.85)';g.fill();
+    g.beginPath();g.arc(p.x,p.y,rad,0,Math.PI*2);g.fillStyle=CAT[bb.cat];g.fill();
+    g.strokeStyle=sel?'#ffe08a':'rgba(255,255,255,.85)';g.lineWidth=sel?2.4:1.2;g.stroke();
+    if(sel){g.beginPath();g.arc(p.x,p.y,rad+6,0,Math.PI*2);g.strokeStyle='rgba(255,224,138,.45)';g.lineWidth=1.5;g.stroke();}
+    if(showLabels||sel){
+      g.font='12px "PingFang SC","Microsoft YaHei",sans-serif';g.textAlign='center';g.textBaseline='middle';
+      const tw=g.measureText(bb.name).width;
+      g.fillStyle='rgba(7,10,20,.72)';g.fillRect(p.x-tw/2-5,p.y-rad-20,tw+10,17);
+      g.fillStyle='#eaf1ff';g.fillText(bb.name,p.x,p.y-rad-11);
+    }
+  });
+  drawScaleBar(w,h,s);
+}
+
+function drawScaleBar(w,h,s){
+  const g=mapCtx;let m=1000;
+  while(m*s>170)m/=2;while(m*s<70)m*=2;
+  const px=m*s,x0=14,y0=h-16;
+  g.strokeStyle='rgba(223,232,255,.75)';g.lineWidth=2;
+  g.beginPath();g.moveTo(x0,y0);g.lineTo(x0+px,y0);
+  g.moveTo(x0,y0-5);g.lineTo(x0,y0+5);g.moveTo(x0+px,y0-5);g.lineTo(x0+px,y0+5);g.stroke();
+  g.fillStyle='rgba(223,232,255,.85)';g.font='11px sans-serif';g.textAlign='left';g.textBaseline='bottom';
+  g.fillText((m>=1000?(m/1000)+' km':m+' m')+'（离线底图）',x0,y0-6);
+}
+
+/* 3D 地形：Canvas 手写透视投影（与哥特视图同一坐标系） */
+function camBasis(){
+  const tx=MAPV.cx,tz=MAPV.cz,ty=800,d=CAM3.dist;
+  const ce=Math.cos(CAM3.el),se=Math.sin(CAM3.el);
+  const cx=tx+Math.sin(CAM3.yaw)*d*ce,cy=ty+d*se,cz=tz+Math.cos(CAM3.yaw)*d*ce;
+  let fx=tx-cx,fy=ty-cy,fz=tz-cz;const fl=Math.hypot(fx,fy,fz);fx/=fl;fy/=fl;fz/=fl;
+  let rx=-fz,rz=fx;const rl=Math.hypot(rx,rz)||1;rx/=rl;rz/=rl;
+  return {cx,cy,cz,fx,fy,fz,rx,ry:0,rz,
+          ux:-rz*fy,uy:rz*fx-rx*fz,uz:rx*fy};
+}
+function p3(b,x,y,z){
+  const px=x-b.cx,py=y-b.cy,pz=z-b.cz;
+  const Z=px*b.fx+py*b.fy+pz*b.fz;
+  if(Z<120)return null;
+  const k=b.f/Z;
+  return {x:b.w/2+k*(px*b.rx+py*b.ry+pz*b.rz),y:b.h/2-k*(px*b.ux+py*b.uy+pz*b.uz),z:Z};
+}
+function shadeHex(hex,f){
+  const n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  return 'rgb('+c255(r*f)+','+c255(g*f)+','+c255(b*f)+')';
+}
+function drawBox3(b,g,x0,z0,x1,z1,y0,y1,hex,sel){
+  const P=(x,y,z)=>p3(b,x,y,z);
+  const a=P(x0,y0,z0),bb=P(x1,y0,z0),c=P(x1,y0,z1),d=P(x0,y0,z1);
+  const a2=P(x0,y1,z0),b2=P(x1,y1,z0),c2=P(x1,y1,z1),d2=P(x0,y1,z1);
+  if(!a||!bb||!c||!d||!a2||!b2||!c2||!d2)return;
+  [{p:[d,c,c2,d2],f:0.95},{p:[a,bb,b2,a2],f:0.62},{p:[bb,c,c2,b2],f:0.78},{p:[a,d,d2,a2],f:0.55},{p:[a2,b2,c2,d2],f:1.18}].forEach(fc=>{
+    g.beginPath();g.moveTo(fc.p[0].x,fc.p[0].y);
+    for(let i=1;i<4;i++)g.lineTo(fc.p[i].x,fc.p[i].y);
+    g.closePath();g.fillStyle=shadeHex(hex,fc.f);g.fill();
+    g.strokeStyle=sel?'#ffe08a':'rgba(0,0,0,.35)';g.lineWidth=sel?1.6:0.8;g.stroke();
+  });
+}
+
+function draw3D(w,h){
+  const g=mapCtx,b=camBasis();
+  b.w=w;b.h=h;b.f=(h*0.5)/Math.tan(50*Math.PI/360);
+  const sky=g.createLinearGradient(0,0,0,h);
+  sky.addColorStop(0,'#0a1424');sky.addColorStop(.6,'#0b1526');sky.addColorStop(1,'#070c16');
+  g.setTransform(1,0,0,1,0,0);g.fillStyle=sky;g.fillRect(0,0,w,h);
+  const EXT=24000,step=300,N=Math.round(EXT/step),half=EXT/2,P=[];
+  for(let i=0;i<=N;i++){
+    const z=-half+i*step,row=[];
+    for(let j=0;j<=N;j++){const x=-half+j*step;row.push(p3(b,x,heightAt(x,z),z));}
+    P.push(row);
+  }
+  const quads=[];
+  for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+    const a=P[i][j],bb=P[i][j+1],c=P[i+1][j+1],d=P[i+1][j];
+    if(!a||!bb||!c||!d)continue;
+    const x=-half+(j+.5)*step,z=-half+(i+.5)*step,hh=heightAt(x,z),cc=terrainRGB(hh,x,z);
+    const k=showSat?shade(hh,x,z,130):1;
+    let r=cc[0]*k*255,gg=cc[1]*k*255,bl=cc[2]*k*255;
+    if(!showSat){const gy=(r*.30+gg*.42+bl*.28)*.75;r=gy*.85;gg=gy*.93;bl=gy;}
+    const dep=(a.z+bb.z+c.z+d.z)/4;
+    const fg=Math.min(.62,Math.max(0,(dep-CAM3.dist*.55)/(CAM3.dist*1.6)));
+    r=r*(1-fg)+12*fg;gg=gg*(1-fg)+22*fg;bl=bl*(1-fg)+38*fg;
+    quads.push({p:[a,bb,c,d],z:dep,c:'rgb('+c255(r)+','+c255(gg)+','+c255(bl)+')'});
+  }
+  quads.sort((m,n)=>n.z-m.z);
+  for(let i=0;i<quads.length;i++){
+    const p=quads[i].p;
+    g.beginPath();g.moveTo(p[0].x,p[0].y);g.lineTo(p[1].x,p[1].y);
+    g.lineTo(p[2].x,p[2].y);g.lineTo(p[3].x,p[3].y);g.closePath();
+    g.fillStyle=quads[i].c;g.fill();
+  }
+  if(showSense){
+    B.forEach(bb=>{
+      const rr=senseM(bb.rank);if(!rr)return;
+      const cx=bb.de*1000,cz=bb.dn*1000,gy=heightAt(cx,cz)+6,pts=[];
+      for(let k=0;k<=48;k++){const t=k/48*Math.PI*2,pt=p3(b,cx+Math.cos(t)*rr,gy,cz+Math.sin(t)*rr);if(pt)pts.push(pt);}
+      if(pts.length<8)return;
+      g.beginPath();g.moveTo(pts[0].x,pts[0].y);
+      for(let k=1;k<pts.length;k++)g.lineTo(pts[k].x,pts[k].y);
+      g.closePath();g.globalAlpha=.12;g.fillStyle=CAT[bb.cat];g.fill();
+      g.globalAlpha=.85;g.setLineDash([5,7]);g.strokeStyle=CAT[bb.cat];g.lineWidth=1.3;g.stroke();
+      g.setLineDash([]);g.globalAlpha=1;
+    });
+  }
+  const list=B.map(bb=>{
+    const cx=bb.de*1000,cz=bb.dn*1000,base=heightAt(cx,cz),t=p3(b,cx,base+40,cz);
+    return {bb,cx,cz,base,z:t?t.z:1e9};
+  }).sort((m,n)=>n.z-m.z);
+  list.forEach(o=>{
+    const bb=o.bb,half=FOOT[bb.rank]/2,hg=HEIGHT[bb.rank];
+    drawBox3(b,g,o.cx-half,o.cz-half,o.cx+half,o.cz+half,o.base+4,o.base+hg,CAT[bb.cat],bb.id===selId);
+  });
+  if(showLabels){
+    g.font='12px "PingFang SC","Microsoft YaHei",sans-serif';g.textAlign='center';g.textBaseline='middle';
+    list.forEach(o=>{
+      const t=p3(b,o.cx,o.base+HEIGHT[o.bb.rank]+10,o.cz);if(!t)return;
+      const tw=g.measureText(o.bb.name).width;
+      g.fillStyle='rgba(7,10,20,.7)';g.fillRect(t.x-tw/2-5,t.y-16,tw+10,17);
+      g.fillStyle='#eaf1ff';g.fillText(o.bb.name,t.x,t.y-7);
+    });
+  }
+  g.fillStyle='rgba(130,148,184,.85)';g.font='11px sans-serif';g.textAlign='left';g.textBaseline='bottom';
+  g.fillText('离线程序化地形 · 拖拽旋转 · 滚轮缩放',14,h-12);
+}
+
+/* 命中检测 */
+function findHit(ev){
+  const r=mapCanvas.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top;
+  const {w,h}=mapSize();let best=null,bd=1e9;
+  if(mode3d){
+    const b=camBasis();b.w=w;b.h=h;b.f=(h*0.5)/Math.tan(50*Math.PI/360);
+    B.forEach(bb=>{
+      const cx=bb.de*1000,cz=bb.dn*1000,p=p3(b,cx,heightAt(cx,cz)+HEIGHT[bb.rank],cz);
+      if(!p)return;const d=Math.hypot(p.x-mx,p.y-my);if(d<bd){bd=d;best=bb.id;}
+    });
+    if(bd>70)best=null;
+  }else{
+    const s=mapS(),b=MAPV.bearing*Math.PI/180;
+    B.forEach(bb=>{
+      const p=proj2(bb.de*1000,bb.dn*1000,w,h,s,b),d=Math.hypot(p.x-mx,p.y-my);
+      if(d<bd){bd=d;best=bb.id;}
+    });
+    if(bd>26)best=null;
+  }
+  return best;
+}
+
+/* 拖拽 / 缩放 / 点选 */
+function bindMapEvents(){
+  const cv=mapCanvas;
+  cv.addEventListener('mousedown',ev=>{mapDrag=true;mapMoved=false;mapLast={x:ev.clientX,y:ev.clientY};cv.style.cursor='grabbing';});
+  window.addEventListener('mousemove',ev=>{
+    if(!mapDrag){if(ev.target===cv)cv.style.cursor=findHit(ev)?'pointer':'';return;}
+    const dx=ev.clientX-mapLast.x,dy=ev.clientY-mapLast.y;
+    if(Math.abs(dx)+Math.abs(dy)>3)mapMoved=true;
+    mapLast={x:ev.clientX,y:ev.clientY};
+    if(mode3d){CAM3.yaw-=dx*0.005;CAM3.el=Math.max(.18,Math.min(1.15,CAM3.el+dy*0.004));}
+    else{
+      const s=mapS(),b=MAPV.bearing*Math.PI/180;
+      MAPV.cx-=(dx*Math.cos(b)+dy*Math.sin(b))/s;
+      MAPV.cz-=(dx*Math.sin(b)-dy*Math.cos(b))/s;clampCenter();
+    }
+    scheduleDraw();
+  });
+  window.addEventListener('mouseup',()=>{if(mapDrag){mapDrag=false;cv.style.cursor='';}});
+  cv.addEventListener('wheel',ev=>{
+    ev.preventDefault();
+    if(mode3d){
+      CAM3.dist=Math.max(2600,Math.min(46000,CAM3.dist*Math.exp(ev.deltaY*0.0011)));
+    }else{
+      const {w,h}=mapSize(),r=cv.getBoundingClientRect();
+      const mx=ev.clientX-r.left,my=ev.clientY-r.top,b=MAPV.bearing*Math.PI/180;
+      const s0=mapS(),X=mx-w/2,Y=my-h/2;
+      const wx=MAPV.cx+(X*Math.cos(b)+Y*Math.sin(b))/s0;
+      const wz=MAPV.cz+(X*Math.sin(b)-Y*Math.cos(b))/s0;
+      MAPV.zoom=Math.max(9,Math.min(14.6,MAPV.zoom-ev.deltaY*0.0016));
+      const s1=mapS();
+      MAPV.cx=wx-(X*Math.cos(b)+Y*Math.sin(b))/s1;
+      MAPV.cz=wz-(X*Math.sin(b)-Y*Math.cos(b))/s1;
+      clampCenter();
+    }
+    scheduleDraw();
+  },{passive:false});
+  cv.addEventListener('click',ev=>{
+    if(mapMoved){mapMoved=false;return;}
+    const hit=findHit(ev);if(hit)select(hit);
+  });
+}
+
+/* 兼容原 MapLibre 调用面的轻量垫片 */
+function animateTo(o){
+  const from={cx:MAPV.cx,cz:MAPV.cz,zoom:MAPV.zoom},to={cx:from.cx,cz:from.cz,zoom:from.zoom};
+  if(o.center){const p=ll2w(o.center[0],o.center[1]);to.cx=p.x;to.cz=p.z;}
+  if(o.zoom!=null)to.zoom=o.zoom;
+  const t0=performance.now(),dur=o.duration||700;
+  if(mapAnim)clearTimeout(mapAnim);
+  (function step(t){
+    const k=Math.min(1,(t-t0)/dur),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    MAPV.cx=from.cx+(to.cx-from.cx)*e;
+    MAPV.cz=from.cz+(to.cz-from.cz)*e;
+    MAPV.zoom=from.zoom+(to.zoom-from.zoom)*e;
+    clampCenter();drawMap();
+    if(k<1)mapAnim=setTimeout(()=>step(performance.now()),16);
+  })(t0);
+}
+map={
+  isStyleLoaded(){return true;},
+  getCanvas(){return mapCanvas;},
+  getLayer(id){return mapReg[id]?{}:null;},
+  setLayoutProperty(id,p,v){
+    if(mapReg[id])mapReg[id][p]=v;
+    if(id==='sense-fill'||id==='sense-line')showSense=(v==='visible');
+    if(id==='bldg-label')showLabels=(v==='visible');
+    if(id==='base-sat')showSat=(v==='visible');
+    if(id==='base-dark')showSat=(v!=='visible');
+    scheduleDraw();
+  },
+  setTerrain(){},addControl(){},on(){},
+  flyTo:animateTo,easeTo:animateTo
+};
+
+function initMap(){
+  const el=mapBox();el.style.position='relative';
+  mapCanvas=document.createElement('canvas');
+  mapCanvas.style.cssText='width:100%;height:100%;display:block;cursor:grab';
+  el.appendChild(mapCanvas);
+  mapCtx=mapCanvas.getContext('2d');
+  baseTip=document.createElement('div');
+  baseTip.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:#8294b8;font-size:12px;letter-spacing:.5px;pointer-events:none';
+  baseTip.textContent='正在生成离线地形底图…';
+  el.appendChild(baseTip);
+  bindMapEvents();
+  drawMap();
+  buildBaseMap(()=>{if(baseTip){baseTip.remove();baseTip=null;}});
+  if(typeof THREE==='undefined')document.getElementById('err').style.display='flex';
+}
+window.addEventListener('resize',()=>{if(mapCanvas&&mapBox().style.display!=='none')scheduleDraw();});
+
+/* 3D 建筑体块：高度按境界、占地按境界 */
+const HEIGHT={lianqi:15,zhuji:22,jindan:40,yuanying:70,huashen:110,lianxu:160,hedao:220};
+const FOOT  ={lianqi:120,zhuji:140,jindan:180,yuanying:220,huashen:240,lianxu:280,hedao:320};
+
+/* ===== 侧栏 ===== */
+function select(id){
+  selId=id;const b=BYID[id];
+  const sM=senseM(b.rank);
+  const senseTxt = b.rank==='hedao' ? '笼罩全宗（等同法则）' : (SENSE[b.rank]>0 ? (SENSE[b.rank]+' 丈（≈'+Math.round(sM)+' m）') : '无（五感范围）');
+  const minGap = b.rank==='hedao' ? '独占一峰' : (SENSE[b.rank]>0 ? '≥ '+(SENSE[b.rank]*2)+' 丈' : '仅避喧（数丈）');
+  document.getElementById('sideTitle').innerHTML='🏯 '+b.name;
+  document.getElementById('sideBody').innerHTML=
+    `<div style='display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px'>
+       <span class='badge' style='background:${CAT[b.cat]}'>${CATN[b.cat]}</span>
+       <span class='badge' style='background:#1b2746;color:#e9c46a'>典型境界：${RNAME[b.rank]}</span>
+     </div>
+     <div class='meta'>职能：${b.func}</div>
+     <div class='meta'>坐标：<span style='color:#cdd9f3'>${b.lat.toFixed(4)}°N, ${b.lng.toFixed(4)}°E</span></div>
+     <div class='meta'><span class='k' style='color:var(--jade)'>神念外放：</span>${senseTxt}<br><span class='k' style='color:var(--jade)'>居所最小间距：</span>${minGap}</div>
+     <div class='design'>${b.design}</div>
+     <div class='note'>点地图其他建筑切换；「平面 / 3D / 哥特大理石」切换视角，拖拽可环视。</div>`;
+  if(modeGothic&&gothicInited)selectGothic(id);
+  if(modeReal&&realInited)selectReal(id);
+  if(modeScene&&sceneInited)selectScene(id);
+  if(map&&map.isStyleLoaded()){
+    map.flyTo({center:[b.lng,b.lat],zoom:13.2,pitch: mode3d?60:0,duration:900});
+  }
+}
+
+function buildList(){
+  document.getElementById('blist').innerHTML=B.map(b=>
+    `<div class='row' onclick='select("${b.id}")'><span style='width:10px;height:10px;border-radius:3px;background:${CAT[b.cat]};flex:none'></span><span style='flex:1'>${b.name}</span><span style='color:var(--dim);font-size:11px'>${RNAME[b.rank]}</span></div>`
+  ).join('');
+}
+
+/* ===== 控制 ===== */
+document.getElementById('btn2d').onclick=function(){mode3d=false;this.classList.add('on');document.getElementById('btn3d').classList.remove('on');if(map){map.easeTo({pitch:0,bearing:-18,duration:700});try{map.setTerrain(null);}catch(e){}if(map.getLayer('bldg'))map.setLayoutProperty('bldg','visibility','visible');if(map.getLayer('bldg3d'))map.setLayoutProperty('bldg3d','visibility','none');}};
+document.getElementById('btn3d').onclick=function(){mode3d=true;this.classList.add('on');document.getElementById('btn2d').classList.remove('on');if(map){map.easeTo({pitch:62,bearing:-18,duration:700});map.setTerrain({source:'terrain',exaggeration:1.5});if(map.getLayer('bldg'))map.setLayoutProperty('bldg','visibility','none');if(map.getLayer('bldg3d'))map.setLayoutProperty('bldg3d','visibility','visible');}};
+document.getElementById('btnSense').onclick=function(){showSense=!showSense;this.classList.toggle('on',showSense);if(map){['sense-fill','sense-line'].forEach(l=>{if(map.getLayer(l))map.setLayoutProperty(l,'visibility',showSense?'visible':'none');});}};
+document.getElementById('btnLabels').onclick=function(){showLabels=!showLabels;this.classList.toggle('on',showLabels);if(map&&map.getLayer('bldg-label'))map.setLayoutProperty('bldg-label','visibility',showLabels?'visible':'none');};
+document.getElementById('btnBase').onclick=function(){showSat=!showSat;this.classList.toggle('on',showSat);this.textContent=showSat?'🛰 地形底图':'🌑 暗色底图';drawMap();};
+
+/* ===== 哥特大理石 3D 视角（Three.js 程序化搭建） ===== */
+const ACCENT={core:0xffcf6b,prod:0x6fe0cf,social:0xff7d7d,rest:0xb98bff,dorm:0x7fb0ff};
+let modeGothic=false,gothicInited=false,gAnimOn=false;
+let gScene,gCam,gRenderer,gControls,gBuildings={},gSelRing,marbleMat,marbleTrim;
+
+function marbleTexture(){
+  const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');
+  x.fillStyle='#efe9df';x.fillRect(0,0,256,256);
+  for(let i=0;i<70;i++){x.strokeStyle='rgba(120,110,95,'+(0.04+Math.random()*0.07)+')';x.lineWidth=0.5+Math.random()*1.6;x.beginPath();let px=Math.random()*256,py=Math.random()*256;x.moveTo(px,py);for(let s=0;s<6;s++){px+=(Math.random()-0.5)*64;py+=(Math.random()-0.5)*64;x.lineTo(px,py);}x.stroke();}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+}
+function addBox(w,h,d,x,y,z,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);return m;}
+
+/* 程序化哥特大理石殿堂：返回已按 s 缩放的 Group */
+function makeGothic(s,accentHex){
+  const g=new THREE.Group();
+  const glass=new THREE.MeshStandardMaterial({color:0x0b0e14,emissive:new THREE.Color(accentHex),emissiveIntensity:1.0,roughness:0.35,metalness:0.0});
+  const W=150,D=190,wallH=82,base=8,wallT=10;
+  // 基座
+  g.add(addBox(W+34,base,D+34,0,base/2,0,marbleTrim));
+  // 侧墙 + 尖拱长窗 + 飞扶壁
+  [-1,1].forEach(sx=>{
+    g.add(addBox(wallT,wallH,D,sx*(W/2),base+wallH/2,0,marbleMat));
+    const n=4,span=D*0.78,step=span/(n-1);
+    for(let i=0;i<n;i++){const z=-span/2+i*step;g.add(addBox(3,wallH*0.5,13,sx*(W/2+wallT/2+1.5),base+wallH*0.52,z,glass));}
+    const np=3,bspan=D*0.82,bstep=bspan/(np-1),px=sx*(W/2+wallT+20);
+    for(let i=0;i<np;i++){const z=-bspan/2+i*bstep;
+      g.add(addBox(12,wallH*0.7,12,px,base+wallH*0.35,z,marbleTrim));
+      const wx=sx*(W/2+wallT/2),dx=px-wx,len=Math.abs(dx);
+      const arch=addBox(3,3,len,(px+wx)/2,base+wallH*0.62,z,marbleTrim);arch.rotation.y=Math.PI/2;g.add(arch);
+    }
+  });
+  // 西立面墙 + 门洞 + 玫瑰窗
+  g.add(addBox(W,wallH,wallT,0,base+wallH/2,-D/2,marbleMat));
+  g.add(addBox(32,wallH*0.6,4,0,base+wallH*0.3,-D/2-2,glass));
+  const rose=new THREE.Group();rose.position.set(0,base+wallH*0.82,-D/2-2);
+  rose.add(new THREE.Mesh(new THREE.TorusGeometry(17,3.4,8,28),glass));
+  for(let k=0;k<8;k++){const a=k/8*Math.PI*2;const bar=new THREE.Mesh(new THREE.BoxGeometry(2,2,30),glass);bar.position.set(Math.cos(a)*0,Math.sin(a)*0,0);bar.rotation.z=a;bar.position.set(Math.cos(a)*0,Math.sin(a)*0,0);rose.add(bar);}
+  g.add(rose);
+  // 桶形拱顶（中殿）
+  const vault=new THREE.Mesh(new THREE.CylinderGeometry(W/2,W/2,D,28,1,true),marbleMat);vault.rotation.x=Math.PI/2;vault.position.set(0,base+wallH,0);g.add(vault);
+  // 双塔 + 尖顶
+  [-1,1].forEach(sx=>{const tx=sx*(W/2+18),th=140,tz=-D/2+6;
+    g.add(addBox(28,th,28,tx,base+th/2,tz,marbleMat));
+    g.add(addBox(34,10,34,tx,base+th,tz,marbleTrim));
+    const spire=new THREE.Mesh(new THREE.ConeGeometry(19,66,4),marbleTrim);spire.position.set(tx,base+th+33,tz);spire.rotation.y=Math.PI/4;g.add(spire);
+    g.add(addBox(4,34,4,tx,base+th*0.5,tz+14,glass));
+  });
+  // 中央尖塔（flèche）
+  g.add(addBox(14,100,14,0,base+wallH+50,0,marbleTrim));
+  const fl=new THREE.Mesh(new THREE.ConeGeometry(10,50,4),marbleTrim);fl.position.set(0,base+wallH+50+75,0);fl.rotation.y=Math.PI/4;g.add(fl);
+  g.scale.set(s,s,s);
+  return g;
+}
+
+function initGothic(){
+  if(gothicInited)return;
+  if(typeof THREE==='undefined'||typeof THREE.OrbitControls==='undefined'){alert('3D 库（Three.js）未加载，请检查网络后重试');return;}
+  const cont=document.getElementById('gothic');
+  const tex=marbleTexture();tex.repeat.set(60,60);
+  marbleMat=new THREE.MeshStandardMaterial({map:tex,color:0xf2ede3,roughness:0.62,metalness:0.0});
+  marbleTrim=new THREE.MeshStandardMaterial({map:tex,color:0xe7e0d2,roughness:0.72,metalness:0.0});
+  gScene=new THREE.Scene();gScene.background=new THREE.Color(0x05070f);gScene.fog=new THREE.Fog(0x05070f,3500,15000);
+  const w=cont.clientWidth||900,h=cont.clientHeight||620;
+  gCam=new THREE.PerspectiveCamera(55,w/h,10,90000);gCam.position.set(0,2600,7400);
+  gRenderer=new THREE.WebGLRenderer({antialias:true});gRenderer.setSize(w,h);gRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));cont.appendChild(gRenderer.domElement);
+  gControls=new THREE.OrbitControls(gCam,gRenderer.domElement);gControls.target.set(0,260,0);gControls.enableDamping=true;gControls.maxPolarAngle=Math.PI*0.49;gControls.minDistance=400;gControls.maxDistance=40000;
+  gScene.add(new THREE.HemisphereLight(0xbcd2ff,0x140f08,0.62));
+  const dl=new THREE.DirectionalLight(0xfff1d8,1.15);dl.position.set(5000,8000,4000);gScene.add(dl);
+  gScene.add(new THREE.AmbientLight(0x404a66,0.42));
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(40000,40000),new THREE.MeshStandardMaterial({map:tex,color:0xcfc8ba,roughness:0.92,metalness:0}));ground.rotation.x=-Math.PI/2;gScene.add(ground);
+  B.forEach(b=>{const s=FOOT[b.rank]/320;const grp=makeGothic(s,ACCENT[b.cat]);grp.position.set(b.de*1000,0,b.dn*1000);grp.userData.id=b.id;gScene.add(grp);gBuildings[b.id]=grp;
+    const r=Math.max(senseM(b.rank),FOOT[b.rank]*0.7);
+    const ring=new THREE.Mesh(new THREE.RingGeometry(r-7,r,80),new THREE.MeshBasicMaterial({color:new THREE.Color(CAT[b.cat]),transparent:true,opacity:0.16,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(b.de*1000,3,b.dn*1000);gScene.add(ring);
+  });
+  gSelRing=new THREE.Mesh(new THREE.TorusGeometry(40,3,8,44),new THREE.MeshBasicMaterial({color:0xffe08a,transparent:true,opacity:0.9}));gSelRing.rotation.x=-Math.PI/2;gSelRing.visible=false;gScene.add(gSelRing);
+  const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+  gRenderer.domElement.addEventListener('click',ev=>{const rc=cont.getBoundingClientRect();mouse.x=((ev.clientX-rc.left)/rc.width)*2-1;mouse.y=-((ev.clientY-rc.top)/rc.height)*2+1;ray.setFromCamera(mouse,gCam);const hits=ray.intersectObjects(Object.values(gBuildings),true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.id)o=o.parent;if(o&&o.userData.id)select(o.userData.id);}});
+  gothicInited=true;animateGothic();
+}
+function animateGothic(){if(!modeGothic){gAnimOn=false;return;}gAnimOn=true;requestAnimationFrame(animateGothic);gControls.update();if(gSelRing.visible){gSelRing.scale.setScalar(gSelRing.userData.sc*(1+Math.sin(performance.now()*0.003)*0.07));}gRenderer.render(gScene,gCam);}
+function onGothicResize(){if(!gothicInited)return;const c=document.getElementById('gothic');gRenderer.setSize(c.clientWidth,c.clientHeight);gCam.aspect=c.clientWidth/c.clientHeight;gCam.updateProjectionMatrix();}
+function selectGothic(id){const b=BYID[id];if(!b)return;gSelRing.position.set(b.de*1000,14,b.dn*1000);gSelRing.userData.sc=Math.max(1.2,FOOT[b.rank]/80);gSelRing.scale.setScalar(gSelRing.userData.sc);gSelRing.visible=true;if(gControls){gControls.target.set(b.de*1000,FOOT[b.rank]/320*120,b.dn*1000);}}
+
+/* 统一视图切换（地图 / 哥特大理石 / 真实建筑 / 实景全景 互斥） */
+function showView(v){
+  const mapEl=document.getElementById('map'),gEl=document.getElementById('gothic'),rEl=document.getElementById('real'),sEl=document.getElementById('scene');
+  mapEl.style.display=(v==='map')?'block':'none';
+  gEl.style.display=(v==='gothic')?'block':'none';
+  rEl.style.display=(v==='real')?'block':'none';
+  sEl.style.display=(v==='scene')?'block':'none';
+  document.getElementById('btn2d').classList.toggle('on',v==='map'&&!mode3d);
+  document.getElementById('btn3d').classList.toggle('on',v==='map'&&mode3d);
+  document.getElementById('btnGothic').classList.toggle('on',v==='gothic');
+  document.getElementById('btnReal').classList.toggle('on',v==='real');
+  document.getElementById('btnScene').classList.toggle('on',v==='scene');
+  if(v==='map')setTimeout(drawMap,30);
+}
+document.getElementById('btn2d').onclick=function(){mode3d=false;modeReal=false;modeGothic=false;modeScene=false;if(map){map.easeTo({pitch:0,bearing:-18,duration:700});try{map.setTerrain(null);}catch(e){}if(map.getLayer('bldg'))map.setLayoutProperty('bldg','visibility','visible');if(map.getLayer('bldg3d'))map.setLayoutProperty('bldg3d','visibility','none');}showView('map');};
+document.getElementById('btn3d').onclick=function(){mode3d=true;modeReal=false;modeGothic=false;modeScene=false;if(map){map.easeTo({pitch:62,bearing:-18,duration:700});map.setTerrain({source:'terrain',exaggeration:1.5});if(map.getLayer('bldg'))map.setLayoutProperty('bldg','visibility','none');if(map.getLayer('bldg3d'))map.setLayoutProperty('bldg3d','visibility','visible');}showView('map');};
+document.getElementById('btnGothic').onclick=function(){modeGothic=!modeGothic;if(modeGothic){modeReal=false;modeScene=false;showView('gothic');initGothic();if(!gAnimOn)animateGothic();setTimeout(onGothicResize,60);}else{modeGothic=false;showView('map');}};
+document.getElementById('btnReal').onclick=function(){modeReal=!modeReal;if(modeReal){modeGothic=false;modeScene=false;showView('real');initReal();if(!rAnimOn)animateReal();setTimeout(onRealResize,60);}else{modeReal=false;showView('map');}};
+document.getElementById('btnScene').onclick=function(){modeScene=!modeScene;if(modeScene){modeGothic=false;modeReal=false;showView('scene');initScene();if(!sAnimOn)animateScene();setTimeout(onSceneResize,60);updateSceneStat();}else{modeScene=false;showView('map');}};
+document.getElementById('btnPeople').onclick=function(){peopleOn=!peopleOn;this.classList.toggle('on',peopleOn);if(sceneInited)people.forEach(p=>{if(p.state!=='inside')p.mesh.visible=peopleOn;});};
+document.getElementById('btnFog').onclick=function(){fogOn=!fogOn;this.classList.toggle('on',fogOn);if(sceneInited)sScene.fog=fogOn?new THREE.Fog(0x0b1322,9000,52000):null;};
+document.getElementById('btnNight').onclick=function(){nightMode=!nightMode;this.classList.toggle('on',nightMode);this.textContent=nightMode?'🌙 昼夜：夜':'🌙 昼夜：昼';if(sceneInited)applyNight();};
+document.getElementById('btnPop').onclick=function(){popOn=!popOn;this.classList.toggle('on',popOn);if(sceneInited){sPopPoints.visible=popOn;sPopLabels.forEach(l=>l.visible=popOn);if(popOn)startPopTimer();else stopPopTimer();updateSceneStat();}};
+window.addEventListener('resize',()=>{if(modeGothic)onGothicResize();if(modeReal)onRealResize();if(modeScene)onSceneResize();});
+
+/* ===== 真实建筑（哥特）视图：参考巴黎圣母院等真实哥特教堂，按功能分原型，体量放大 ===== */
+const REALSIZE={lianqi:0.62,zhuji:0.72,jindan:0.88,yuanying:1.0,huashen:1.16,lianxu:1.32,hedao:1.7};
+let modeReal=false, realInited=false, rAnimOn=false;
+let rScene,rCam,rRenderer,rControls,rBuildings={},rSelRing,stoneMat,stoneTrim,glassMats={};
+
+function stoneTexture(){
+  const c=document.createElement('canvas');c.width=c.height=1024;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,0,1024);g.addColorStop(0,'#e2d8c0');g.addColorStop(1,'#c8bca0');x.fillStyle=g;x.fillRect(0,0,1024,1024);
+  for(let i=0;i<900;i++){x.fillStyle='rgba('+(150+Math.random()*45|0)+','+(135+Math.random()*35|0)+','+(104+Math.random()*34|0)+','+(0.03+Math.random()*0.10)+')';const r=2+Math.random()*16;x.beginPath();x.arc(Math.random()*1024,Math.random()*1024,r,0,7);x.fill();}
+  const bh=26;
+  x.strokeStyle='rgba(95,82,58,0.32)';x.lineWidth=1.5;
+  for(let y=0;y<=1024;y+=bh){const off=((y/bh)|0)%2?bh/2:0;x.beginPath();x.moveTo(0,y+0.5);x.lineTo(1024,y+0.5);x.stroke();for(let vx=off;vx<1024;vx+=bh*2){x.beginPath();x.moveTo(vx+0.5,y);x.lineTo(vx+0.5,y+bh);x.stroke();}}
+  x.strokeStyle='rgba(70,58,40,0.40)';x.lineWidth=2.5;
+  for(let y=70;y<1024;y+=150){x.beginPath();x.moveTo(0,y);x.lineTo(1024,y);x.stroke();}
+  x.strokeStyle='rgba(255,250,235,0.10)';x.lineWidth=1;
+  for(let y=bh;y<1024;y+=bh){const off=((y/bh)|0)%2?bh/2:0;for(let vx=off;vx<1024;vx+=bh*2){x.beginPath();x.moveTo(vx+0.8,y+1.2);x.lineTo(vx+0.8,y+bh-0.8);x.stroke();}}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;if(t.anisotropy!==undefined)t.anisotropy=8;return t;
+}
+function Rbox(w,h,d,x,y,z,mat){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);return m;}
+function cone(r,h,seg,mat){return new THREE.Mesh(new THREE.ConeGeometry(r,h,seg),mat);}
+function stained(accent){return glassMats[accent];}
+
+/* 主教堂（圣母院式：双塔西立面 + 玫瑰窗 + 飞扶壁 + 中央尖塔） */
+function makeCathedral(accent,size){
+  const g=new THREE.Group();const stone=stoneMat,trim=stoneTrim,glass=stained(accent);
+  const W=200*size,D=300*size,wallH=120*size,base=14*size;
+  g.add(Rbox(W+26,base,D+26,0,base/2,0,trim));
+  g.add(Rbox(W+52,base*0.6,D+52,0,base*0.3,0,stone));
+  [-1,1].forEach(sx=>{
+    g.add(Rbox(18*size,wallH,D,sx*(W/2-9*size),base+wallH/2,0,stone));
+    const n=5,span=D*0.8,step=span/(n-1);
+    for(let i=0;i<n;i++){const z=-span/2+i*step;g.add(Rbox(5*size,wallH*0.44,24*size,sx*(W/2-3*size),base+wallH*0.56,z,glass));}
+  });
+  g.add(Rbox(W-22*size,16*size,D*0.92,0,base+wallH+8*size,0,stone));
+  const th=190*size,tx=W/2+7*size,tz=-D/2+9*size;
+  [-1,1].forEach(sx=>{const cx=sx*tx;
+    g.add(Rbox(42*size,th,42*size,cx,base+th/2,tz,stone));
+    for(let k=0;k<2;k++)g.add(Rbox(9*size,th*0.3,5*size,cx+(k?9:-9)*size,base+th*0.72,tz,glass));
+    const sp=cone(31*size,112*size,8,trim);sp.position.set(cx,base+th+56*size,tz);g.add(sp);
+    [-1,1].forEach(pz=>{const p=cone(7*size,42*size,4,trim);p.position.set(cx,base+th+21*size,tz+pz*17*size);p.rotation.y=Math.PI/4;g.add(p);});
+  });
+  const rose=new THREE.Group();rose.position.set(0,base+wallH*0.8,-D/2-3*size);
+  rose.add(new THREE.Mesh(new THREE.TorusGeometry(27*size,5*size,8,30),glass));
+  for(let k=0;k<12;k++){const b=new THREE.Mesh(new THREE.BoxGeometry(3*size,3*size,54*size),glass);b.rotation.z=k/12*Math.PI*2;rose.add(b);}
+  g.add(rose);
+  [-1,0,1].forEach(px=>{const dw=24*size;const door=new THREE.Mesh(new THREE.BoxGeometry(dw,wallH*0.5,6*size),glass);door.position.set(px*28*size,base+wallH*0.25,-D/2-2*size);g.add(door);const ar=cone(dw/2,wallH*0.24,4,stone);ar.position.set(px*28*size,base+wallH*0.5+wallH*0.12,-D/2-2*size);ar.rotation.y=Math.PI/4;g.add(ar);});
+  [-1,1].forEach(sx=>{const np=4,bspan=D*0.7,bstep=bspan/(np-1),px=sx*(W/2+36*size);
+    for(let i=0;i<np;i++){const z=-bspan/2+i*bstep;
+      g.add(Rbox(17*size,92*size,17*size,px,base+46*size,z,trim));
+      const top=cone(9*size,32*size,4,trim);top.position.set(px,base+92*size+16*size,z);top.rotation.y=Math.PI/4;g.add(top);
+      const wx=sx*(W/2-9*size),dx=wx-px,len=Math.abs(dx);
+      const arch=new THREE.Mesh(new THREE.BoxGeometry(5*size,5*size,len),trim);arch.position.set((px+wx)/2,base+wallH*0.6,z);arch.rotation.y=Math.PI/2;g.add(arch);
+    }
+  });
+  g.add(Rbox(20*size,84*size,20*size,0,base+wallH+42*size,0,trim));
+  const fl=cone(13*size,62*size,4,trim);fl.position.set(0,base+wallH+42*size+73*size,0);fl.rotation.y=Math.PI/4;g.add(fl);
+  g.add(Rbox(W,wallH,18*size,0,base+wallH/2,D/2,stone));
+  g.add(Rbox(28*size,wallH*0.62,5*size,0,base+wallH*0.46,D/2+3*size,glass));
+  const eg=cone(W/2,64*size,4,stone);eg.position.set(0,base+wallH+32*size,D/2);eg.rotation.y=Math.PI/4;g.add(eg);
+  return g;
+}
+/* 高塔（沙特尔式：细长石塔 + 尖顶冠） */
+function makeTower(accent,size){
+  const g=new THREE.Group();const stone=stoneMat,trim=stoneTrim,glass=stained(accent);
+  const bw=70*size,th=300*size,base=16*size;
+  g.add(Rbox(bw+18,base,bw+18,0,base/2,0,trim));
+  g.add(Rbox(bw,th,bw,0,base+th/2,0,stone));
+  const n=5;for(let i=0;i<n;i++){const z=-bw/2+10*size+i*(bw-20*size)/(n-1);g.add(Rbox(8*size,th*0.5,6*size,0,base+th*0.42,z,glass));g.add(Rbox(8*size,th*0.5,6*size,bw/2-3*size,base+th*0.42,0,glass));}
+  [-1,1].forEach(sx=>[-1,1].forEach(sz=>{g.add(Rbox(14*size,th*0.8,14*size,sx*(bw/2+8*size),base+th*0.4,sz*(bw/2+8*size),trim));}));
+  const sp=cone(bw/2,150*size,8,trim);sp.position.set(0,base+th+75*size,0);g.add(sp);
+  for(let k=0;k<8;k++){const a=k/8*Math.PI*2;const p=cone(8*size,46*size,4,trim);p.position.set(Math.cos(a)*(bw/2+8*size),base+th+23*size,Math.sin(a)*(bw/2+8*size));p.rotation.y=Math.PI/4;g.add(p);}
+  return g;
+}
+/* 水畔哥特府邸（法式城堡：角楼 + 连廊，临水） */
+function makeChateau(accent,size){
+  const g=new THREE.Group();const stone=stoneMat,trim=stoneTrim,glass=stained(accent);
+  const W=220*size,D=150*size,wallH=70*size,base=12*size;
+  g.add(Rbox(W+20,base,D+20,0,base/2,0,trim));
+  g.add(Rbox(W,wallH,D,0,base+wallH/2,0,stone));
+  const n=4,span=D*0.7,step=span/(n-1);for(let i=0;i<n;i++){const z=-span/2+i*step;g.add(Rbox(5*size,wallH*0.5,20*size,-W/2+4*size,base+wallH*0.55,z,glass));}
+  [-1,1].forEach(sx=>[-1,1].forEach(sz=>{const cx=sx*(W/2-6*size),cz=sz*(D/2-6*size);g.add(Rbox(34*size,wallH+30*size,34*size,cx,base+(wallH+30*size)/2,cz,stone));const sp=cone(24*size,80*size,8,trim);sp.position.set(cx,base+wallH+30*size+40*size,cz);g.add(sp);}));
+  g.add(Rbox(W-10*size,14*size,D-10*size,0,base+wallH+7*size,0,trim));
+  g.add(Rbox(W*0.6,10*size,D*0.5,0,base+5*size,D/2+30*size,stone));
+  const water=new THREE.Mesh(new THREE.CircleGeometry(220*size,40),new THREE.MeshStandardMaterial({color:0x12243a,roughness:0.2,metalness:0.3,transparent:true,opacity:0.85}));water.rotation.x=-Math.PI/2;water.position.set(0,-2*size,D/2+150*size);g.add(water);
+  return g;
+}
+/* 回廊别院（封闭式回廊庭院） */
+function makeManor(accent,size){
+  const g=new THREE.Group();const stone=stoneMat,trim=stoneTrim,glass=stained(accent);
+  const W=190*size,D=190*size,wallH=64*size,base=12*size;
+  g.add(Rbox(W+18,base,D+18,0,base/2,0,trim));
+  function range(len,axis){
+    const grp=new THREE.Group();
+    grp.add(Rbox(axis==='x'?len:16*size,wallH,axis==='x'?16*size:len,0,base+wallH/2,0,stone));
+    const n=Math.max(3,Math.round(len/40*size)),step=len/(n-1);
+    for(let i=0;i<n;i++){const p=-len/2+i*step;const wx=axis==='x'?p:0,wz=axis==='x'?0:p;grp.add(Rbox(axis==='x'?6*size:16*size,wallH*0.5,axis==='x'?16*size:6*size,wx,base+wallH*0.55,wz,glass));}
+    return grp;
+  }
+  const rN=range(W,0);rN.position.set(0,0,D/2);g.add(rN);
+  const rS=range(W,0);rS.position.set(0,0,-D/2);g.add(rS);
+  const rE=range(D,1);rE.position.set(W/2,0,0);g.add(rE);
+  const rW=range(D,1);rW.position.set(-W/2,0,0);g.add(rW);
+  g.add(Rbox(W*0.42,wallH+20*size,D*0.42,0,base+(wallH+20*size)/2,0,trim));
+  g.add(Rbox(W*0.42-10*size,12*size,D*0.42-10*size,0,base+wallH+20*size+6*size,0,stone));
+  [-1,1].forEach(sx=>[-1,1].forEach(sz=>{const p=cone(7*size,30*size,4,trim);p.position.set(sx*W/2,base+wallH+15*size,sz*D/2);p.rotation.y=Math.PI/4;g.add(p);}));
+  return g;
+}
+/* 工坊聚落（哥特山墙棚屋群） */
+function makeWorkshop(accent,size){
+  const g=new THREE.Group();const stone=stoneMat,trim=stoneTrim,glass=stained(accent);
+  const n=4;for(let i=0;i<n;i++){const a=i/n*Math.PI*2,r=70*size,x=Math.cos(a)*r,z=Math.sin(a)*r,w=90*size,d=60*size,h=46*size;
+    g.add(Rbox(w+12,14*size,d+12,x,7*size,z,trim));
+    g.add(Rbox(w,h,d,x,14*size+h/2,z,stone));
+    const n2=3,span=d*0.6,step=span/(n2-1);for(let k=0;k<n2;k++)g.add(Rbox(5*size,h*0.5,14*size,x-w/2+5*size,14*size+h*0.5,z-span/2+k*step,glass));
+    const roof=Rbox(w,12*size,d,0,0,0,stone);roof.position.set(x,14*size+h+6*size,z);g.add(roof);
+    const rg=cone(w/2,40*size,4,stone);rg.position.set(x,14*size+h+6*size+20*size,z);rg.rotation.y=Math.PI/4;g.add(rg);
+  }
+  g.add(Rbox(50*size,30*size,50*size,0,15*size,0,trim));
+  return g;
+}
+/* 弟子聚居区（小镇屋群） */
+function makeDistrict(accent,size){
+  const g=new THREE.Group();const stone=stoneMat,trim=stoneTrim,glass=stained(accent);
+  for(let i=0;i<10;i++){const a=i/10*Math.PI*2,r=40*size+i%3*36*size,x=Math.cos(a)*r,z=Math.sin(a)*r,w=40*size,d=30*size,h=34*size;
+    g.add(Rbox(w+8,10*size,d+8,x,5*size,z,trim));
+    g.add(Rbox(w,h,d,x,10*size+h/2,z,stone));
+    g.add(Rbox(7*size,h*0.5,12*size,x-w/2+4*size,10*size+h*0.5,z,glass));
+    const rg=cone(w/2,30*size,4,stone);rg.position.set(x,10*size+h+15*size,z);rg.rotation.y=Math.PI/4;g.add(rg);
+  }
+  g.add(Rbox(60*size,40*size,60*size,0,20*size,0,trim));
+  return g;
+}
+function buildReal(b){
+  const accent=ACCENT[b.cat],size=REALSIZE[b.rank];
+  let g,type;
+  switch(b.id){
+    case 'zangjing': g=makeTower(accent,size*1.05); type='tower'; break;
+    case 'hongluan': g=makeChateau(accent,size); type='chateau'; break;
+    case 'qindian': case 'wenquan': case 'hongxian': g=makeManor(accent,size); type='manor'; break;
+    case 'danfang': case 'shouyuan': case 'yaopu': g=makeWorkshop(accent,size); type='workshop'; break;
+    case 'dorms': g=makeDistrict(accent,size); type='district'; break;
+    default: g=makeCathedral(accent,size); type='cathedral';
+  }
+  detailPass(g,accent,size,type);
+  return g;
+}
+
+/* 通用 + 分型细节：让每座建筑「非常细节」 */
+function detailPass(g,accent,size,type){
+  const stone=stoneMat,trim=stoneTrim,glass=stained(accent);
+  const R=(type==='cathedral'?300:type==='tower'?120:type==='chateau'?200:type==='district'?120:180)*size;
+  // 1) 四角 pinnacle（小尖塔）
+  for(let i=0;i<4;i++){const a=Math.PI/4+i*Math.PI/2;const px=Math.cos(a)*R*0.92,pz=Math.sin(a)*R*0.92;
+    g.add(Rbox(7*size,46*size,7*size,px,23*size,pz,trim));
+    const pk=cone(6*size,34*size,4,trim);pk.position.set(px,46*size+17*size,pz);pk.rotation.y=Math.PI/4;g.add(pk);
+    const ball=new THREE.Mesh(new THREE.SphereGeometry(4*size,8,8),new THREE.MeshStandardMaterial({color:0xe9c46a,emissive:0x6a4e10,emissiveIntensity:0.6,roughness:0.4,metalness:0.3}));ball.position.set(px,46*size+34*size,pz);g.add(ball);
+    if(sCollectNight)sNightMats.push({m:ball.material,base:0.6});
+  }
+  // 2) 入口灯笼对（发光宝珠+灯柱）
+  [-1,1].forEach(sx=>{const lx=sx*64*size,lz=-R*0.62;
+    g.add(Rbox(4*size,52*size,4*size,lx,26*size,lz,trim));
+    const orb=new THREE.Mesh(new THREE.SphereGeometry(8*size,12,12),new THREE.MeshStandardMaterial({color:0xffd27a,emissive:0xff9b3b,emissiveIntensity:1.8,roughness:0.35}));orb.position.set(lx,58*size,lz);g.add(orb);
+    const halo=new THREE.Mesh(new THREE.SphereGeometry(16*size,12,12),new THREE.MeshBasicMaterial({color:0xffb35c,transparent:true,opacity:0.18}));halo.position.copy(orb.position);g.add(halo);
+    if(sCollectNight){sNightMats.push({m:orb.material,base:1.8});sNightMats.push({m:halo.material,base:0.18,scl:true});}
+  });
+  // 3) 内殿光晕（殿心微光，暗示有人在里面活动）
+  const altar=new THREE.Mesh(new THREE.CircleGeometry(46*size,28),new THREE.MeshStandardMaterial({color:accent,emissive:accent,emissiveIntensity:0.55,transparent:true,opacity:0.5}));altar.rotation.x=-Math.PI/2;altar.position.y=8*size;g.add(altar);
+  if(sCollectNight)sNightMats.push({m:altar.material,base:0.55});
+  // 4) 周垣（低矮围墙+门缺），非工坊/聚居用
+  if(type!=='workshop'&&type!=='district'){
+    const wallH=22*size,wt=6*size,gate=Math.PI/5;
+    for(let i=0;i<48;i++){const a=i/48*Math.PI*2; if(Math.abs(Math.atan2(Math.sin(a),Math.cos(a))- (-Math.PI/2))<gate) continue; // 朝南开门
+      const px=Math.cos(a)*R, pz=Math.sin(a)*R; if(type==='tower'&&Math.abs(pz)>R*0.3) continue;
+      const seg=Rbox(wt,wallH,wt,px,wallH/2,pz,trim); seg.rotation.y=-a; g.add(seg);
+    }
+  }
+  // 5) 分型细节
+  if(type==='cathedral'){
+    const cb=14*size, cw=120*size;
+    // 西立面滴水兽（gargoyle）
+    [-1,1].forEach(sx=>{const tx=sx*(200*size/2+7*size), tz=-300*size/2+9*size;
+      for(let k=0;k<2;k++){const gr=cone(7*size,22*size,4,stone);gr.position.set(tx+(k?14:-14)*size,cb+190*size+112*size+12*size,tz);gr.rotation.x=Math.PI*0.92;gr.rotation.z=Math.PI/2*(k?1:-1);g.add(gr);}
+    });
+    // 中央尖塔 crockets（小尖饰）
+    for(let k=0;k<6;k++){const yy=cb+cw+42*size+ k*18*size; const cr=cone(7*size,16*size,4,trim);cr.position.set(0,yy,0);cr.rotation.y=Math.PI/4;g.add(cr);}
+    // 殿前十字架
+    const cross=new THREE.Group();cross.position.set(0,cb+30*size,-300*size/2-90*size);
+    cross.add(Rbox(8*size,120*size,8*size,0,60*size,0,stone));cross.add(Rbox(60*size,8*size,8*size,0,110*size,0,stone));g.add(cross);
+    // 侧长窗窗棂（tracery）
+    [-1,1].forEach(sx=>{const n=5,span=300*size*0.8,step=span/(n-1);for(let i=0;i<n;i++){const z=-span/2+i*step;const bar=Rbox(3*size,40*size,3*size,sx*(200*size/2-3*size),cb+120*size*0.56+22*size,z,trim);g.add(bar);}});
+  } else if(type==='tower'){
+    const tb=16*size;
+    const fin=new THREE.Mesh(new THREE.SphereGeometry(9*size,10,10),new THREE.MeshStandardMaterial({color:0xe9c46a,emissive:0x6a4e10,emissiveIntensity:0.7,metalness:0.3,roughness:0.4}));fin.position.set(0,tb+300*size+150*size+9*size,0);g.add(fin);
+    if(sCollectNight)sNightMats.push({m:fin.material,base:0.7});
+    // 入口门廊
+    g.add(Rbox(40*size,40*size,24*size,0,tb+20*size,35*size,trim));
+    g.add(Rbox(20*size,30*size,6*size,0,tb+15*size,47*size,glass));
+  } else if(type==='chateau'){
+    const kb=12*size, kw=70*size;
+    // 临水拱桥
+    g.add(Rbox(220*size,10*size,26*size,0,kb+6*size,150*size+110*size,trim));
+    // 塔顶旗
+    [-1,1].forEach(sx=>[-1,1].forEach(sz=>{const cx=sx*(220*size/2-6*size),cz=sz*(150*size/2-6*size);
+      const pole=Rbox(2*size,46*size,2*size,cx,kb+kw+30*size+23*size,cz,trim);
+      const flag=new THREE.Mesh(new THREE.PlaneGeometry(30*size,18*size),new THREE.MeshStandardMaterial({color:0xff6b6b,emissive:0x551111,emissiveIntensity:0.4,side:THREE.DoubleSide,roughness:0.6}));flag.position.set(cx+15*size,kb+kw+30*size+34*size,cz);g.add(pole);g.add(flag);
+      if(sCollectNight)sNightMats.push({m:flag.material,base:0.4});}));
+    // 花园绿篱
+    g.add(Rbox(200*size,14*size,14*size,0,kb+7*size,-150*size-40*size,new THREE.MeshStandardMaterial({color:0x3c6b34,roughness:0.9})));
+  } else if(type==='manor'){
+    const mb=12*size;
+    // 中庭喷泉
+    const fount=new THREE.Group();fount.position.set(0,mb+2*size,0);
+    fount.add(new THREE.Mesh(new THREE.CylinderGeometry(34*size,40*size,18*size,20),trim));
+    const col=new THREE.Mesh(new THREE.CylinderGeometry(6*size,6*size,70*size,12),stone);col.position.y=44*size;fount.add(col);
+    const bowl=new THREE.Mesh(new THREE.SphereGeometry(14*size,14,14,0,Math.PI*2,0,Math.PI/2),stone);bowl.position.y=80*size;fount.add(bowl);
+    const spout=new THREE.Mesh(new THREE.SphereGeometry(6*size,10,10),new THREE.MeshBasicMaterial({color:0x9fe0ff,transparent:true,opacity:0.5}));spout.position.y=92*size;fount.add(spout);
+    g.add(fount);
+    // 回廊坐凳
+    g.add(Rbox(150*size,10*size,10*size,0,mb+12*size,150*size));
+    g.add(Rbox(150*size,10*size,10*size,0,mb+12*size,-150*size));
+  } else if(type==='workshop'){
+    // 烟囱 + 炊烟
+    for(let i=0;i<4;i++){const a=i/4*Math.PI*2,r=70*size,x=Math.cos(a)*r,z=Math.sin(a)*r;
+      g.add(Rbox(20*size,70*size,20*size,x,14*size+46*size+35*size,z,trim));
+      const smoke=new THREE.Mesh(new THREE.SphereGeometry(26*size,12,12),new THREE.MeshBasicMaterial({color:0xcfd6e0,transparent:true,opacity:0.22}));smoke.position.set(x,14*size+46*size+70*size+20*size,z);smoke.userData.smoke=true;g.add(smoke);g.userData.smokes=g.userData.smokes||[];g.userData.smokes.push(smoke);
+    }
+    // 工具架 + 推车
+    g.add(Rbox(60*size,10*size,30*size,0,14*size+5*size,90*size,stone));
+  } else if(type==='district'){
+    // 水井 + 市集棚 + 演武桩 + 树
+    const well=new THREE.Mesh(new THREE.CylinderGeometry(16*size,16*size,20*size,16),stone);well.position.set(0,10*size,0);g.add(well);
+    g.add(Rbox(8*size,40*size,8*size,-18*size,20*size,0,trim));g.add(Rbox(8*size,40*size,8*size,18*size,20*size,0,trim));
+    for(let i=0;i<5;i++){const a=i/5*Math.PI*2,r=120*size;const stall=Rbox(40*size,8*size,40*size,Math.cos(a)*r,12*size,Math.sin(a)*r,trim);g.add(stall);const roof=cone(34*size,26*size,4,stone);roof.position.set(Math.cos(a)*r,12*size+17*size,Math.sin(a)*r);roof.rotation.y=Math.PI/4;g.add(roof);}
+    for(let i=0;i<8;i++){const a=i/8*Math.PI*2,r=170*size+ (i%2?40:0);const tree=new THREE.Mesh(new THREE.ConeGeometry(18*size,60*size,7),new THREE.MeshStandardMaterial({color:0x2f5d2c,roughness:0.95}));tree.position.set(Math.cos(a)*r,30*size,Math.sin(a)*r);g.add(tree);}
+  }
+}
+function ensureSceneMats(){
+  if(stoneMat)return;
+  const tex=stoneTexture();tex.repeat.set(8,8);
+  stoneMat=new THREE.MeshStandardMaterial({map:tex,color:0xdad0b8,roughness:0.85,metalness:0.0});
+  stoneTrim=new THREE.MeshStandardMaterial({map:tex,color:0xc7bb9d,roughness:0.9,metalness:0.0});
+  Object.keys(ACCENT).forEach(k=>{glassMats[ACCENT[k]]=new THREE.MeshStandardMaterial({color:0x0a0d14,emissive:new THREE.Color(ACCENT[k]),emissiveIntensity:1.25,roughness:0.3,metalness:0.0,transparent:true,opacity:0.92});});
+}
+function initReal(){
+  if(realInited)return;
+  if(typeof THREE==='undefined'||typeof THREE.OrbitControls==='undefined'){alert('3D 库（Three.js）未加载，请检查网络后重试');return;}
+  const cont=document.getElementById('real');
+  ensureSceneMats();
+  rScene=new THREE.Scene();rScene.background=new THREE.Color(0x070b16);rScene.fog=new THREE.Fog(0x070b16,6000,42000);
+  const w=cont.clientWidth||900,h=cont.clientHeight||620;
+  rCam=new THREE.PerspectiveCamera(52,w/h,10,120000);rCam.position.set(0,4200,13500);
+  rRenderer=new THREE.WebGLRenderer({antialias:true});rRenderer.setSize(w,h);rRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));cont.appendChild(rRenderer.domElement);
+  rControls=new THREE.OrbitControls(rCam,rRenderer.domElement);rControls.target.set(0,300,0);rControls.enableDamping=true;rControls.maxPolarAngle=Math.PI*0.49;rControls.minDistance=500;rControls.maxDistance=60000;
+  rScene.add(new THREE.HemisphereLight(0xb9cdf0,0x140f08,0.6));
+  const dl=new THREE.DirectionalLight(0xffe9c8,1.2);dl.position.set(6000,9000,4500);rScene.add(dl);
+  rScene.add(new THREE.AmbientLight(0x3a445e,0.4));
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(80000,80000),new THREE.MeshStandardMaterial({color:0xb8b09c,roughness:0.95,metalness:0}));ground.rotation.x=-Math.PI/2;ground.position.y=-4;rScene.add(ground);
+  B.forEach(b=>{const grp=buildReal(b);grp.position.set(b.de*1000,0,b.dn*1000);grp.userData.id=b.id;rScene.add(grp);rBuildings[b.id]=grp;
+    const sr=SENSE[b.rank]>0?Math.min(senseM(b.rank),6000):0;
+    if(sr>0){const ring=new THREE.Mesh(new THREE.RingGeometry(sr-9,sr,90),new THREE.MeshBasicMaterial({color:new THREE.Color(CAT[b.cat]),transparent:true,opacity:0.16,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(b.de*1000,5,b.dn*1000);rScene.add(ring);}
+  });
+  rSelRing=new THREE.Mesh(new THREE.TorusGeometry(50,4,8,48),new THREE.MeshBasicMaterial({color:0xffe08a,transparent:true,opacity:0.9}));rSelRing.rotation.x=-Math.PI/2;rSelRing.visible=false;rScene.add(rSelRing);
+  const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+  rRenderer.domElement.addEventListener('click',ev=>{const rc=cont.getBoundingClientRect();mouse.x=((ev.clientX-rc.left)/rc.width)*2-1;mouse.y=-((ev.clientY-rc.top)/rc.height)*2+1;ray.setFromCamera(mouse,rCam);const hits=ray.intersectObjects(Object.values(rBuildings),true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.id)o=o.parent;if(o&&o.userData.id)select(o.userData.id);}});
+  realInited=true;animateReal();
+}
+function animateReal(){if(!modeReal){rAnimOn=false;return;}rAnimOn=true;requestAnimationFrame(animateReal);rControls.update();if(rSelRing.visible){rSelRing.scale.setScalar(rSelRing.userData.sc*(1+Math.sin(performance.now()*0.003)*0.07));}rRenderer.render(rScene,rCam);}
+function onRealResize(){if(!realInited)return;const c=document.getElementById('real');rRenderer.setSize(c.clientWidth,c.clientHeight);rCam.aspect=c.clientWidth/c.clientHeight;rCam.updateProjectionMatrix();}
+function selectReal(id){const b=BYID[id];if(!b)return;const sc=Math.max(1.2,REALSIZE[b.rank]*1.1);rSelRing.position.set(b.de*1000,18,b.dn*1000);rSelRing.userData.sc=sc;rSelRing.scale.setScalar(sc);rSelRing.visible=true;if(rControls)rControls.target.set(b.de*1000,REALSIZE[b.rank]*120,b.dn*1000);}
+
+/* ============================================================
+   🌄 实景全景：真实地形 + 精细哥特建筑 + 宗门众生（行走/生活）
+   ============================================================ */
+const TERR={size:16000,seg:420,peakX:0,peakZ:7000,peakH:1900,lakeX:2750,lakeZ:-2000,lakeR:2700,lakeDepth:210,waterY:240,base:200};
+function _hash(x,z){const s=Math.sin(x*0.013+z*0.017)*43758.5453;return s-Math.floor(s);}
+function fbm(x,z){let a=0,amp=1,f=1,tot=0;for(let i=0;i<4;i++){a+=_hash(x*f+11.1,z*f+3.7)*amp;tot+=amp;amp*=0.5;f*=2.13;}return a/tot;}
+function heightAt(x,z){
+  const dx=x-TERR.peakX,dz=z-TERR.peakZ,d2=dx*dx+dz*dz;
+  let h=TERR.peakH*Math.exp(-d2/(2*4300*4300));
+  h+=850*Math.exp(-(((x-4800)*(x-4800)+(z-4200)*(z-4200))/(2*3300*3300)));
+  h+=650*Math.exp(-(((x+5200)*(x+5200)+(z+1800)*(z+1800))/(2*3700*3700)));
+  h+=TERR.base;
+  const ldx=x-TERR.lakeX,ldz=z-TERR.lakeZ,ld2=ldx*ldx+ldz*ldz;
+  h-=TERR.lakeDepth*Math.exp(-ld2/(2*TERR.lakeR*TERR.lakeR));
+  h+=(fbm(x+999,z-555)-0.5)*340;
+  if(d2<3200*3200)h+=(fbm(x*2.3,z*2.3)-0.5)*140;
+  return h;
+}
+function smoothstep(a,b,x){const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);}
+function terraColor(h,wx,wz){
+  const w=TERR.waterY;
+  const soil=[0.70,0.63,0.47],grass=[0.25,0.45,0.21],rock=[0.47,0.45,0.41],snow=[0.93,0.95,0.98];
+  let r,g,b;
+  if(h<w+30){r=soil[0];g=soil[1];b=soil[2];}
+  else{
+    const t1=smoothstep(w+30,560,h),t2=smoothstep(560,1180,h),t3=smoothstep(1180,1640,h);
+    r=soil[0]*(1-t1)+grass[0]*t1; g=soil[1]*(1-t1)+grass[1]*t1; b=soil[2]*(1-t1)+grass[2]*t1;
+    r=r*(1-t2)+rock[0]*t2; g=g*(1-t2)+rock[1]*t2; b=b*(1-t2)+rock[2]*t2;
+    r=r*(1-t3)+snow[0]*t3; g=g*(1-t3)+snow[1]*t3; b=b*(1-t3)+snow[2]*t3;
+  }
+  const n1=fbm(wx*0.06+50,wz*0.06)-0.5,n2=fbm(wx*0.21-13,wz*0.21)-0.5;
+  const m=n1*0.11+n2*0.055;
+  r=Math.min(1,Math.max(0,r+m));g=Math.min(1,Math.max(0,g+m));b=Math.min(1,Math.max(0,b+m));
+  return {r,g,b};
+}
+/* 高精度地形纹理：逐像素按世界坐标算高度着色 + 细节噪声，消除大色块/格子感 */
+function terrainTexture(){
+  const S=TERR.size,W=1024,H=1024;
+  const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  const img=x.createImageData(W,H);const d=img.data;
+  for(let row=0;row<H;row++){const v=row/(H-1),wz=(0.5-v)*S;
+    for(let col=0;col<W;col++){const u=col/(W-1),wx=u*S-S/2;
+      const h=heightAt(wx,wz);const cc=terraColor(h,wx,wz);
+      const i=(row*W+col)*4;
+      d[i]=cc.r*255;d[i+1]=cc.g*255;d[i+2]=cc.b*255;d[i+3]=255;
+    }
+  }
+  x.putImageData(img,0,0);
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;
+  if(t.anisotropy!==undefined)t.anisotropy=8;return t;
+}
+function makeTerrain(){
+  const S=TERR.size,seg=TERR.seg;
+  const geo=new THREE.PlaneGeometry(S,S,seg,seg);
+  const pos=geo.attributes.position;
+  for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i);const h=heightAt(x,-y);pos.setZ(i,h);}
+  geo.computeVertexNormals();geo.rotateX(-Math.PI/2);
+  const tex=terrainTexture();
+  return new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:tex,roughness:0.95,metalness:0.0}));
+}
+function makeWater(){
+  const g=new THREE.CircleGeometry(TERR.lakeR*1.12,56);g.rotateX(-Math.PI/2);
+  const m=new THREE.MeshStandardMaterial({color:0x163a55,roughness:0.12,metalness:0.55,transparent:true,opacity:0.8});
+  const mesh=new THREE.Mesh(g,m);mesh.position.set(TERR.lakeX,TERR.waterY+3,TERR.lakeZ);return mesh;
+}
+function makeLabel(text,hex){
+  const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');
+  x.fillStyle='rgba(7,10,20,0.72)';x.fillRect(0,0,256,64);
+  x.strokeStyle=hex;x.lineWidth=3;x.strokeRect(2,2,252,60);
+  x.fillStyle=hex;x.font='bold 30px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(text,128,34);
+  const t=new THREE.CanvasTexture(c);const m=new THREE.SpriteMaterial({map:t,transparent:true,depthTest:false});const s=new THREE.Sprite(m);s.scale.set(620,155,1);return s;
+}
+
+let modeScene=false,sceneInited=false,sAnimOn=false,peopleOn=true,fogOn=true,nightMode=false,popOn=false;
+let sScene,sCam,sRenderer,sControls,sBuildings={},sSelRing,sLabels=[],sSmokes=[],people=[],sLast=0,sFrame=0;
+let sHemi,sDir,sAmb,sNightMats=[],sStars=null,sGlassBase=1.25,sPopPoints=null,sPopLabels=[],sPopData=[],sCollectNight=false;
+
+function makePerson(hex,scale){
+  const g=new THREE.Group();
+  const mat=new THREE.MeshStandardMaterial({color:hex,emissive:hex,emissiveIntensity:0.55,roughness:0.5});
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(2.4*scale,3.6*scale,11*scale,8),mat);body.position.y=6*scale;g.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(2.6*scale,10,10),mat);head.position.y=12.5*scale;g.add(head);
+  const glow=new THREE.Mesh(new THREE.CircleGeometry(6*scale,16),new THREE.MeshBasicMaterial({color:hex,transparent:true,opacity:0.22}));glow.rotation.x=-Math.PI/2;glow.position.y=0.6;g.add(glow);
+  return g;
+}
+const POP={heshi:2,zangjing:4,yanfa:6,wuku:3,qindian:10,hongxian:8,hongluan:8,keting:6,wenquan:6,danfang:8,shouyuan:6,yaopu:6,dorms:46};
+const RANKIDX={lianqi:0,zhuji:1,jindan:2,yuanying:3,huashen:4,lianxu:5,hedao:6};
+function rnd(a,b){return a+Math.random()*(b-a);}
+function spawnPeople(){
+  people=[];
+  B.forEach(b=>{const n=POP[b.id]||4;const cx=b.de*1000,cz=b.dn*1000;const sc=1+RANKIDX[b.rank]*0.18;const col=ACCENT[b.cat];
+    for(let i=0;i<n;i++){let px=cx+Math.cos(i*1.3)*rnd(60,260),pz=cz+Math.sin(i*1.7)*rnd(60,260);
+      if(heightAt(px,pz)<TERR.waterY+25){px=cx+(cx>=0?160:-160);pz=cz+200;}
+      const m=makePerson(col,sc);m.position.set(px,heightAt(px,pz)+2,pz);
+      const p={mesh:m,home:b.id,x:px,z:pz,state:'idle',t:rnd(0,5),tx:px,tz:pz,speed:rnd(55,135),phase:Math.random()*6,targetHome:true};
+      sScene.add(m);people.push(p);}
+  });
+}
+function pickTarget(p){
+  const goHome=Math.random()<0.5;
+  const b=goHome?BYID[p.home]:B[(Math.random()*B.length)|0];
+  p.targetHome=goHome;
+  const bx=b.de*1000,bz=b.dn*1000,ang=Math.random()*Math.PI*2,rad=rnd(70,230);
+  p.tx=bx+Math.cos(ang)*rad;p.tz=bz+Math.sin(ang)*rad;p.state='walk';
+}
+function arrive(p){
+  if(p.targetHome&&Math.random()<0.55){p.state='inside';p.t=rnd(3,10);p.mesh.visible=false;return;}
+  p.state='idle';p.t=rnd(2,8);
+}
+function stepPeople(dt){
+  for(const p of people){
+    if(p.state==='inside'){p.t-=dt;if(p.t<=0){p.state='idle';p.t=rnd(2,6);p.mesh.visible=peopleOn;}continue;}
+    if(p.state==='idle'){p.t-=dt;if(p.t<=0)pickTarget(p);p.mesh.position.y=heightAt(p.x,p.z)+2;continue;}
+    const dx=p.tx-p.x,dz=p.tz-p.z,d=Math.hypot(dx,dz);
+    if(d<35){p.x=p.tx;p.z=p.tz;arrive(p);continue;}
+    const sp=p.speed*dt,nx=p.x+dx/d*sp,nz=p.z+dz/d*sp;p.x=nx;p.z=nz;
+    p.mesh.position.set(nx,heightAt(nx,nz)+2+Math.sin((p.phase+=dt*7))*1.4,nz);
+    p.mesh.rotation.y=Math.atan2(dx,dz);
+  }
+}
+function updateSceneStat(){
+  const el=document.getElementById('sceneStat');if(!el)return;
+  let w=0,r=0,ins=0;for(const p of people){if(p.state==='walk')w++;else if(p.state==='inside')ins++;else r++;}
+  let s='宗门众生 '+people.length+' 人 · 行走 '+w+' · 殿前 '+r+' · 入内 '+ins;
+  if(popOn)s+=' ｜ 千人分布 '+(sPopData.reduce((a,d)=>a+d.count,0))+' 人实时';
+  el.innerHTML=s;
+}
+function initScene(){
+  if(sceneInited)return;
+  if(typeof THREE==='undefined'||typeof THREE.OrbitControls==='undefined'){alert('3D 库（Three.js）未加载，请检查网络后重试');return;}
+  ensureSceneMats();
+  const cont=document.getElementById('scene');
+  sScene=new THREE.Scene();sScene.background=new THREE.Color(0x0b1322);sScene.fog=new THREE.Fog(0x0b1322,9000,52000);
+  const w=cont.clientWidth||900,h=cont.clientHeight||620;
+  sCam=new THREE.PerspectiveCamera(50,w/h,10,160000);sCam.position.set(2600,9200,14800);
+  sRenderer=new THREE.WebGLRenderer({antialias:true});sRenderer.setSize(w,h);sRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));cont.appendChild(sRenderer.domElement);
+  sControls=new THREE.OrbitControls(sCam,sRenderer.domElement);sControls.target.set(0,500,-800);sControls.enableDamping=true;sControls.maxPolarAngle=Math.PI*0.49;sControls.minDistance=600;sControls.maxDistance=90000;
+  sHemi=new THREE.HemisphereLight(0xbcd2ff,0x1a140a,0.7);sScene.add(sHemi);
+  sDir=new THREE.DirectionalLight(0xfff1d8,1.2);sDir.position.set(7000,11000,5000);sScene.add(sDir);
+  sAmb=new THREE.AmbientLight(0x4a546e,0.42);sScene.add(sAmb);
+  sScene.add(makeTerrain());
+  sScene.add(makeWater());
+  const spine=new THREE.CatmullRomCurve3([[0,-6500,0],[0,-4000,0],[-300,-1500,0],[400,1200,0],[0,3800,0],[0,7000,0]].map(p=>new THREE.Vector3(p[0],heightAt(p[0],p[1])+8,p[1])));
+  const sg=new THREE.BufferGeometry().setFromPoints(spine.getPoints(90));
+  sScene.add(new THREE.Line(sg,new THREE.LineBasicMaterial({color:0x9fe0c0,transparent:true,opacity:0.5})));
+  sCollectNight=true;
+  B.forEach(b=>{const grp=buildReal(b);const x=b.de*1000,z=b.dn*1000,y=heightAt(x,z);
+    grp.position.set(x,y,z);grp.userData.id=b.id;sScene.add(grp);sBuildings[b.id]=grp;
+    if(grp.userData.smokes)sSmokes.push.apply(sSmokes,grp.userData.smokes);
+    const sr=SENSE[b.rank]>0?Math.min(senseM(b.rank),6000):0;
+    if(sr>0){const ring=new THREE.Mesh(new THREE.RingGeometry(sr-9,sr,90),new THREE.MeshBasicMaterial({color:new THREE.Color(CAT[b.cat]),transparent:true,opacity:0.16,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(x,Math.max(y,TERR.waterY)+6,z);sScene.add(ring);}
+    const lab=makeLabel(b.name,CAT[b.cat]);lab.position.set(x,y+(REALSIZE[b.rank]*200+160),z);sScene.add(lab);sLabels.push(lab);
+  });
+  sCollectNight=false;
+  sStars=makeStars();sScene.add(sStars);sStars.visible=false;
+  buildPop();
+  spawnPeople();
+  sSelRing=new THREE.Mesh(new THREE.TorusGeometry(60,5,8,52),new THREE.MeshBasicMaterial({color:0xffe08a,transparent:true,opacity:0.9}));sSelRing.rotation.x=-Math.PI/2;sSelRing.visible=false;sScene.add(sSelRing);
+  const ray=new THREE.Raycaster(),mouse=new THREE.Vector2();
+  sRenderer.domElement.addEventListener('click',ev=>{const rc=cont.getBoundingClientRect();mouse.x=((ev.clientX-rc.left)/rc.width)*2-1;mouse.y=-((ev.clientY-rc.top)/rc.height)*2+1;ray.setFromCamera(mouse,sCam);const hits=ray.intersectObjects(Object.values(sBuildings),true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.id)o=o.parent;if(o&&o.userData.id)select(o.userData.id);}});
+  if(nightMode)applyNight();
+  if(popOn){sPopPoints.visible=true;sPopLabels.forEach(l=>l.visible=true);startPopTimer();}
+  sceneInited=true;animateScene();
+}
+function animateScene(){
+  if(!modeScene){sAnimOn=false;return;}sAnimOn=true;requestAnimationFrame(animateScene);
+  const now=performance.now();const dt=Math.min(0.05,(now-sLast)/1000||0.016);sLast=now;
+  sControls.update();
+  if(peopleOn)stepPeople(dt);
+  if(sSmokes.length){const t=now*0.001;for(const sm of sSmokes){sm.scale.setScalar(1+Math.sin(t*1.3+sm.position.z*0.01)*0.12);sm.material.opacity=0.16+0.09*Math.sin(t+sm.position.x);sm.position.y+=0.4;if(sm.position.y>heightAt(sm.position.x,sm.position.z)+200)sm.position.y=heightAt(sm.position.x,sm.position.z)+120;}}
+  if(sSelRing.visible)sSelRing.scale.setScalar(sSelRing.userData.sc*(1+Math.sin(now*0.003)*0.07));
+  if(nightMode&&sStars){sStars.rotation.y+=dt*0.002;}
+  if(popOn&&sPopPoints){const t=now*0.002;sPopPoints.material.opacity=0.78+0.18*Math.sin(t);sPopPoints.material.size=32+4*Math.sin(t*1.3);}
+  if((sFrame++%30)===0)updateSceneStat();
+  sRenderer.render(sScene,sCam);
+}
+function onSceneResize(){if(!sceneInited)return;const c=document.getElementById('scene');sRenderer.setSize(c.clientWidth,c.clientHeight);sCam.aspect=c.clientWidth/c.clientHeight;sCam.updateProjectionMatrix();}
+function selectScene(id){const b=BYID[id];if(!b)return;const x=b.de*1000,z=b.dn*1000,y=heightAt(x,z);
+  const sc=Math.max(1.4,REALSIZE[b.rank]*1.2);sSelRing.position.set(x,y+20,z);sSelRing.userData.sc=sc;sSelRing.scale.setScalar(sc);sSelRing.visible=true;
+  if(sControls)sControls.target.set(x,y+REALSIZE[b.rank]*120,z);}
+
+/* ===== 星空（夜景） ===== */
+function makeStars(){
+  const N=1600,pos=new Float32Array(N*3);
+  for(let i=0;i<N;i++){const u=Math.random(),v=Math.random(),th=u*Math.PI*2,ph=Math.acos(2*v-1);
+    const r=60000;const x=r*Math.sin(ph)*Math.cos(th),y=Math.abs(r*Math.cos(ph))*0.9+2000,z=r*Math.sin(ph)*Math.sin(th);
+    pos[i*3]=x;pos[i*3+1]=y;pos[i*3+2]=z;}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  return new THREE.Points(g,new THREE.PointsMaterial({color:0xeaf2ff,size:120,sizeAttenuation:true,transparent:true,opacity:0.85,depthWrite:false}));
+}
+
+/* ===== 千人分布光点（呼应 roster 实时分布） ===== */
+const TOTAL_POP=1000;
+function popWeights(){const w=B.map(b=>(POP[b.id]||4));const s=w.reduce((a,b)=>a+b,0);return w.map(x=>x/s);}
+function buildPop(){
+  sPopData=B.map(b=>({id:b.id,color:new THREE.Color(CAT[b.cat])}));
+  const w=popWeights();sPopBld=new Int16Array(TOTAL_POP);
+  const pos=new Float32Array(TOTAL_POP*3),col=new Float32Array(TOTAL_POP*3);
+  const cnt=sPopData.map(()=>0);
+  for(let i=0;i<TOTAL_POP;i++){let r=Math.random(),k=0;for(;k<w.length;k++){r-=w[k];if(r<=0)break;}k=Math.min(k,w.length-1);sPopBld[i]=k;cnt[k]++;
+    const b=B[k],bx=b.de*1000,bz=b.dn*1000,ang=Math.random()*Math.PI*2,rad=Math.random()*240+30;
+    let px=bx+Math.cos(ang)*rad,pz=bz+Math.sin(ang)*rad;if(heightAt(px,pz)<TERR.waterY+25){px=bx+260;pz=bz+200;}
+    pos[i*3]=px;pos[i*3+1]=heightAt(px,pz)+4;pos[i*3+2]=pz;
+    const c=sPopData[k].color;col[i*3]=c.r;col[i*3+1]=c.g;col[i*3+2]=c.b;}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const tex=glowTex();const mat=new THREE.PointsMaterial({size:34,map:tex,vertexColors:true,transparent:true,opacity:0.92,depthWrite:false,blending:THREE.AdditiveBlending});
+  sPopPoints=new THREE.Points(g,mat);sPopPoints.visible=false;sScene.add(sPopPoints);
+  sPopData.forEach((d,i)=>{d.count=cnt[i];const b=B[i],x=b.de*1000,z=b.dn*1000,y=heightAt(x,z);
+    const lab=makeLabel(d.count+' 人',CAT[b.cat]);lab.position.set(x,y+REALSIZE[b.rank]*200+112,z);lab.visible=false;sScene.add(lab);sPopLabels.push(lab);});
+}
+let sPopBld=null;
+function glowTex(){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(0.3,'rgba(255,255,255,0.7)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64);const t=new THREE.CanvasTexture(c);return t;}
+function rerollPop(){
+  if(!sPopBld)return;const w=popWeights();const cnt=sPopData.map(()=>0);
+  for(let i=0;i<TOTAL_POP;i++){if(Math.random()<0.14){let r=Math.random(),k=0;for(;k<w.length;k++){r-=w[k];if(r<=0)break;}k=Math.min(k,w.length-1);sPopBld[i]=k;}
+    const b=B[sPopBld[i]],bx=b.de*1000,bz=b.dn*1000,ang=Math.random()*Math.PI*2,rad=Math.random()*240+30;
+    let px=bx+Math.cos(ang)*rad,pz=bz+Math.sin(ang)*rad;if(heightAt(px,pz)<TERR.waterY+25){px=bx+260;pz=bz+200;}
+    sPopPoints.geometry.attributes.position.array[i*3]=px;sPopPoints.geometry.attributes.position.array[i*3+1]=heightAt(px,pz)+4;sPopPoints.geometry.attributes.position.array[i*3+2]=pz;cnt[sPopBld[i]]++;}
+  sPopPoints.geometry.attributes.position.needsUpdate=true;
+  sPopData.forEach((d,i)=>{d.count=cnt[i];const lab=sPopLabels[i];if(lab){const c=lab.material.map.image,x=c.getContext('2d');x.clearRect(0,0,256,64);x.fillStyle='rgba(7,10,20,0.72)';x.fillRect(0,0,256,64);x.strokeStyle=CAT[B[i].cat];x.lineWidth=3;x.strokeRect(2,2,252,60);x.fillStyle=CAT[B[i].cat];x.font='bold 30px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(d.id+' · '+d.count+' 人',128,34);lab.material.map.needsUpdate=true;}});
+}
+let popTimer=null;
+function startPopTimer(){stopPopTimer();popTimer=setInterval(()=>{if(popOn&&modeScene)rerollPop();},1800);}
+function stopPopTimer(){if(popTimer){clearInterval(popTimer);popTimer=null;}}
+
+/* ===== 昼夜切换 ===== */
+function applyNight(){
+  if(!sceneInited)return;
+  if(nightMode){
+    sScene.background=new THREE.Color(0x02040a);sScene.fog=new THREE.Fog(0x02040a,6000,46000);
+    sHemi.intensity=0.16;sDir.intensity=0.10;sAmb.intensity=0.10;
+    Object.values(glassMats).forEach(m=>{m.emissiveIntensity=sGlassBase*2.3;});
+    sNightMats.forEach(o=>{o.m.emissiveIntensity=o.scl?Math.min(0.7,o.base*2.4):o.base*2.6;});
+    if(sStars)sStars.visible=true;
+  }else{
+    sScene.background=new THREE.Color(0x0b1322);sScene.fog=new THREE.Fog(0x0b1322,9000,52000);
+    sHemi.intensity=0.7;sDir.intensity=1.2;sAmb.intensity=0.42;
+    Object.values(glassMats).forEach(m=>{m.emissiveIntensity=sGlassBase;});
+    sNightMats.forEach(o=>{o.m.emissiveIntensity=o.base;});
+    if(sStars)sStars.visible=false;
+  }
+}
+
+initMap();buildList();
+</script>
+</body>
+</html>

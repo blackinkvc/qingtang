@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>青棠宗 · 关系网（六类脉络）</title>
+<style>
+  :root{
+    --bg:#080c18; --panel:#111a30; --panel2:#18233f; --line:#26355a;
+    --ink:#dfe8ff; --dim:#8399c2; --gold:#e9c46a; --jade:#5fd6c2;
+    --red:#ff6b6b; --violet:#9d7bff; --blue:#5b9dff; --orange:#ff9f43;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#080c18}
+  body{font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+    background:radial-gradient(1100px 900px at 50% 38%,#16224a 0%,#0a1022 55%,var(--bg) 100%);
+    color:var(--ink);height:100vh;min-height:100vh;overflow:hidden;font-size:13px}
+  /* ===== 顶栏 ===== */
+  .top{position:absolute;left:0;right:0;top:0;height:52px;z-index:30;display:flex;align-items:center;gap:12px;
+    padding:0 14px;background:linear-gradient(180deg,rgba(10,15,30,.96),rgba(10,15,30,.68));
+    border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+  .back{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel);
+    display:flex;align-items:center;justify-content:center;color:var(--dim);text-decoration:none;font-size:16px}
+  .back:hover{color:var(--gold);border-color:var(--gold)}
+  .top h1{font-size:16px;color:var(--gold);letter-spacing:1px;white-space:nowrap;text-shadow:0 0 12px rgba(233,196,106,.35)}
+  .top .sub{color:var(--dim);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px}
+  .top .sp{flex:1}
+  .search{position:relative;flex:0 0 210px}
+  .search input{width:100%;height:30px;border-radius:8px;border:1px solid var(--line);background:#0c1428;
+    color:var(--ink);padding:0 10px 0 28px;font-size:12px;outline:none}
+  .search input:focus{border-color:var(--gold)}
+  .search .ic{position:absolute;left:9px;top:7px;color:var(--dim);font-size:13px;pointer-events:none}
+  .sres{position:absolute;top:34px;left:0;right:0;background:var(--panel);border:1px solid var(--line);
+    border-radius:8px;max-height:240px;overflow:auto;display:none;box-shadow:0 8px 28px rgba(0,0,0,.6)}
+  .sres.on{display:block}
+  .sres .it{padding:6px 9px;cursor:pointer;font-size:12px;border-bottom:1px solid rgba(255,255,255,.05)}
+  .sres .it:hover{background:var(--panel2);color:var(--gold)}
+  .sres .it small{color:var(--dim);margin-left:6px}
+  .chips{display:flex;gap:5px;flex-wrap:nowrap}
+  .chip{font-size:11px;padding:5px 9px;border-radius:14px;border:1px solid var(--line);
+    background:#0d152b;color:var(--dim);cursor:pointer;white-space:nowrap;user-select:none}
+  .chip.on{color:#0a0e1a;font-weight:700;background:var(--c,#e9c46a);border-color:var(--c,#e9c46a)}
+  .tbtn{font-size:11px;padding:5px 9px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel);color:var(--dim);cursor:pointer;white-space:nowrap}
+  .tbtn:hover{color:var(--gold);border-color:var(--gold)}
+  .tbtn.on{color:var(--gold);border-color:var(--gold)}
+  /* ===== 舞台 ===== */
+  #stage{position:absolute;left:0;right:0;top:52px;bottom:0;overflow:hidden;cursor:grab}
+  #stage:active{cursor:grabbing}
+  #world{position:absolute;left:0;top:0;width:1000px;height:1000px;transform-origin:0 0}
+  #edges{position:absolute;left:0;top:0;width:1000px;height:1000px;overflow:visible;pointer-events:none}
+  #deco{position:absolute;left:0;top:0;width:1000px;height:1000px;pointer-events:none}
+  #nodes{position:absolute;left:0;top:0;width:1000px;height:1000px}
+  .node{position:absolute;transform:translate(-50%,-50%);cursor:pointer;transition:opacity .18s}
+  .av{position:relative;border-radius:50%;overflow:hidden;background:linear-gradient(150deg,#2b3b66,#14203c);
+    border:2px solid var(--ring);box-shadow:0 0 0 1px rgba(0,0,0,.7),0 2px 10px rgba(0,0,0,.55)}
+  .av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 16%}
+  .av .ini{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--ring);font-weight:700;font-size:15px;letter-spacing:1px}
+  .node.core .av{border-color:var(--gold);box-shadow:0 0 0 1px rgba(0,0,0,.8),0 0 14px rgba(233,196,106,.45)}
+  .node.dao .av{border-color:#fff4d6;box-shadow:0 0 0 1px rgba(0,0,0,.8),0 0 16px rgba(255,244,214,.5)}
+  .node.tainted .av{border-color:var(--red);box-shadow:0 0 0 1px rgba(0,0,0,.8),0 0 12px rgba(255,107,107,.55)}
+  .node .nm{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:3px;
+    font-size:10px;color:var(--ink);white-space:nowrap;text-shadow:0 1px 3px #000,0 0 6px #000;display:none}
+  .node.lab .nm{display:block}
+  .node.dim{opacity:.13}
+  .node.sel .av{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 22px var(--gold)}
+  .node.pair .av{outline:2px solid var(--jade);outline-offset:2px}
+  .zlab{position:absolute;transform:translate(-50%,-50%);font-size:13px;letter-spacing:2px;
+    color:var(--zc);opacity:.72;text-shadow:0 0 12px rgba(0,0,0,.9);white-space:nowrap;cursor:pointer;pointer-events:auto}
+  .zlab:hover{opacity:1;text-decoration:underline}
+  .zlab.off{opacity:.22}
+  .edge{stroke-width:1.05;opacity:.32;transition:opacity .18s,stroke-width .18s}
+  .edge.hi{opacity:.95;stroke-width:2}
+  .edge.dim{opacity:.025}
+  /* ===== 中央浮层 ===== */
+  #center{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);z-index:12;
+    width:250px;text-align:center;pointer-events:none}
+  .hero{background:linear-gradient(180deg,rgba(9,14,28,.9),rgba(9,14,28,.72));
+    border:1px solid rgba(233,196,106,.35);border-radius:12px;padding:14px 16px;
+    box-shadow:0 10px 40px rgba(0,0,0,.65);pointer-events:auto}
+  .hero .big{font-size:18px;font-weight:700;color:var(--ink);letter-spacing:1px;line-height:1.5;
+    text-shadow:0 0 18px rgba(233,196,106,.3)}
+  .hero .lead{color:var(--dim);font-size:11.5px;line-height:1.72;margin-top:9px;text-align:left}
+  .hero .lead b{color:var(--gold);font-weight:600}
+  .card{background:linear-gradient(180deg,rgba(6,10,22,.96),rgba(12,18,36,.94));
+    border:1px solid rgba(233,196,106,.45);border-radius:12px;padding:12px 14px;
+    box-shadow:0 12px 44px rgba(0,0,0,.8);pointer-events:auto}
+  .card .av2{width:56px;height:56px;margin:0 auto 7px;border-radius:50%;overflow:hidden;position:relative;
+    border:2px solid var(--gold);box-shadow:0 0 16px rgba(233,196,106,.4);
+    background:linear-gradient(150deg,#2b3b66,#14203c)}
+  .card .av2 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 16%}
+  .card .av2 .ini{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:20px;font-weight:700}
+  .card .cname{font-size:16px;font-weight:700;color:var(--gold)}
+  .card .cmeta{font-size:11px;color:var(--dim);margin-top:3px}
+  .card .count{font-size:13px;margin-top:8px;color:var(--ink);line-height:1.8}
+  .card .count b{color:var(--jade);font-size:15px}
+  .card .count i{color:var(--gold);font-style:normal;font-size:15px;font-weight:700}
+  .card .tip{font-size:11px;color:var(--dim);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+  .card .clr{margin-top:8px;font-size:11px;color:var(--dim);cursor:pointer;text-decoration:underline}
+  .pairbox{margin-top:9px;text-align:left;max-height:210px;overflow:auto}
+  .qrow{font-size:11.5px;line-height:1.7;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
+  .qrow .who{color:var(--jade);font-weight:600}
+  .qrow .txt{color:var(--ink)}
+  .qrow .emptyq{color:var(--dim)}
+  .badge{display:inline-block;font-size:10px;padding:0 5px;border-radius:4px;margin-left:4px;vertical-align:1px}
+  .b-fact{background:rgba(95,214,194,.16);color:var(--jade)}
+  .b-doubt{background:rgba(233,196,106,.16);color:var(--gold)}
+  .b-bias{background:rgba(255,159,67,.16);color:var(--orange)}
+  .b-taint{background:rgba(255,107,107,.16);color:var(--red)}
+  /* ===== 右侧详情 ===== */
+  .side{position:absolute;right:0;top:52px;bottom:0;width:318px;z-index:26;
+    background:linear-gradient(180deg,rgba(13,20,40,.97),rgba(9,14,28,.97));
+    border-left:1px solid var(--line);overflow:auto;padding:12px;transition:transform .2s}
+  .side.hide{transform:translateX(318px)}
+  .side h2{color:var(--gold);font-size:14px;margin-bottom:9px;border-bottom:1px solid var(--line);padding-bottom:7px}
+  .side .card2{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px}
+  .side .hd{display:flex;gap:10px;align-items:center}
+  .side .hd .av3{width:52px;height:52px;border-radius:50%;overflow:hidden;position:relative;flex:none;
+    border:2px solid var(--gold);background:linear-gradient(150deg,#2b3b66,#14203c)}
+  .side .hd .av3 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 16%}
+  .side .hd .av3 .ini{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;font-weight:700}
+  .side .nm2{font-size:15px;color:var(--gold);font-weight:700}
+  .side .meta{color:var(--dim);font-size:11.5px;margin:3px 0;line-height:1.7}
+  .side .bio{font-size:11.5px;color:var(--ink);line-height:1.8;margin-top:6px;opacity:.9}
+  .side h3{font-size:12px;color:var(--jade);margin:10px 0 5px}
+  .side .q{font-size:11.5px;line-height:1.7;padding:6px 7px;margin-bottom:5px;border-radius:7px;
+    background:rgba(255,255,255,.035);border-left:2px solid var(--line);cursor:pointer}
+  .side .q:hover{background:rgba(255,255,255,.08)}
+  .side .q .t{color:var(--dim)}
+  .side .q .t b{color:var(--blue);font-weight:600}
+  .side .empty{color:var(--dim);font-size:12px;line-height:2}
+  .side .fognote{font-size:11px;color:var(--dim);line-height:1.85;background:rgba(157,123,255,.07);
+    border:1px dashed rgba(157,123,255,.3);border-radius:8px;padding:8px;margin-top:10px}
+  /* ===== 底栏 ===== */
+  .foot{position:absolute;left:0;bottom:0;z-index:22;max-width:100%;
+    background:linear-gradient(0deg,rgba(8,12,24,.96),rgba(8,12,24,.72));
+    border-top:1px solid var(--line);border-right:1px solid var(--line);
+    border-radius:0 10px 0 0;padding:9px 16px}
+  .stats{display:flex;gap:26px;flex-wrap:wrap}
+  .stat .v{font-size:20px;font-weight:700;color:var(--gold);line-height:1.1}
+  .stat .k{font-size:10.5px;color:var(--dim);margin-top:2px}
+  .foot .src{font-size:10.5px;color:var(--dim);margin-top:7px;border-top:1px dashed var(--line);padding-top:6px}
+  .foot .desc{font-size:11px;color:var(--dim);line-height:1.8;margin-top:6px;max-width:640px}
+  .foot.fold .desc,.foot.fold .src{display:none}
+  .foldbtn{float:right;font-size:10px;color:var(--dim);cursor:pointer;text-decoration:underline}
+  .hint{position:absolute;left:12px;top:60px;z-index:10;font-size:11px;color:var(--dim);
+    background:rgba(6,10,22,.6);border:1px solid var(--line);border-radius:8px;padding:5px 9px;pointer-events:none}
+  #tip{position:absolute;z-index:40;pointer-events:none;display:none;background:rgba(6,10,22,.95);
+    border:1px solid var(--gold);border-radius:7px;padding:4px 8px;font-size:12px;color:var(--ink);white-space:nowrap}
+  @media(max-width:760px){
+    .top .sub,.chips{display:none}
+    .side{width:100%;transform:translateY(100%);top:auto;height:46%}
+    .side.hide{transform:translateY(100%)}
+    .side.show{transform:translateY(0)}
+    .foot{max-width:100%}
+  }
+</style>
+</head>
+<body>
+
+<div class='top'>
+  <a class='back' href='index.html' title='返回数据看板'>‹</a>
+  <h1>青棠宗关系网</h1>
+  <span class='sub'>六类关系 · 一条线，就是一段档册记载的关系</span>
+  <span class='sp'></span>
+  <div class='chips' id='chips'></div>
+  <button class='tbtn' id='nameBtn'>名字</button>
+  <button class='tbtn' id='sideBtn'>详情</button>
+  <div class='search'>
+    <span class='ic'>⌕</span>
+    <input id='q' type='text' placeholder='搜索角色或别称' autocomplete='off'>
+    <div class='sres' id='sres'></div>
+  </div>
+</div>
+
+<div id='stage'>
+  <div id='world'>
+    <svg id='deco' viewBox='0 0 1000 1000'></svg>
+    <svg id='edges' viewBox='0 0 1000 1000'></svg>
+    <div id='nodes'></div>
+  </div>
+  <div id='center'></div>
+  <div class='hint'>滚轮缩放 · 拖拽平移 · 点一人，再点另一人</div>
+  <div class='foot' id='foot'>
+    <span class='foldbtn' id='foldBtn'>收起说明</span>
+    <div class='stats' id='stats'></div>
+    <div class='desc' id='desc'></div>
+    <div class='src' id='src'></div>
+  </div>
+</div>
+
+<div class='side hide' id='side'><div id='detail'></div></div>
+<div id='tip'></div>
+
+<script src='avatars.js'></script>
+<script>
+/* =========================================================
+   青棠宗 · 关系网（六类关系 · 新版 UI）
+   沿用旧版力导向关系网的六类关系与配色：师徒/道侣/同门/上下级/仇敌/跨门
+   节点与界面沿用相互评录版：圆形头像环 + 真实立绘 + 中心卡 + 侧栏 + 搜索
+   ========================================================= */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const RND=mulberry32(20261106);
+function pick(a){return a[Math.floor(RND()*a.length)];}
+function chance(p){return RND()<p;}
+function ri(a,b){return a+Math.floor(RND()*(b-a+1));}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+/* ===== 世界常量（与 roster / WORLD-LORE 对齐）===== */
+const REALM=['练气','筑基','金丹','元婴','化神','炼虚','合道'];
+const DEPTS={
+  neimen:  {name:'内门修炼',color:'#ff9f43'},
+  danding: {name:'丹鼎房',  color:'#e9c46a'},
+  lingchong:{name:'灵兽苑', color:'#5b9dff'},
+  lingzhi: {name:'灵植苑',  color:'#7ee787'},
+  hongxian:{name:'红线仙司',color:'#ffd76b'},
+  hongluan:{name:'红鸾院',  color:'#ff6b6b'},
+  waimao:  {name:'外事贸易司',color:'#9d7bff'},
+  tangyi:  {name:'棠医堂',  color:'#5fd6c2'},
+};
+const DEPT_KEYS=Object.keys(DEPTS);
+const GODS={'sla':'色孽','tze':'奸奇','nur':'纳垢','kho':'恐虐','ny':'奈亚拉托提普','yog':'犹格索托斯','has':'哈斯塔','cth':'克苏鲁','shu':'莎布·尼古拉丝','aza':'阿撒托斯'};
+const CHAOS=['sla','tze','nur','kho'];
+const PARTNER_SECTS=['太虚剑宗','百草谷','玄机阁','凌霄盟','九幽魔宗'];
+const XING=['苏','沈','柳','谢','顾','陆','云','江','白','慕容','上官','温','裴','楚','洛','晏','卫','蓝','澹台','宋','阮','秦','叶','萧','纪','容'];
+const MING_M=['清','砚','霜','尘','澜','珩','昭','凌','川','翊','修','璟','渊','墨','谦','澈','岚','屿','霄','桓','逍','霁'];
+const MING_F=['瑶','玥','锦','檀','镜','月','芷','宛','笙','婉','苒','韵','萱','璃','霁','绾','昭','珞','浅','霜','娥','薇'];
+
+/* ===== 真实立绘（人物类，已排除建筑/风景）===== */
+const P='portraits/';
+const IMG_F=[
+ P+'3D_CG_realistic_FULL_BODY_char_2026-11-03T11-25-33.webp',
+ P+'3D_CG_realistic_render_of_a_Ch_2026-11-03T11-05-18.webp',
+ P+'3D_CG_realistic_render_of_a_Ch_2026-11-03T11-05-56.webp',
+ P+'3D_CG_realistic_render_of_an_e_2026-11-03T11-05-45.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-25-52.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-27-03.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-27-21.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-27-38.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-29-07.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-29-17.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-30-29.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-30-38.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-30-57.webp',
+ P+'3D_CG_realistic_render_of_the__2026-11-03T11-32-22.webp',
+ P+'Photorealistic_portrait_of_a_C_2026-11-03T10-53-20.webp',
+ P+'Photorealistic_portrait_of_a_C_2026-11-03T10-53-42.webp',
+ P+'Photorealistic_portrait_of_a_y_2026-11-03T10-51-42.webp',
+ P+'Photorealistic_portrait_of_an__2026-11-03T10-52-10.webp',
+ P+'SuWan_gauze_white_2026-11-03T11-42-05.webp',
+ P+'SuWan_gauze_pink_gold_2026-11-03T11-42-25.webp',
+ P+'SuWan_gauze_blue_white_2026-11-03T11-43-36.webp',
+ P+'SuWan_gauze_drape_2026-11-03T11-43-48.webp',
+ P+'SuWan_gauze_red_2026-11-03T11-45-37.webp',
+ P+'SuWan_meditation_gauze_2026-11-03T12-10-03.webp',
+ P+'anime/Chinese_xianxia_cultivation_gi_2026-11-03T10-32-16.webp',
+ P+'anime/Chinese_xianxia_female_alchemi_2026-11-03T10-33-49.webp',
+ P+'anime/Chinese_xianxia_female_cultiva_2026-11-03T10-35-26.webp',
+ P+'anime/Ethereal_Chinese_xianxia_fairy_2026-11-03T10-32-37.webp',
+];
+const IMG_M=[
+ P+'3D_CG_realistic_render_of_a_Ch_2026-11-03T11-03-42.webp',
+ P+'3D_CG_realistic_render_of_a_ha_2026-11-03T11-04-00.webp',
+ P+'Photorealistic_portrait_of_a_C_2026-11-03T10-53-32.webp',
+ P+'Photorealistic_portrait_of_a_h_2026-11-03T10-51-53.webp',
+ P+'anime/Chinese_xianxia_male_immortal__2026-11-03T10-34-08.webp',
+ P+'anime/Handsome_Chinese_xianxia_male__2026-11-03T10-32-27.webp',
+];
+const SUWAN=P+'SuWan_gauze_white_2026-11-03T11-42-05.webp';
+
+/* ===== 节点 ===== */
+const NODES=[], byId={};
+function add(n){NODES.push(n);byId[n.id]=n;return n;}
+function deptName(n){return n.dept&&DEPTS[n.dept]?DEPTS[n.dept].name:(n.group==='dao'?'道门·世外':n.group==='ally'?'他宗':n.group==='scav'?'裂隙巡缝':'青棠宗');}
+function ringColor(n){return n.dept&&DEPTS[n.dept]?DEPTS[n.dept].color:(n.group==='dao'?'#fff4d6':n.group==='ally'?'#9d7bff':'#5fd6c2');}
+
+/* 具名核心（与 roster.registerNotables 对齐） */
+const NOTABLES=[
+ {id:91001,name:'青霄太衍真人',realm:5,dept:'neimen',title:'掌教',sex:'男',img:P+'Photorealistic_portrait_of_a_C_2026-11-03T10-53-32.webp',bio:'当代宗主，修为仅初入炼虚；统御六司与世俗伪装，宗门已无合道坐镇，外神之事力有不逮。'},
+ {id:91002,name:'丹霞元君',realm:4,dept:'danding',title:'丹鼎房掌司',sex:'女',img:P+'Photorealistic_portrait_of_a_C_2026-11-03T10-53-20.webp',bio:'掌三十六丹炉火候，精炼灵气为丹。'},
+ {id:91003,name:'御灵真人',realm:4,dept:'lingchong',title:'灵兽苑掌司',sex:'男',img:P+'3D_CG_realistic_render_of_a_ha_2026-11-03T11-04-00.webp',bio:'通灵兽之语，驯化青鸾墨蛇。'},
+ {id:91004,name:'植灵真人',realm:4,dept:'lingzhi',title:'灵植苑掌司',sex:'女',img:P+'anime/Chinese_xianxia_female_cultiva_2026-11-03T10-35-26.webp',bio:'主灵植品阶分区与样本培育。'},
+ {id:91005,name:'红线仙翁·玄机子',realm:4,dept:'hongxian',title:'红线仙司首席',sex:'男',img:P+'anime/Chinese_xianxia_male_immortal__2026-11-03T10-34-08.webp',bio:'承三生簿秘术，苏绾之师；掌跨门斡旋。'},
+ {id:91006,name:'红鸾仙子·绾月',realm:4,dept:'hongluan',title:'红鸾院掌司',sex:'女',img:P+'3D_CG_realistic_render_of_the__2026-11-03T11-25-52.webp',bio:'主音律书画歌舞，红鸾别院水榭回廊四季有花。'},
+ {id:91007,name:'通商使者·陆怀玉',realm:4,dept:'waimao',title:'外事贸易司掌司',sex:'男',img:P+'anime/Handsome_Chinese_xianxia_male__2026-11-03T10-32-27.webp',bio:'掌仙门贸易物流与政权伪装通道。'},
+ {id:91008,name:'剑首·凌霄子',realm:4,dept:'neimen',title:'内门修炼首座',sex:'男',img:P+'Photorealistic_portrait_of_a_h_2026-11-03T10-51-53.webp',bio:'主剑术斗法与守山阵法，性情刚烈。'},
+ {id:91013,name:'琴仙·昭月',realm:3,dept:'neimen',title:'琴剑双仙',sex:'女',img:P+'3D_CG_realistic_render_of_the__2026-11-03T11-27-03.webp',bio:'与凌川结为道侣，剑胆琴心。'},
+ {id:91014,name:'剑仙·凌川',realm:3,dept:'hongluan',title:'琴剑双仙',sex:'男',img:P+'3D_CG_realistic_render_of_a_Ch_2026-11-03T11-03-42.webp',bio:'与昭月结为道侣，常于红鸾别院抚琴舞剑。'},
+ {id:90001,name:'苏绾',realm:3,dept:'hongxian',title:'红线仙女',sex:'女',img:SUWAN,bio:'当代红线仙司核心，承袭「灵枢穿行术」，掌三生簿与跨门斡旋。'}
+];
+NOTABLES.forEach(n=>add({...n,group:'core',god:null,core:true}));
+
+/* 抽样弟子：每部门 12~13 人 */
+const DIST_W=[0.34,0.26,0.18,0.12,0.07,0.03,0];
+let did=1001;
+DEPT_KEYS.forEach(d=>{
+  const cnt=12+Math.floor(RND()*2);
+  for(let i=0;i<cnt;i++){
+    let r=0,acc=0;const x=RND();for(let k=0;k<7;k++){acc+=DIST_W[k];if(x<=acc){r=k;break;}}
+    const sex=chance(.5)?'男':'女';
+    const name=pick(XING)+(sex==='男'?pick(MING_M):pick(MING_F));
+    // 魔染源：合道中期·亚空间四神主动播染；色孽／奸奇因情缘立宗占绝大多数
+    const t=RND();
+    const chaosGod=t<0.42?'sla':t<0.80?'tze':t<0.92?'nur':'kho';
+    const god=chance(.42)?null:(chance(.9)?chaosGod:pick(Object.keys(GODS)));
+    add({id:did++,name,realm:r,dept:d,title:REALM[r]+'弟子',sex,god,group:'disc',
+      img:sex==='男'?IMG_M[did%IMG_M.length]:IMG_F[did%IMG_F.length]});
+  }
+});
+
+/* 道门合道真君（非本宗，仅传闻可及） */
+const DAOMEN=[
+ {id:'dz1',name:'镇厄涵虚真君',sect:'道门·玄机阁',bio:'曾于外神大规模渗透时主持镇守之阵，力保灵枢锚点不失。',img:P+'Photorealistic_portrait_of_a_C_2026-11-03T10-53-32.webp'},
+ {id:'dz2',name:'抱朴守拙真君',sect:'道门·隐世',bio:'超然物外，留《火候真解》《三生簿》注疏。',img:P+'Photorealistic_portrait_of_an__2026-11-03T10-52-10.webp'},
+ {id:'dz3',name:'太素守一真君',sect:'道门·太虚剑宗',bio:'立誓镇守，与镇厄涵虚真君共担外神防线。',img:P+'anime/Ethereal_Chinese_xianxia_fairy_2026-11-03T10-32-37.webp'},
+];
+DAOMEN.forEach(n=>add({...n,realm:6,dept:null,title:'合道真君（道门）',sex:'男',god:null,group:'dao'}));
+
+/* 他宗代表 */
+const ALLY_NAMES=['谢无咎','谷清微','墨仲舒','凌素问','幽篁客'];
+PARTNER_SECTS.forEach((s,i)=>add({id:'al'+i,name:ALLY_NAMES[i],dept:null,realm:ri(2,4),
+  title:s+' · 客卿',sex:i%2?'女':'男',god:null,group:'ally',
+  bio:'友盟宗派「'+s+'」派驻青棠宗的常驻代表，掌跨门往来。',
+  img:i%2?IMG_F[(i*3)%IMG_F.length]:IMG_M[i%IMG_M.length]}));
+
+/* 当代拾茧人（网道崩溃之后，呼应 cocoon.html） */
+const SCAV=['阿茧','石九','温窈','陆衔','阮小七'];
+SCAV.forEach((nm,i)=>add({id:'sc'+i,name:nm,dept:null,realm:ri(0,2),title:'拾茧人',sex:i%2?'女':'男',
+  god:chance(.5)?(chance(.7)?'sla':'tze'):null,group:'scav',
+  bio:'网道崩溃后以拾茧为生的散修，往来于各裂隙之间，言语常带异样。',
+  img:i%2?IMG_F[(i*5+2)%IMG_F.length]:IMG_M[i%IMG_M.length]}));
+
+/* ===== 环形扇区布局 ===== */
+const CX=500, CY=500;
+const core=NODES.filter(n=>n.group==='core');
+const dao=NODES.filter(n=>n.group==='dao'||n.group==='ally'||n.group==='scav');
+const disc=NODES.filter(n=>n.group==='disc');
+// 中心留白（半径 <165 不放节点），供中央浮层卡片使用。
+// 内环 A：具名核心人物（半径 190）
+core.forEach((n,i)=>{const a=-Math.PI/2+i/core.length*Math.PI*2;
+  n.x=CX+Math.cos(a)*215;n.y=CY+Math.sin(a)*215;n.r=22;});
+// 内环 B：道门／他宗／拾茧人「世外之环」（半径 272，与核心错开）
+dao.forEach((n,i)=>{const a=-Math.PI/2+i/dao.length*Math.PI*2+0.14;
+  n.x=CX+Math.cos(a)*272;n.y=CY+Math.sin(a)*272;n.r=15;});
+// 外环：按部门分 8 扇区，每扇区 3 圈
+DEPT_KEYS.forEach((d,di)=>{
+  const arr=disc.filter(n=>n.dept===d);
+  const a0=-Math.PI/2+di/DEPT_KEYS.length*Math.PI*2+0.06;
+  const span=(Math.PI*2/DEPT_KEYS.length)-0.12;
+  arr.forEach((n,i)=>{
+    const lane=i%3;                       // 三圈
+    const idx=Math.floor(i/3);
+    const laneCnt=Math.ceil(arr.length/3);
+    const a=a0+span*(idx+0.5)/laneCnt+(lane-1)*0.022;
+    const rad=[318,372,426][lane]+(RND()-.5)*9;
+    n.x=CX+Math.cos(a)*rad;n.y=CY+Math.sin(a)*rad;n.r=17;
+  });
+});
+// 部门标签位置（内环与外环之间）
+const ZLABS=DEPT_KEYS.map((d,di)=>{
+  const a=-Math.PI/2+(di+0.5)/DEPT_KEYS.length*Math.PI*2;
+  return {key:d,a,x:CX+Math.cos(a)*285,y:CY+Math.sin(a)*285};
+});
+
+/* ===== 关系类型（沿用旧版关系网六类与配色）===== */
+const REL={
+  mentor :{label:'师徒',    short:'师徒',  color:'#e9c46a'},
+  couple :{label:'道侣',    short:'道侣',  color:'#ff6b6b'},
+  peer   :{label:'同门',    short:'同门',  color:'#5fd6c2'},
+  lead   :{label:'上下级',  short:'上下级',color:'#5b9dff'},
+  rival  :{label:'仇敌',    short:'仇敌',  color:'#d05757'}, // 旧版 #8a2b2b，暗底提亮以便辨认
+  foreign:{label:'跨门交往',short:'跨门',  color:'#9d7bff'}
+};
+
+/* ===== 生成关系（旧版规则，节点换为本版 125 人环）===== */
+const RELS=[], relMap={}, pairMap={}, seenRel=new Set();
+NODES.forEach(n=>{relMap[String(n.id)]=[];});
+function pairKey(a,b){const x=String(a),y=String(b);return x<y?x+'|'+y:y+'|'+x;}
+function addRel(s,t,type){
+  const a=byId[String(s)],b=byId[String(t)];
+  if(!a||!b||String(s)===String(t))return false;
+  const k=pairKey(s,t)+'#'+type;
+  if(seenRel.has(k))return false;              // 同类型同一对只记一次
+  seenRel.add(k);
+  const e={s:String(s),t:String(t),type};
+  RELS.push(e);
+  relMap[String(s)].push(e);relMap[String(t)].push(e);
+  const pk=pairKey(s,t);(pairMap[pk]=pairMap[pk]||[]).push(e);
+  return true;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(RND()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+const DISC=NODES.filter(n=>n.group==='disc');
+const ALLY=NODES.filter(n=>n.group==='ally');
+const OUTS=NODES.filter(n=>n.group==='dao'||n.group==='scav');
+// 六司掌司（与旧版 heads 一致；棠医堂旧版亦无掌司节点）
+const HEADS={danding:91002,lingchong:91003,lingzhi:91004,hongxian:91005,
+  hongluan:91006,waimao:91007,neimen:91008};
+
+/* 上下级：掌司 → 司内弟子，每司限 3 人 */
+DEPT_KEYS.forEach(d=>{
+  const h=HEADS[d];if(h==null)return;
+  const pool=DISC.filter(n=>n.dept===d).map(n=>String(n.id));
+  for(let k=0;k<Math.min(3,pool.length);k++){
+    const idx=Math.floor(RND()*pool.length);addRel(h,pool.splice(idx,1)[0],'lead');
+  }
+});
+/* 掌教统辖六司掌司：核心环补连，仍属旧版「上下级」一类 */
+[91002,91003,91004,91005,91006,91007,91008].forEach(id=>addRel(91001,id,'lead'));
+/* 师徒：弟子拜同部门高境者为师 */
+DISC.forEach(n=>{
+  const mentors=NODES.filter(m=>m.dept===n.dept&&m.realm>n.realm&&
+    m.group!=='ally'&&m.group!=='dao'&&m.group!=='scav');
+  if(mentors.length&&chance(.8))addRel(pick(mentors).id,n.id,'mentor');
+});
+addRel(91005,90001,'mentor');                       // 红线仙翁 → 苏绾
+/* 同门：同部门随机两两相连，每节点 1~2 条 */
+DEPT_KEYS.forEach(d=>{
+  const arr=DISC.filter(n=>n.dept===d).map(n=>String(n.id));
+  arr.forEach((id,i)=>{
+    const links=1+Math.floor(RND()*2);
+    for(let k=0;k<links;k++){const j=Math.floor(RND()*arr.length);if(arr[j]!==id)addRel(id,arr[j],'peer');}
+  });
+});
+/* 道侣：抽样配对 + 琴剑双仙 */
+const dating=DISC.filter(n=>n.realm>=1&&n.realm<=4).slice();shuffle(dating);
+for(let i=0;i+1<dating.length;i+=2){if(chance(.4))addRel(dating[i].id,dating[i+1].id,'couple');}
+addRel(91013,91014,'couple');
+/* 仇敌：宗内竞争 / 跨门较劲，随机 8 对 */
+for(let i=0;i<8;i++){
+  const a=pick(DISC),b=pick(DISC.filter(n=>String(n.id)!==String(a.id)));
+  if(a&&b)addRel(a.id,b.id,'rival');
+}
+/* 跨门交往：他宗客卿（旧版为友盟宗派节点） */
+ALLY.forEach(a=>{
+  const cnt=1+Math.floor(RND()*2);
+  for(let k=0;k<cnt;k++){const n=pick(DISC);if(n)addRel(n.id,a.id,'foreign');}
+});
+/* 世外之环补连：道门真君 / 拾茧人与本宗的往来，避免外环孤立 */
+OUTS.forEach((a,i)=>{
+  const b=(i%2)?pick(NODES.filter(n=>n.group==='core')):pick(DISC);
+  if(b)addRel(a.id,b.id,'foreign');
+});
+
+/* 关系说明（档册口吻，非评语；呼应认知迷雾：未必齐全、未必作准） */
+function relText(e){
+  const a=byId[e.s],b=byId[e.t];
+  const dep=a.dept&&DEPTS[a.dept]?DEPTS[a.dept].name:'本宗';
+  switch(e.type){
+    case 'mentor': return a.name+' 为师，'+b.name+' 执弟子礼（'+dep+'）';
+    case 'couple': return '结为道侣，共参情缘；三生簿有录';
+    case 'peer':   return '同出 '+dep+'，同门之谊';
+    case 'lead':   return a.name+' 统辖 '+b.name+'（'+(b.dept&&DEPTS[b.dept]?DEPTS[b.dept].name:dep)+'）';
+    case 'rival':  return '宗内档册记为仇敌，互不相让';
+    default:       return a.name+' 与 '+b.name+' 有跨门往还之录'+(b.title?'（'+b.title+'）':'');
+  }
+}
+
+/* ===== 统计 ===== */
+const STATS={people:NODES.length,rels:RELS.length,pairs:Object.keys(pairMap).length,
+  tainted:NODES.filter(n=>n.god&&CHAOS.indexOf(n.god)>=0).length,core:core.length,
+  byType:Object.keys(REL).map(k=>({k,n:RELS.filter(e=>e.type===k).length}))};
+
+/* ===== 渲染：装饰环 / 连线 / 节点 / 分区标签 ===== */
+const NS='http://www.w3.org/2000/svg';
+const deco=document.getElementById('deco'), edgesSvg=document.getElementById('edges'), nodesBox=document.getElementById('nodes');
+function svgEl(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+// 装饰：同心圆 + 星点 + 刻度
+let decoHtml='';
+[128,205,268,318,372,426,462].forEach((r,i)=>{
+  decoHtml+=`<circle cx='${CX}' cy='${CY}' r='${r}' fill='none' stroke='#2c3d68' stroke-width='${i%2?0.6:0.9}' opacity='${i===6?0.5:0.28}' ${i===6?'stroke-dasharray="2 7"':''}/>`;
+});
+for(let i=0;i<70;i++){const a=RND()*Math.PI*2,r=110+RND()*355;
+  decoHtml+=`<circle cx='${(CX+Math.cos(a)*r).toFixed(1)}' cy='${(CY+Math.sin(a)*r).toFixed(1)}' r='${(0.5+RND()*1.1).toFixed(1)}' fill='#9fb4e0' opacity='${(0.15+RND()*0.5).toFixed(2)}'/>`;}
+for(let i=0;i<48;i++){const a=i/48*Math.PI*2;
+  decoHtml+=`<line x1='${(CX+Math.cos(a)*462).toFixed(1)}' y1='${(CY+Math.sin(a)*462).toFixed(1)}' x2='${(CX+Math.cos(a)*468).toFixed(1)}' y2='${(CY+Math.sin(a)*468).toFixed(1)}' stroke='#3a4d7e' stroke-width='0.8' opacity='.4'/>`;}
+deco.innerHTML=decoHtml;
+// 连线
+const edgeEls=[];
+RELS.forEach(e=>{
+  const a=byId[e.s],b=byId[e.t];if(!a||!b)return;
+  const ln=svgEl('line',{class:'edge',x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:REL[e.type].color});
+  ln.dataset.s=e.s;ln.dataset.t=e.t;ln.dataset.type=e.type;
+  edgesSvg.appendChild(ln);edgeEls.push(ln);
+});
+// 节点
+/* 头像：优先专属 AI 头像，缺图时自动回退到 portraits/ 旧立绘 */
+function avImg(id){
+  const src=window.avatarOf?window.avatarOf(id):'',fb=window.avatarFallback?window.avatarFallback(id):'';
+  return `<img src='${src}' data-fb='${fb}' alt='' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'>`;
+}
+function avHtml(n,cls){
+  const ini=(n.name||'?').slice(0,1);
+  return `<div class='av' style='width:${n.r*2}px;height:${n.r*2}px;--ring:${ringColor(n)}'>`+
+    `<span class='ini'>${ini}</span>`+
+    avImg(n.id)+
+    `</div><div class='nm'>${n.name}</div>`;
+}
+nodesBox.innerHTML=NODES.map(n=>{
+  const cls=['node',n.group==='core'?'core':'',n.group==='dao'?'dao':'',
+    (n.god&&CHAOS.indexOf(n.god)>=0)?'tainted':''].filter(Boolean).join(' ');
+  return `<div class='${cls}' data-id='${n.id}' style='left:${n.x.toFixed(1)}px;top:${n.y.toFixed(1)}px'>${avHtml(n)}</div>`;
+}).join('')+
+ ZLABS.map(z=>`<div class='zlab' data-z='${z.key}' style='left:${z.x.toFixed(1)}px;top:${z.y.toFixed(1)}px;--zc:${DEPTS[z.key].color}'>${DEPTS[z.key].name}</div>`).join('');
+const nodeEls={};
+document.querySelectorAll('#nodes .node').forEach(el=>{nodeEls[el.dataset.id]=el;});
+
+/* ===== 视图变换 ===== */
+const world=document.getElementById('world'), stage=document.getElementById('stage');
+let view={x:0,y:0,k:1};
+function fit(){const w=stage.clientWidth||1000,h=stage.clientHeight||700;
+  const reserve=118;                                  // 给底栏预留高度，避免遮住最外圈头像
+  const k=Math.min((w-36)/1000,(h-reserve)/1000,1);
+  view.k=k;view.x=(w-1000*k)/2;view.y=(h-reserve-1000*k)/2;applyView();}
+function applyView(){world.style.transform=`translate(${view.x}px,${view.y}px) scale(${view.k})`;}
+fit();
+let panning=false,px=0,py=0;
+stage.addEventListener('mousedown',e=>{if(e.target===stage||e.target===world||e.target===deco||e.target===edgesSvg){panning=true;px=e.clientX;py=e.clientY;}});
+window.addEventListener('mousemove',e=>{if(panning){view.x+=e.clientX-px;view.y+=e.clientY-py;px=e.clientX;py=e.clientY;applyView();}});
+window.addEventListener('mouseup',()=>panning=false);
+stage.addEventListener('wheel',e=>{e.preventDefault();const r=stage.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top,f=e.deltaY<0?1.12:0.89,nk=clamp(view.k*f,.28,3.2);
+  view.x=mx-(mx-view.x)*(nk/view.k);view.y=my-(my-view.y)*(nk/view.k);view.k=nk;applyView();},{passive:false});
+
+/* ===== 状态与筛选 ===== */
+let sel=null, pair=null, relOn={mentor:true,couple:true,peer:true,lead:true,rival:true,foreign:true}, zoneOff={}, showName=false;
+function relVisible(t){return relOn[t];}
+function refresh(){
+  // 统一用字符串 id 比较（节点 id 为数字，dataset/选中态为字符串）
+  const ids=pair?pair.slice():(sel?[sel]:[]);
+  const idset=new Set(ids);
+  // 连线
+  edgeEls.forEach(ln=>{
+    const on=relVisible(ln.dataset.type), s=ln.dataset.s, t=ln.dataset.t;
+    let hit=false;
+    if(pair) hit=(s===pair[0]&&t===pair[1])||(s===pair[1]&&t===pair[0]);
+    else if(sel) hit=(s===sel||t===sel);
+    ln.classList.toggle('hi',!!(on&&hit));
+    ln.classList.toggle('dim',!on||(ids.length>0&&!hit));
+  });
+  // 节点：焦点 + 其邻居（按可见关系）
+  const nb=new Set(ids);
+  if(ids.length) RELS.forEach(e=>{
+    if(!relVisible(e.type))return;
+    const s=String(e.s), t=String(e.t);
+    if(idset.has(s))nb.add(t);
+    if(idset.has(t))nb.add(s);
+  });
+  NODES.forEach(n=>{
+    const el=nodeEls[n.id];if(!el)return;
+    const id=String(n.id);
+    const zok=!n.dept||!zoneOff[n.dept];
+    el.classList.toggle('dim',!!(ids.length&&!nb.has(id))||!zok||(searchHits&&!searchHits.has(id)));
+    el.classList.toggle('sel',id===sel);
+    el.classList.toggle('pair',!!pair&&(id===pair[0]||id===pair[1]));
+    el.classList.toggle('lab',showName);
+  });
+  document.querySelectorAll('.zlab').forEach(z=>z.classList.toggle('off',!!zoneOff[z.dataset.z]));
+}
+
+/* ===== 中央卡片 ===== */
+const center=document.getElementById('center');
+function relBadge(k){
+  const R=REL[k];
+  return `<span class='badge' style='background:${R.color}22;color:${R.color};border:1px solid ${R.color}55'>${R.label}</span>`;
+}
+function personCard(id){
+  const n=byId[String(id)];
+  const rs=(relMap[String(id)]||[]).filter(e=>relVisible(e.type));
+  const others=new Set(rs.map(e=>String(e.s)===String(id)?String(e.t):String(e.s)));
+  const cnt={};rs.forEach(e=>cnt[e.type]=(cnt[e.type]||0)+1);
+  const tags=Object.keys(REL).filter(k=>cnt[k]).map(k=>
+    `<span class='badge' style='background:${REL[k].color}22;color:${REL[k].color};border:1px solid ${REL[k].color}55;margin:2px 2px 0 0'>${REL[k].label} ${cnt[k]}</span>`).join('');
+  const ini=(n.name||'?').slice(0,1);
+  return `<div class='card'>
+    <div class='av2'><span class='ini'>${ini}</span>${avImg(n.id)}</div>
+    <div class='cname'>${n.name}</div>
+    <div class='cmeta'>${n.group==='dao'?'道门 · ':''}${n.title||''}　·　${deptName(n)}　·　${REALM[Math.min(n.realm,6)]}</div>
+    <div class='count'>档册中与 <b>${others.size}</b> 人有旧，共 <i>${rs.length}</i> 段关系</div>
+    <div style='margin-top:6px;line-height:1.9'>${tags||'<span class="cmeta">未筛选到关系</span>'}</div>
+    <div class='tip'>${pair?'':'再点一个人，看二人之间有何关系'}</div>
+    <div class='clr' onclick='clearSel()'>× 清除选择</div>
+  </div>`;
+}
+function pairCard(a,b){
+  const A=byId[String(a)],B=byId[String(b)];
+  const rs=(pairMap[pairKey(String(a),String(b))]||[]).filter(e=>relVisible(e.type));
+  const iniA=(A.name||'?').slice(0,1),iniB=(B.name||'?').slice(0,1);
+  let body='';
+  if(rs.length)body=rs.map(e=>
+    `<div class='qrow'><span class='who'>${REL[e.type].label}：</span><span class='txt'>${relText(e)}</span>${relBadge(e.type)}</div>`).join('');
+  else body=`<div class='qrow'><span class='emptyq'>档册中，${A.name} 与 ${B.name} 并无记载的关系</span></div>`;
+  const state=rs.length?(rs.length>1?`共 ${rs.length} 段关系`:'有一段关系'):'无记载关系';
+  return `<div class='card'>
+    <div style='display:flex;justify-content:center;gap:8px;align-items:center'>
+      <div class='av2' style='width:42px;height:42px;margin:0'><span class='ini'>${iniA}</span>${avImg(A.id)}</div>
+      <span style='color:var(--gold);font-size:16px'>⇄</span>
+      <div class='av2' style='width:42px;height:42px;margin:0'><span class='ini'>${iniB}</span>${avImg(B.id)}</div>
+    </div>
+    <div class='cname'>${A.name} × ${B.name}</div>
+    <div class='cmeta'>${state}</div>
+    <div class='pairbox'>${body}</div>
+    <div class='clr' onclick='clearSel()'>× 清除选择</div>
+  </div>`;
+}
+function heroCard(){
+  return `<div class='hero'>
+    <div class='big'>把他们之间的关系，<br>全连到一起</div>
+    <div class='lead'>宗门档册记着六类往来：<b>师徒 · 道侣 · 同门 · 上下级 · 仇敌 · 跨门</b>。一条线，就是一段被记下的关系。<br><b>点一个人，再点一个人，看二人之间有何牵连。</b></div>
+  </div>`;
+}
+function renderCenter(){
+  if(pair)center.innerHTML=pairCard(pair[0],pair[1]);
+  else if(sel)center.innerHTML=personCard(sel);
+  else center.innerHTML=heroCard();
+}
+
+/* ===== 右侧详情 ===== */
+const detail=document.getElementById('detail');
+function renderDetail(){
+  if(!sel){detail.innerHTML=`<h2>人物详情</h2><div class='empty'>点一个头像，查看其身份与全部关系脉络。<br>再点一个头像，可查看二人之间的关系。<br><br>点击部门名称可只看该部门；顶栏可按六类关系筛选。</div>
+    <div class='fognote'><b style='color:var(--violet)'>档册与迷雾</b><br>关系录自六司职司簿、三生簿旁注与跨门往来牒，<b style='color:var(--gold)'>未必齐全，也未必作准</b>。标红头像者为已魔染之人，其关系或已被暗中改写；道门合道真君居世外之环，非本宗人物，宗主仅初入炼虚。</div>`;return;}
+  const n=byId[String(sel)],ini=(n.name||'?').slice(0,1);
+  const rs=(relMap[String(sel)]||[]).filter(e=>relVisible(e.type));
+  const rows=rs.slice(0,40).map(e=>{
+    const oid=String(e.s)===String(sel)?String(e.t):String(e.s);
+    const o=byId[oid];
+    return `<div class='q' data-go='${oid}' style='border-left-color:${REL[e.type].color}'>
+      <div class='t'>与 <b>${o.name}</b> ${relBadge(e.type)}</div>
+      <div>${relText(e)}</div></div>`;}).join('')||'<div class="empty">（无）</div>';
+  detail.innerHTML=`<h2>人物详情</h2>
+   <div class='card2'><div class='hd'>
+     <div class='av3'><span class='ini'>${ini}</span>${avImg(n.id)}</div>
+     <div><div class='nm2'>${n.name}</div>
+       <div class='meta'>${n.title||''}　·　${deptName(n)}<br>境界：${REALM[Math.min(n.realm,6)]}${n.god?'　·　<span style="color:var(--red)">魔染：'+GODS[n.god]+'</span>':''}</div>
+     </div></div>
+     ${n.bio?`<div class='bio'>${n.bio}</div>`:''}</div>
+   <h3>关系脉络（${rs.length}）</h3>${rows}
+   <div class='fognote'>关系以档册为准，<b>未必作准</b>——此即认知迷雾；已魔染者（标红）的关系尤需存疑。</div>`;
+  detail.querySelectorAll('.q').forEach(el=>el.addEventListener('click',()=>select(el.dataset.go)));
+}
+
+/* ===== 选择逻辑 ===== */
+function select(id){
+  id=String(id);
+  if(pair){pair=null;sel=id;}
+  else if(sel&&sel!==id){pair=[sel,id];}
+  else if(sel===id){clearSel();return;}
+  else sel=id;
+  renderCenter();renderDetail();refresh();
+  const sd=document.getElementById('side');sd.classList.remove('hide');sd.classList.add('show');
+}
+function clearSel(){sel=null;pair=null;renderCenter();renderDetail();refresh();}
+
+/* ===== 搜索 ===== */
+let searchHits=null;
+const qInput=document.getElementById('q'), sres=document.getElementById('sres');
+function searchList(q){
+  q=q.trim();if(!q){searchHits=null;sres.classList.remove('on');refresh();return;}
+  const hits=NODES.filter(n=>(n.name&&n.name.indexOf(q)>=0)||(n.title&&n.title.indexOf(q)>=0)||
+    (deptName(n).indexOf(q)>=0)||(n.bio&&n.bio.indexOf(q)>=0)||(n.sect&&n.sect.indexOf(q)>=0));
+  searchHits=new Set(hits.map(n=>String(n.id)));
+  sres.innerHTML=hits.slice(0,12).map(n=>`<div class='it' data-id='${n.id}'>${n.name}<small>${deptName(n)} · ${n.title||''}</small></div>`).join('')||
+    '<div class="it" style="color:var(--dim)">无匹配</div>';
+  sres.classList.add('on');
+  sres.querySelectorAll('.it[data-id]').forEach(el=>el.addEventListener('click',()=>{
+    const id=el.dataset.id;focusOn(id);select(id);sres.classList.remove('on');qInput.value=nById(id).name;}));
+  refresh();
+}
+function nById(id){return byId[String(id)]||{name:''};}
+function focusOn(id){const n=byId[String(id)];if(!n)return;const w=stage.clientWidth||1000,h=stage.clientHeight||700;
+  view.x=w/2-n.x*view.k;view.y=h/2-n.y*view.k;applyView();}
+qInput.addEventListener('input',e=>searchList(e.target.value));
+qInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&searchHits&&searchHits.size){
+  const id=searchHits.values().next().value;focusOn(id);select(id);sres.classList.remove('on');}});
+document.addEventListener('click',e=>{if(!e.target.closest('.search'))sres.classList.remove('on');});
+
+/* ===== 事件绑定 ===== */
+document.querySelectorAll('#nodes .node').forEach(el=>{
+  el.addEventListener('click',e=>{e.stopPropagation();select(el.dataset.id);});
+  el.addEventListener('mouseenter',e=>{
+    if(sel||pair)return;
+    const id=el.dataset.id;
+    edgeEls.forEach(ln=>{const rel=ln.dataset.s===id||ln.dataset.t===id;
+      ln.classList.toggle('hi',!!(rel&&relVisible(ln.dataset.type)));ln.classList.toggle('dim',!rel);});
+    const tip=document.getElementById('tip'),n=byId[id];
+    tip.innerHTML=n.name+'　<span style="color:var(--dim)">'+deptName(n)+'</span>';
+    tip.style.display='block';tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';
+  });
+  el.addEventListener('mousemove',e=>{const tip=document.getElementById('tip');tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY+12)+'px';});
+  el.addEventListener('mouseleave',()=>{document.getElementById('tip').style.display='none';if(!sel&&!pair)refresh();});
+});
+document.querySelectorAll('.zlab').forEach(z=>z.addEventListener('click',e=>{
+  e.stopPropagation();const k=z.dataset.z;zoneOff[k]=!zoneOff[k];refresh();}));
+stage.addEventListener('click',e=>{if(e.target===stage||e.target===world||e.target===deco||e.target===edgesSvg){if(sel||pair)clearSel();}});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){clearSel();sres.classList.remove('on');}});
+window.addEventListener('resize',fit);
+
+/* 顶栏控件 */
+const chips=document.getElementById('chips');
+Object.keys(REL).forEach(k=>{
+  const c=document.createElement('div');c.className='chip on';c.dataset.t=k;c.textContent=REL[k].short;
+  c.style.setProperty('--c',REL[k].color);
+  c.addEventListener('click',()=>{relOn[k]=!relOn[k];c.classList.toggle('on',relOn[k]);
+    renderCenter();renderDetail();refresh();});chips.appendChild(c);
+});
+const nameBtn=document.getElementById('nameBtn');
+nameBtn.addEventListener('click',()=>{showName=!showName;nameBtn.classList.toggle('on',showName);refresh();});
+const sideBtn=document.getElementById('sideBtn'),sd=document.getElementById('side');
+sideBtn.addEventListener('click',()=>{sd.classList.toggle('hide');sd.classList.toggle('show');});
+const foot=document.getElementById('foot'),foldBtn=document.getElementById('foldBtn');
+foldBtn.addEventListener('click',()=>{foot.classList.toggle('fold');foldBtn.textContent=foot.classList.contains('fold')?'展开说明':'收起说明';});
+
+/* ===== 底栏 ===== */
+document.getElementById('stats').innerHTML=[
+ {v:STATS.people,k:'个人'},
+ {v:STATS.rels.toLocaleString(),k:'段关系'},
+ {v:STATS.pairs.toLocaleString(),k:'对有牵连'},
+ {v:STATS.tainted,k:'位已魔染'},
+].map(s=>`<div class='stat'><div class='v'>${s.v}</div><div class='k'>${s.k}</div></div>`).join('');
+document.getElementById('desc').innerHTML=
+ `六类关系分色：<b style='color:#e9c46a'>师徒</b>／<b style='color:#ff6b6b'>道侣</b>／<b style='color:#5fd6c2'>同门</b>／<b style='color:#5b9dff'>上下级</b>／<b style='color:#d05757'>仇敌</b>／<b style='color:#9d7bff'>跨门交往</b>。点一个人看他的关系脉络，再点一个人看二人之间有何牵连；顶栏可逐类开关，点击部门名称只看该部门。`;
+document.getElementById('src').innerHTML=
+ `信息源：青棠宗·六司职司簿 ／ 三生簿旁注 ／ 跨门往来牒　｜　${STATS.core} 位具名核心 · ${STATS.tainted} 位已魔染（色孽／奸奇居多）· 道门合道真君 3 位（非本宗，仅传闻可及）　｜　背景故事见 WORLD-LORE.md §七 认知迷雾、§九 魔染产业链、§十二 网道与大崩溃`;
+
+/* ===== 启动 ===== */
+renderCenter();renderDetail();refresh();
+window.clearSel=clearSel;window.select=select;
+var __g=function(){return {NODES:NODES,RELS:RELS,REL:REL,STATS:STATS,byId:byId,
+  relMap:relMap,pairMap:pairMap,select:select,clearSel:clearSel,searchList:searchList,
+  relText:relText,pairKey:pairKey,
+  getState:function(){return {sel:sel,pair:pair,relOn:relOn,searchHits:searchHits};}};};
+</script>
+</body>
+</html>

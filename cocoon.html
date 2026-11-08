@@ -1,0 +1,1243 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>青棠宗 · 拾茧（开箱模拟器）</title>
+<script src='avatars.js'></script>
+<style>
+  :root{--bg:#0b0f1a;--card:#121826;--card2:#0f1626;--line:#26304a;--line2:#1d263c;--jade:#5fd6c2;--gold:#e9c46a;--red:#ff6b6b;--ink:#dfe8ff;--dim:#8294b8;--blue:#5b9dff;--purple:#b08cff;--violet:#9d7bff;--r:12px;--gap:10px}
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100vh;background:#0b0f1a}
+  body{background:radial-gradient(1200px 700px at 70% -10%,#16223e 0%,var(--bg) 60%);color:var(--ink);font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;font-size:13px;line-height:1.55;padding-bottom:40px}
+  .wrap{max-width:1120px;margin:0 auto;padding:12px}
+  header{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px;flex-wrap:wrap}
+  header h1{margin:0;font-size:19px;letter-spacing:2px;color:var(--gold)}
+  header .sub{color:var(--dim);font-size:11px}
+  header .right{margin-left:auto;display:flex;gap:6px}
+  /* 顶部常驻状态条 */
+  #topbar{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(18,24,38,.97),rgba(18,24,38,.9));backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:var(--r);padding:8px 11px;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:7px 14px;align-items:center}
+  .vit{display:flex;flex-direction:column;gap:2px;min-width:74px}
+  .vit .lab{font-size:10px;color:var(--dim);letter-spacing:.5px}
+  .vit .val{font-size:13px;font-weight:600;white-space:nowrap}
+  .mini{height:5px;border-radius:4px;background:var(--line2);overflow:hidden;width:100%}
+  .mini>i{display:block;height:100%;border-radius:4px;transition:width .3s}
+  .vsep{width:1px;align-self:stretch;background:var(--line)}
+  /* 建议条 */
+  .recbar{padding:8px 11px;border-radius:10px;background:linear-gradient(90deg,rgba(233,196,106,.12),rgba(95,214,194,.06));border:1px solid rgba(233,196,106,.35);font-size:12px;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .recbar .ic{font-size:15px}
+  .recbar b{color:var(--gold)}
+  /* 布局 */
+  .layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:var(--gap);align-items:start}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:11px 12px;margin-bottom:var(--gap);box-shadow:0 2px 10px rgba(0,0,0,.18)}
+  .card h3{margin:0 0 8px;font-size:12px;color:var(--gold);letter-spacing:1px;border-left:3px solid var(--gold);padding-left:8px;display:flex;align-items:center;gap:6px}
+  .card h3 .t{margin-left:auto;color:var(--dim);font-size:10px;font-weight:400}
+  .card.collapsed .cbody{display:none}
+  .card h3.fold{cursor:pointer;user-select:none}
+  .card h3.fold:hover{color:#fff}
+  .card h3.fold::after{content:'▾';margin-left:auto;color:var(--dim);font-size:11px}
+  .card.collapsed h3.fold::after{content:'▸'}
+  /* 茧舞台 */
+  .egg{display:flex;gap:14px;align-items:center;padding:10px;border-radius:10px;background:radial-gradient(320px 160px at 30% 40%,rgba(157,123,255,.10),transparent 70%),var(--card2);border:1px solid var(--line);margin-bottom:9px}
+  .egg .orb{flex:0 0 76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;background:radial-gradient(circle at 35% 30%,#2a3560,#111828 70%);border:1px solid var(--line);box-shadow:0 0 22px rgba(157,123,255,.22),inset 0 0 18px rgba(157,123,255,.12);animation:bob 3.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .egg .info{flex:1;min-width:0}
+  .egg .nm{font-size:16px;font-weight:700;color:var(--ink)}
+  .egg .meta{color:var(--dim);font-size:11px;margin-top:3px;line-height:1.7}
+  .egg .hint{color:var(--jade);font-size:11px;margin-top:4px}
+  .appraise{padding:8px 10px;border-radius:9px;background:rgba(91,157,255,.07);border:1px dashed var(--line);font-size:12px;line-height:1.75;margin-bottom:9px}
+  .appraise b{color:var(--blue)}
+  .appraise .warn{color:var(--red)}
+  /* 结果卡 */
+  .result{padding:12px;border-radius:10px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(255,255,255,.03),transparent),var(--card2);animation:reveal .35s ease-out}
+  @keyframes reveal{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+  .result .rhead{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .result .rname{font-size:18px;font-weight:700}
+  .result .rcat{font-size:10px;padding:2px 8px;border-radius:20px;background:#1a2236;border:1px solid var(--line);color:var(--dim)}
+  .result .rdesc{color:#c3cfe8;font-size:12px;margin:7px 0 9px;line-height:1.75}
+  .result .rval{font-size:13px;color:var(--gold);font-weight:700}
+  .result .danger{margin-top:8px;padding:7px 9px;border-radius:8px;background:rgba(255,107,107,.09);border-left:3px solid var(--red);font-size:12px;color:#ffb3b3;line-height:1.7}
+  .result .safe{margin-top:8px;padding:7px 9px;border-radius:8px;background:rgba(95,214,194,.07);border-left:3px solid var(--jade);font-size:12px;color:var(--dim)}
+  /* 按钮 */
+  .btns{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0 2px}
+  button{background:#1a2236;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:12px;cursor:pointer;transition:transform .08s,border-color .15s,color .15s,box-shadow .15s;font-family:inherit}
+  button:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
+  button:active{transform:none}
+  button:disabled{opacity:.38;cursor:not-allowed;transform:none}
+  button.gold{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;border-color:var(--gold);font-weight:700}
+  button.gold:hover{color:#1a1305;box-shadow:0 0 0 2px rgba(233,196,106,.3)}
+  button.jade{border-color:var(--jade);color:var(--jade)}
+  button.red{border-color:var(--red);color:var(--red)}
+  button.purple{border-color:var(--purple);color:var(--purple)}
+  button.sm{padding:5px 9px;font-size:11px}
+  button.rec{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 2px rgba(233,196,106,.22);animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 2px rgba(233,196,106,.2)}50%{box-shadow:0 0 0 3px rgba(233,196,106,.45)}}
+  button small{display:block;color:var(--dim);font-size:10px;margin-top:2px}
+  button.gold small{color:#4a3a12}
+  /* 队列 */
+  .queue{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+  .qitem{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:8px;background:var(--card2);border:1px solid var(--line);cursor:pointer;font-size:11px;transition:.15s}
+  .qitem:hover{border-color:var(--gold)}
+  .qitem.cur{border-color:var(--gold);box-shadow:0 0 0 1px rgba(233,196,106,.3)}
+  .qitem .ic{font-size:13px}
+  .qitem .zn{color:var(--dim);font-size:10px}
+  .empty{padding:16px;text-align:center;color:var(--dim);font-size:12px}
+  /* 侧栏小组件 */
+  .row{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed var(--line2);font-size:12px}
+  .row b{font-weight:600}
+  .pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:10px;background:#1a2236;border:1px solid var(--line);margin:2px}
+  .tag{font-size:10px;padding:1px 7px;border-radius:6px;margin-left:4px}
+  .t-good{background:#16331f;color:#7ee787}.t-bad{background:#3a1820;color:#ff8a8a}.t-info{background:#16223e;color:#9fb6ff}
+  .log{max-height:210px;overflow:auto;font-size:11px;color:var(--dim);line-height:1.7}
+  .log div{padding:3px 0;border-bottom:1px dashed var(--line2)}
+  .log .t{color:var(--gold);margin-right:5px}
+  .note{color:var(--dim);font-size:11px;line-height:1.7;margin-top:6px}
+  .zones{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+  .zbtn{padding:5px 9px;font-size:11px}
+  .zbtn.on{border-color:var(--jade);color:var(--jade);background:rgba(95,214,194,.08)}
+  .zbtn.lock{opacity:.4;cursor:not-allowed}
+  .itemline{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:11px;border-bottom:1px dashed var(--line2)}
+  .itemline .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .itemline .v{margin-left:auto;color:var(--gold)}
+  .bar{height:6px;border-radius:4px;background:var(--line2);overflow:hidden;margin-top:3px}
+  .bar>i{display:block;height:100%;border-radius:4px}
+  a{color:var(--blue)}
+  .over{padding:18px;text-align:center;border-radius:10px;border:1px solid var(--red);background:rgba(255,107,107,.07);margin-bottom:10px}
+  .over h2{margin:0 0 8px;color:var(--red);font-size:17px}
+  /* ===== 开茧仪式 ===== */
+  .ritual{padding:6px 2px 2px;text-align:center}
+  .crackstage{position:relative;width:132px;height:112px;margin:0 auto 4px}
+  .half{position:absolute;left:50%;top:50%;width:74px;height:74px;margin:-37px 0 0 -37px;border-radius:50%;
+    background:radial-gradient(circle at 34% 28%,#3a4678,#141c34 72%);border:1px solid var(--line);
+    box-shadow:inset 0 0 16px rgba(157,123,255,.3),0 0 22px rgba(157,123,255,.25)}
+  .half.l{clip-path:polygon(0 0,50% 0,50% 100%,0 100%);animation:shake .5s ease-in-out,splitL .62s .5s forwards}
+  .half.r{clip-path:polygon(50% 0,100% 0,100% 100%,50% 100%);animation:shake .5s ease-in-out,splitR .62s .5s forwards}
+  @keyframes shake{0%,100%{transform:translateX(0) rotate(0)}20%{transform:translateX(-3px) rotate(-3deg)}40%{transform:translateX(3px) rotate(3deg)}60%{transform:translateX(-2px) rotate(-2deg)}80%{transform:translateX(2px) rotate(2deg)}}
+  @keyframes splitL{to{transform:translateX(-46px) rotate(-24deg);opacity:0}}
+  @keyframes splitR{to{transform:translateX(46px) rotate(24deg);opacity:0}}
+  .flare{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;
+    background:radial-gradient(circle,#fff4d6,#e9c46a 40%,rgba(233,196,106,0) 72%);opacity:0;animation:flare .85s .52s ease-out}
+  @keyframes flare{0%{opacity:0;transform:scale(.4)}35%{opacity:1}100%{opacity:0;transform:scale(7)}}
+  .revealIcon{position:absolute;left:50%;top:50%;margin:-18px 0 0 -18px;width:36px;height:36px;line-height:36px;
+    font-size:26px;opacity:0;animation:rise .6s .82s ease-out forwards}
+  @keyframes rise{from{opacity:0;transform:translateY(14px) scale(.6)}to{opacity:1;transform:none}}
+  .steps{display:flex;justify-content:center;gap:16px;font-size:11px;color:var(--dim);margin-top:2px}
+  .steps span{opacity:.32;animation:stepOn .45s forwards}
+  .steps span:nth-child(1){animation-delay:.05s}
+  .steps span:nth-child(2){animation-delay:.52s}
+  .steps span:nth-child(3){animation-delay:1.02s}
+  @keyframes stepOn{to{opacity:1;color:var(--gold)}}
+  .egg.scanning .orb{animation:bob 3.4s ease-in-out infinite,scan .8s ease-out}
+  @keyframes scan{0%{box-shadow:0 0 0 0 rgba(91,157,255,.7)}100%{box-shadow:0 0 0 18px rgba(91,157,255,0)}}
+  /* ===== 永远遗失 · 货单 ===== */
+  .mf{border:1px solid var(--line);border-radius:9px;padding:8px 9px;margin:7px 0;background:var(--card2)}
+  .mfh{display:flex;gap:8px;align-items:center;font-size:11.5px;line-height:1.6}
+  .mfav{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:center 18%;
+    border:1px solid var(--gold);flex:none;background:#1a2236}
+  .mff{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;font-size:11px;color:var(--dim)}
+  .mf.done{opacity:.68}
+  /* ===== 决策浮字 ===== */
+  .toast{position:fixed;right:18px;top:18px;z-index:60;max-width:330px;padding:10px 13px;border-radius:10px;
+    background:rgba(12,18,32,.97);border:1px solid var(--gold);color:var(--ink);font-size:12px;line-height:1.7;
+    opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+  .toast.show{opacity:1;transform:none}
+  .toast.bad{border-color:var(--red)}
+  /* ===== 灵植园 · 偷菜 ===== */
+  .grow-sec{display:flex;align-items:center;gap:6px;margin:9px 0 5px;font-size:11px;color:var(--dim)}
+  .grow-sec b{color:var(--ink);font-size:11.5px;letter-spacing:.3px}
+  .grow-sec .sp{margin-left:auto;font-size:10px}
+  .plots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .plot{border:1px solid var(--line);border-radius:9px;background:var(--card2);padding:6px 7px;display:flex;flex-direction:column;gap:4px;min-height:92px}
+  .plot.empty{border-style:dashed;cursor:pointer;justify-content:center;align-items:center;text-align:center;color:var(--dim)}
+  .plot.empty:hover{border-color:var(--gold);color:var(--gold)}
+  .plot.ready{border-color:var(--jade);box-shadow:inset 0 0 0 1px rgba(95,214,194,.3)}
+  .plot .ph{display:flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;line-height:1.3}
+  .plot .pic{font-size:14px}
+  .plot .pav{width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:center 18%;border:1px solid var(--line);flex:none}
+  .plot .pt{font-size:10px;color:var(--dim);line-height:1.45}
+  .plot .pb{height:4px;border-radius:3px;background:var(--line2);overflow:hidden}
+  .plot .pb>i{display:block;height:100%;border-radius:3px;transition:width .4s}
+  .plot button{width:100%;margin-top:auto;padding:4px 2px;font-size:10.5px}
+  .seedbar{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 3px}
+  .seed{padding:4px 8px;border-radius:7px;border:1px solid var(--line);background:var(--card2);font-size:10.5px;line-height:1.35;cursor:pointer;transition:.15s}
+  .seed:hover{border-color:var(--gold)}
+  .seed.on{border-color:var(--gold);color:var(--gold);background:rgba(233,196,106,.08)}
+  .seed.poor{opacity:.45}
+  @media(max-width:560px){
+    .plots{grid-template-columns:repeat(2,1fr)}
+    .plot{min-height:100px}
+    .plot button{padding:7px 2px;font-size:11px}
+    .seed{padding:6px 9px;font-size:11px}
+  }
+  .banbar{padding:6px 9px;border-radius:8px;background:rgba(255,107,107,.09);border:1px solid rgba(255,107,107,.4);font-size:11px;color:#ffb3b3;margin:6px 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .banbar button{margin-left:auto}
+  .grecs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  @media(max-width:560px){.grecs{grid-template-columns:1fr}}
+  .grec{border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--card2);min-width:0}
+  .grec .gt{font-size:10.5px;color:var(--gold);letter-spacing:.5px;margin-bottom:2px}
+  .grec .gi{font-size:10.5px;color:var(--ink);line-height:1.6;border-top:1px dashed var(--line2);padding-top:3px;margin-top:3px;word-break:break-all}
+</style>
+</head><body>
+<div class='wrap'>
+
+<header>
+  <h1>青棠宗 · 拾茧</h1>
+  <span class='sub'>网道崩溃之后 · 修仙主题开箱模拟器　｜　巡缝 → 鉴定 → 开茧 → 上交／私藏</span>
+  <div class='right'>
+    <button class='sm' onclick="jumpGarden()" title="灵植园：种菜、偷菜、被偷记录">灵植园</button>
+    <button class='sm' onclick="toggleFold('loreCard')">背景故事</button>
+    <button class='sm' onclick="exportSave()" title="把当前进度导出为 JSON 文件">导出存档</button>
+    <button class='sm' onclick="document.getElementById('importFile').click()" title="从 JSON 文件恢复进度">导入存档</button>
+    <input type='file' id='importFile' accept='.json,application/json' style='display:none' onchange='importSave(this)'>
+    <button class='sm red' onclick="if(confirm('确定重置这一世？图鉴将保留。'))resetGame()">重置</button>
+  </div>
+</header>
+
+<div id='topbar'></div>
+<div id='recbar' class='recbar'></div>
+<div id='overBox'></div>
+<div id='toast' class='toast'></div>
+
+<div class='layout'>
+  <div>
+    <div class='card'>
+      <h3>开茧台 <span class='t' id='stageTag'></span></h3>
+      <div id='stage'></div>
+    </div>
+
+    <div class='card'>
+      <h3>巡视裂缝 <span class='t'>每巡一次推进一回合 · 回复神识 · 补入新茧</span></h3>
+      <div class='zones' id='zones'></div>
+      <div class='btns'>
+        <button class='gold rec' id='patrolBtn' onclick='patrol()'>◈ 巡视裂缝（补 1–3 枚茧）</button>
+        <button class='sm' onclick="toggleFold('vaultCard')">密库 / 销赃</button>
+      </div>
+      <div class='note' id='zoneNote'></div>
+    </div>
+
+    <div class='card' id='gardenCard'>
+      <h3 class='fold' onclick="toggleFold('gardenCard')">灵植园 · 偷菜 <span class='t' id='gardenTag'></span></h3>
+      <div class='cbody'>
+        <div id='gardenBan'></div>
+        <div class='grow-sec'><b>我的菜地</b><span class='sp'>6 块 · 按真实时间成熟 · 关掉页面也在长</span></div>
+        <div class='plots' id='myPlots'></div>
+        <div class='seedbar' id='seedBar'></div>
+        <div class='note' id='seedNote' style='margin-top:2px'>先点种子，再点空地播种；灵石从拾茧账上扣。</div>
+        <div class='grow-sec'><b>同门菜地 · 灵植苑</b><span class='sp' id='npcTag'>成熟即可偷</span></div>
+        <div class='plots' id='npcPlots'></div>
+        <div class='note' id='stealNote'></div>
+        <div class='grow-sec'><b>丹鼎房 · 代炼</b><span class='sp'>2 份同种灵植 + 30 灵石 → 养神丹</span></div>
+        <div id='brewBox'></div>
+        <div class='grecs' id='gardenRecs'></div>
+        <div class='note' id='gardenNote'></div>
+      </div>
+    </div>
+
+    <div class='card'>
+      <h3>待开之茧 <span class='t' id='queueTag'></span></h3>
+      <div class='queue' id='queue'></div>
+    </div>
+
+    <div class='card collapsed' id='vaultCard'>
+      <h3 class='fold' onclick="toggleFold('vaultCard')">密库 · 私藏与销赃 <span class='t' id='vaultTag'></span></h3>
+      <div class='cbody'><div id='vault'></div><div class='note'>私藏全额归你，但会抬高<b style='color:var(--red)'>宗门察觉</b>；危险物私藏还会持续沾染魔染。销赃按七折折为灵石。</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class='card' id='toolCard'>
+      <h3 class='fold' onclick="toggleFold('toolCard')">法器坊市 <span class='t'>灵石购置 · 只购一次，永久生效</span></h3>
+      <div class='cbody'><div id='tools'></div></div>
+    </div>
+
+    <div class='card collapsed' id='codexCard'>
+      <h3 class='fold' onclick="toggleFold('codexCard')">拾遗录（图鉴） <span class='t' id='codexTag'></span></h3>
+      <div class='cbody'><div id='codex'></div><div id='lost'></div></div>
+    </div>
+
+    <div class='card collapsed' id='logCard'>
+      <h3 class='fold' onclick="toggleFold('logCard')">拾茧日志 <span class='t'>日常生活与年岁流水</span></h3>
+      <div class='cbody'><div class='log' id='log'></div></div>
+    </div>
+
+    <div class='card collapsed' id='loreCard'>
+      <h3 class='fold' onclick="toggleFold('loreCard')">背景故事 · 网道与大崩溃 <span class='t'>全部世界观皆为背景，玩法只有开箱</span></h3>
+      <div class='cbody' id='lore'></div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+'use strict';
+/* ===================== 常量 ===================== */
+const RAR=[{n:'尘品',c:'#8294b8'},{n:'凡品',c:'#dfe8ff'},{n:'灵品',c:'#7ee787'},{n:'玄品',c:'#5b9dff'},{n:'地品',c:'#b08cff'},{n:'天品',c:'#e9c46a'}];
+const RANKS=[
+ {name:'拾茧人',need:0,   zone:1,sense:60, bias:0},
+ {name:'巡缝使',need:120, zone:2,sense:70, bias:.18},
+ {name:'定隙吏',need:360, zone:3,sense:82, bias:.26},
+ {name:'镇染使',need:800, zone:4,sense:95, bias:.34},
+ {name:'掌茧人',need:1600,zone:5,sense:110,bias:.42}
+];
+const ZONES=[
+ {key:'ground',name:'地表裂缝',minRank:0,cost:0, bonus:0,  risk:.00,desc:'封印最稳，产出寻常；新手拾茧人多在此处讨生活。'},
+ {key:'under', name:'地底裂隙',minRank:1,cost:6, bonus:.4, risk:.10,desc:'落入岩层的旧货随裂缝渗出，多灵材，亦多挤压损坏。'},
+ {key:'sky',   name:'悬空罡风',minRank:2,cost:10,bonus:.8, risk:.16,desc:'悬于云海罡风，可遇不可求；偶有整件珍物，也有半茧。'},
+ {key:'deep',  name:'封印深处',minRank:3,cost:14,bonus:1.2,risk:.24,desc:'贴近合道大能的封印眼，渗出物最珍，魔染也最重。'},
+ {key:'void',  name:'位外虚空',minRank:4,cost:20,bonus:1.8,risk:.32,desc:'被甩出位面之外的货，须持「空间锚」方能拾取。'}
+];
+const SHELLS=[
+ {key:'plain',  name:'素茧',   w:28,ic:'🥚',hint:'灰白无纹，最是寻常',cap:3,
+  mix:{treasure:62,junk:24,relic:6,half:4,person:2,taint:1,void:1}},
+ {key:'crystal',name:'晶茧',   w:15,ic:'💠',hint:'壳透微光，似蕴灵物',cap:5,
+  mix:{treasure:70,relic:14,void:8,half:4,taint:3,junk:1,person:0}},
+ {key:'blood',  name:'血茧',   w:12,ic:'🩸',hint:'壳上渗着暗红，触之微温',cap:4,
+  mix:{person:52,taint:28,junk:10,treasure:6,half:3,relic:1,void:0}},
+ {key:'whisper',name:'低语茧', w:9, ic:'🌀',hint:'贴近能听见细碎人声，不宜久持',cap:5,
+  mix:{taint:64,person:18,void:10,junk:5,treasure:2,relic:1,half:0}},
+ {key:'broken', name:'破茧',   w:20,ic:'🥀',hint:'壳已裂开一角，内含多半受损',cap:2,
+  mix:{junk:70,half:16,person:7,treasure:5,taint:1,relic:1,void:0}},
+ {key:'half',   name:'半茧',   w:16,ic:'🌗',hint:'齐整地被切成两半，只余其一',cap:3,
+  mix:{half:88,junk:8,treasure:3,person:1,taint:0,relic:0,void:0}}
+];
+const CATNAME={treasure:'天材地宝',junk:'残损杂物',half:'残半之器',person:'活人',taint:'魔染之物',relic:'前朝遗珍',void:'乱流结晶'};
+/* [名, 类, 稀有度, 基价, 魔染, 即时危险, 描述, 配对键] */
+const RAW=[
+ ['月华露','treasure',1,32,0,'','盛于玉盏的清露，灵气温和，坊市常见。'],
+ ['赤髓芝','treasure',1,42,0,'','赤色小芝，炼气弟子最常用的辅料。'],
+ ['龙涎香脂','treasure',2,95,0,'','凝脂如蜡，燃之可定神，红鸾院常备。'],
+ ['九转紫芝','treasure',2,82,0,'','九转方成，丹鼎房收得最勤的一味。'],
+ ['玄冰髓','treasure',2,90,0,'','寒潭深处凝出的髓，触之刺骨。'],
+ ['寒潭玉','treasure',2,108,0,'','玉质温润而自带凉意，可琢法器。'],
+ ['九幽寒铁','treasure',2,86,0,'','性阴沉，铸剑可镇心魔——坊间如此说。'],
+ ['灵犀角','treasure',2,104,0,'','传可通灵兽之语，真伪难辨。'],
+ ['深海夜明珠','treasure',2,100,0,'','夜里自明，光色随潮汐微变。'],
+ ['星陨砂','treasure',3,180,0,'','据称天外坠星所化，掺入丹火可提品阶。'],
+ ['凤凰血竭','treasure',3,220,0,'','赤如凝血，价高，仿品亦多。'],
+ ['太岁灵髓','treasure',3,240,0,'','肉芝之髓，灵植苑视为上品培养基。'],
+ ['万年雷击木','treasure',3,200,0,'','雷纹入木，制符者争之。'],
+ ['天外陨铁','treasure',3,190,0,'','非此界之铁，折叠途中似被什么改动过。'],
+ ['昆仑瑶草','treasure',3,210,0,'','传说生于昆仑，今多由网道运来。'],
+ ['无根灵泉','treasure',3,230,0,'','一泓不附器皿而不散的泉水。'],
+ ['虚空晶','treasure',4,480,0,'','内似有星尘流转，凝视久了会走神。'],
+ ['紫府金精','treasure',4,520,0,'','金精紫气，高阶修士闭关所资。'],
+ ['曦轮灵液残滴','treasure',5,1600,6,'','史前原初灵液的残滴——今人所谓「灵气」的祖宗。封蜡已裂。',''],
+ ['三生簿散页','treasure',5,1400,4,'','红线仙司秘术的散页，字迹会自行游移。',''],
+ ['空茧','junk',0,0,0,'','壳内空空如也，连乱流都没剩下。'],
+ ['挤压变形的丹炉','junk',1,12,0,'','折叠半途闭合，炉身拧成了麻花。'],
+ ['灵性散尽的法器残片','junk',1,8,0,'','曾是一件法器，如今只是块沉铁。'],
+ ['错序的丹药','junk',1,6,0,'','一炉糊渣，丹纹全乱，服之无益。'],
+ ['旧货主的货单','junk',1,16,0,'','残页记着一批「永远遗失」的货号，可交宗门建档。'],
+ ['道门封印残片','relic',3,160,0,'','合道大能封缝时剥落的碎片，交宗门可换厚赏。'],
+ ['网道道标残片','relic',3,145,0,'','当年用来定坐标的意识结晶，仍在微弱地「指路」。'],
+ ['时空乱流结晶','void',4,380,8,'void','壳一开，未散的乱流便擦着神识而过。'],
+ ['时空乱流余屑','void',2,70,4,'void','细碎的时间渣滓，碰一下便有片刻恍惚。'],
+ ['断剑·上半截','half',2,60,0,'','折叠面正切过剑身，剑铭只剩半句。','sword'],
+ ['断剑·下半截','half',2,60,0,'','与上半截合成，方是完器。','sword'],
+ ['玉璧·左半','half',3,90,0,'','断口平整得不像摔的。','bi'],
+ ['玉璧·右半','half',3,90,0,'','与左半合成，纹路才能接上。','bi'],
+ ['丹方·前卷','half',2,70,0,'','只剩前三味与火候，后头没了。','dan'],
+ ['丹方·后卷','half',2,70,0,'','与前卷合看，才成一炉。','dan'],
+ ['合欢铃·雌','half',3,110,0,'','单摇不响，须得成双。','bell'],
+ ['合欢铃·雄','half',3,110,0,'','单摇不响，须得成双。','bell'],
+ ['被撕碎的奴隶残骸','person',0,4,7,'tear','网道一直私运活人；这是没被折叠完的那些。'],
+ ['魔染归来的活人','person',3,0,20,'possessed','肉身随折叠落回人间，意识却留在网道里被四神浸透。看着像人。'],
+ ['尚在沉睡的奴隶','person',2,0,0,'alive','茧壳替他挡住了乱流，人还活着，呼吸很轻。'],
+ ['被切成两半的活人','person',1,0,10,'tear','两半各自落向不同处，这一半还在渗着温热。'],
+ ['色孽的欢愉残响','taint',4,620,18,'','壳内是化不开的绮声与甜香，听久了会不想走。'],
+ ['奸奇的织命丝','taint',4,680,20,'','一缕会自行改道的丝线，仿佛在替谁重排因果。'],
+ ['恐虐的战意碎片','taint',4,560,22,'','握着它，只想找人打一架。'],
+ ['纳垢的孢囊','taint',4,600,25,'','慈父般的温热，里头是不死的病变。'],
+ ['四神低语核','taint',5,1200,35,'','四道声音叠在一起，谁也没在对你说话，又全都在说。']
+];
+const ITEMS=RAW.map(a=>({name:a[0],cat:a[1],rar:a[2],base:a[3],taint:a[4],danger:a[5],desc:a[6],pair:a[7]||null}));
+/* 稀有度基准权重（rar 0..5）：指数衰减，避免高品泛滥；区域越深整体抬升 */
+const RAR_W=[100,68,40,18,6,1.4];
+const CATPOOL={};ITEMS.forEach(i=>{(CATPOOL[i.cat]=CATPOOL[i.cat]||[]).push(i);});
+const CATIC={treasure:'✦',junk:'⌁',half:'◑',person:'☻',taint:'✷',relic:'⌘',void:'◇'};
+/* 永远遗失 · 货单支线 */
+const LOST_CARGO=[
+ '红线仙司·三生簿副本一函','丹鼎房·九转紫芝三十六匣','灵植苑·万年雷击木二株',
+ '外事贸易司·世俗伪装账册一箱','红鸾院·合欢铃一对','内门修炼·守山阵图残卷',
+ '棠医堂·无根灵泉七瓮','灵兽苑·青鸾幼雏三羽','位外虚空·未登记货箱一只',
+ '道门·封印眼校准仪','前朝·曦轮灵液封蜡一坛','网道道标·第七批意识结晶'
+];
+const LOST_END=[
+ {key:'recovered',w:34,label:'循道标寻回残货'},
+ {key:'gone',     w:46,label:'确认湮灭，连曾否存在都无从查证'},
+ {key:'swallowed',w:20,label:'货早已被人私吞，账册被抹平'}
+];
+const OWNER_IDS=['91007','91005','90001','al0','al2','91001','sc0','91002'];
+
+const TOOLS=[
+ {key:'compass',name:'定隙罗盘',cost:180,desc:'神识鉴定误差大幅降低，估价更接近真实。'},
+ {key:'ward',   name:'镇染符',  cost:220,desc:'开茧所受魔染减半。'},
+ {key:'box',    name:'封魔匣',  cost:260,desc:'私藏危险物不再额外沾染魔染，且察觉增长减半。'},
+ {key:'anchor', name:'空间锚',  cost:420,desc:'解锁「位外虚空」拾取；巡缝不再受虚空额外神识损耗。'},
+ {key:'incense',name:'清心香',  cost:140,desc:'焚去一桩成见（高阶修士对某类物件的系统性误判）。'}
+];
+const EVENTS=[
+ {key:'quake', name:'网道余震', desc:'封印一阵抽搐，本回补入的茧更多，但个个带乱流。', apply(p){p.eventBonus=2;p.eventRisk=.12;}},
+ {key:'whisper',name:'四神低语', desc:'这一回合，你的神识鉴定会全体失准——别信自己。', apply(p){p.blind=true;}},
+ {key:'inspect',name:'宗门清查', desc:'执事循着账册来了：密库被罚没，贡献折半，察觉稍降。', apply(p){p.vault=[];p.merit=Math.floor(p.merit*.5);p.suspicion=Math.max(0,p.suspicion-45);}},
+ {key:'seal',  name:'道门巡缝', desc:'道门合道高修加固了封印，产出减少，但这一批干净得多。', apply(p){p.eventBonus=-1;p.eventRisk=-.08;}},
+ {key:'owner', name:'旧货主寻物', desc:'有人拿着残货单来认领。交还一件密库之物，可换一笔贡献与清白。', apply(p){p.ownerAsk=true;}},
+ {key:'wake',  name:'茧中人苏醒', desc:'某枚茧里传来叩击声……这一回合，活人之物更可能出现。', apply(p){p.personBoost=true;}}
+];
+const LORE=
+ `<div style='font-size:12px;line-height:1.85;color:#c3cfe8'>`+
+ `<b style='color:var(--gold)'>网道只作道标，不运货物。</b>亚空间不能传送实体，后世便拿它当「活的海图」：以魔染意识连结成的节点定出时空坐标，再由<b>空间传送基站</b>折叠跳跃，把货从一处折到另一处——货物自始至终没进过网道。<br>`+
+ `<b style='color:var(--gold)'>四神生于网道。</b>网道的真身是魔染意识的集合体，积久自凝出亚空间四神。它们让坐标不再漂移、网道<b>更稳定</b>，可它们<b>本身的存在</b>让使用者与货物的安全渐渐没了保障。掌门级明知有异，因性价比秘而不宣。<br>`+
+ `<b style='color:var(--red)'>直到网道崩溃。</b>所有在途货物被甩出：永远遗失、损坏、落入地底、悬在天上、浮于太空、被折叠面切成两半。一直私运的<b>活人奴隶</b>或被乱流撕碎，或被魔染回归现实。各地留下的<b>时空裂缝</b>由道门合道大能封印，却未根治，仍有东西渗出——落地时裹成一层壳，是为<b style='color:var(--jade)'>「茧」</b>，新型矿藏。<br>`+
+ `<b style='color:var(--gold)'>你是拾茧人。</b>开茧看有没有价值，决定上交宗门还是私藏，并随时判断有没有危险。神识鉴定只是猜测：越珍稀越易看错，而职阶越高反而越固执（成见）。魔染到头，你自己也会变成茧中物。<br>`+
+ `<span class='note'>「永远遗失」的货单如今可在拾遗录中追查；完整设定见 <a href='WORLD-LORE.md'>WORLD-LORE.md</a> §十二；其余纪元、宗门史、诸神谱系、魔染产业链、人物关系网等<b>全部是背景故事</b>，可在 <a href='index.html'>数据看板</a> 查阅。</span></div>`;
+
+/* ===================== 状态 ===================== */
+const SAVE_KEY='qingtang_cocoon_v1';
+let P=null;
+function freshState(keepCodex){
+  const old=keepCodex&&P?{codex:P.codex,lost:P.lost}:{codex:{},lost:[]};
+  return {
+    turn:1,stones:120,merit:0,karma:0,sense:60,taint:0,suspicion:0,rank:0,opened:0,
+    zone:'ground',seal:100,queue:[],current:null,stage:'idle',vault:[],tools:{},bias:null,
+    codex:old.codex,lost:old.lost,log:[],gameOver:false,
+    event:null,eventBonus:0,eventRisk:0,blind:false,ownerAsk:false,personBoost:false,
+    seq:1,lastResult:null,garden:freshGarden()
+  };
+}
+function save(){try{if(typeof localStorage!=='undefined')localStorage.setItem(SAVE_KEY,JSON.stringify(P));}catch(e){}}
+function load(){try{if(typeof localStorage!=='undefined'){const s=localStorage.getItem(SAVE_KEY);if(s){const o=JSON.parse(s);if(o&&o.queue)return sanitize(o);}}}catch(e){}return null;}
+
+/* ===================== 存档导出 / 导入 ===================== */
+const SAVE_FORMAT='qingtang-cocoon-save',SAVE_VERSION=1;
+function fnv1a(str){let h=0x811c9dc5;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0;}return ('00000000'+h.toString(16)).slice(-8);}
+function sanitize(s){
+  if(!s||typeof s!=='object'||Array.isArray(s))throw new Error('存档内容不是对象');
+  if(typeof s.turn!=='number'||!Array.isArray(s.queue))throw new Error('缺少回合数或茧队列');
+  const p=Object.assign(freshState(false),s);
+  if(!p.codex||typeof p.codex!=='object')p.codex={};
+  if(!Array.isArray(p.lost))p.lost=[];
+  if(!Array.isArray(p.vault))p.vault=[];
+  if(!p.tools||typeof p.tools!=='object')p.tools={};
+  if(!Array.isArray(p.log))p.log=[];
+  p.garden=normGarden(p.garden);
+  if(p.stage==='opening')p.stage='opened';
+  p.turn=Math.max(1,Math.floor(p.turn));
+  ['stones','merit','karma','sense','taint','suspicion','seal','opened','rank','seq'].forEach(k=>{p[k]=Number.isFinite(+p[k])?+p[k]:0;});
+  if(!p.current&&p.queue[0])p.current=p.queue[0];
+  return p;
+}
+function exportSave(){
+  try{
+    const body={format:SAVE_FORMAT,version:SAVE_VERSION,game:'拾茧',savedAt:new Date().toISOString(),
+      checksum:fnv1a(JSON.stringify(P)),state:P};
+    const blob=new Blob([JSON.stringify(body,null,2)],{type:'application/json'});
+    const d=new Date(),p2=n=>String(n).padStart(2,'0');
+    const name='青棠宗-拾茧-存档-'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes())+'.json';
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    flashMsg('存档已导出：回合 '+P.turn+'，版本 '+SAVE_VERSION,'good');
+  }catch(e){flashMsg('导出失败：'+e.message,'bad');}
+}
+function importSave(input){
+  const f=input.files&&input.files[0];if(!f)return;
+  const bad=m=>{flashMsg('导入失败：'+m+'。现有存档未改动。','bad');input.value='';};
+  const rd=new FileReader();
+  rd.onload=()=>{
+    let o;try{o=JSON.parse(rd.result);}catch(e){return bad('不是有效的 JSON 文件');}
+    if(!o||o.format!==SAVE_FORMAT)return bad('不是青棠宗·拾茧的存档');
+    if(!Number.isFinite(o.version))return bad('缺少版本号');
+    if(o.version>SAVE_VERSION)return bad('存档版本 '+o.version+' 高于当前游戏（'+SAVE_VERSION+'），请更新游戏');
+    if(typeof o.checksum!=='string'||fnv1a(JSON.stringify(o.state))!==o.checksum)return bad('校验不通过，文件可能被修改或损坏');
+    let p;try{p=sanitize(o.state);}catch(e){return bad(e.message);}
+    if(!confirm('导入将覆盖当前这一世（回合 '+P.turn+'）。图鉴与遗失货单会一并替换。继续？')){input.value='';return;}
+    try{localStorage.setItem(SAVE_KEY+'_backup',JSON.stringify(P));}catch(e){}
+    P=p;normalizeLost();save();render();
+    flashMsg('存档已导入：回合 '+P.turn+'（版本 '+o.version+'）','good');
+    input.value='';
+  };
+  rd.onerror=()=>bad('无法读取文件');
+  rd.readAsText(f,'utf-8');
+}
+
+/* ===================== 工具函数 ===================== */
+const rnd=()=>Math.random();
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+function weighted(arr){let s=arr.reduce((a,x)=>a+(x.w||1),0),r=Math.random()*s;for(let i=0;i<arr.length;i++){r-=(arr[i].w||1);if(r<=0)return arr[i];}return arr[arr.length-1];}
+function pushLog(t,type){P.log.unshift({t:P.turn,s:t,k:type||''});if(P.log.length>90)P.log.length=90;}
+function rank(){return RANKS[P.rank];}
+function senseMax(){return rank().sense;}
+function sealFactor(){return 1+(100-P.seal)/120;}
+function karmaGuard(){return Math.min(.45,P.karma*0.02);}
+function zone(){return ZONES.find(z=>z.key===P.zone)||ZONES[0];}
+function rar(r){return RAR[clamp(r,0,5)];}
+function tool(k){return !!P.tools[k];}
+
+/* ===================== 灵植园 · 偷菜 ===================== */
+const MIN=60*1000,HOUR=60*MIN;
+/* 作物名字全部取自现有内容物（ITEMS），成熟后进密库即可销赃、进图鉴 */
+const GARDEN_CROPS=[
+ {key:'yuehua',   name:'月华露',   ic:'🌙',grow:10*MIN, cost:12, value:32, rar:1,w:30},
+ {key:'chimai',   name:'赤髓芝',   ic:'🍄',grow:25*MIN, cost:22, value:42, rar:1,w:26},
+ {key:'jiuzhuan', name:'九转紫芝', ic:'🪻',grow:60*MIN, cost:55, value:82, rar:2,w:18},
+ {key:'xuanbing', name:'玄冰髓',   ic:'❄',grow:90*MIN, cost:80, value:90, rar:2,w:12},
+ {key:'kunlun',   name:'昆仑瑶草', ic:'🌿',grow:180*MIN,cost:150,value:210,rar:3,w:8},
+ {key:'taisui',   name:'太岁灵髓', ic:'🫘',grow:300*MIN,cost:220,value:240,rar:3,w:6}
+];
+/* 灵植苑同门（取自 avatars.js 的人物元数据，头像/姓名不另存一份） */
+const GARDEN_NPC=['1038','1039','1040','1041','1042','1043','1044','1045','1046','1047','1048','1049','1050','91004'];
+const GARDEN_SLOTS=6;
+let gardenSeed='yuehua',gardenSig='';
+
+function cropByKey(k){return GARDEN_CROPS.find(c=>c.key===k)||GARDEN_CROPS[0];}
+function npcMeta(id){return (window.AVATAR_META&&window.AVATAR_META[String(id)])||{};}
+function npcName(id){return npcMeta(id).name||('弟子 '+id);}
+function fmtDur(ms){
+  ms=Math.max(0,ms);
+  const s=Math.ceil(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=s%60;
+  if(h>=24)return Math.floor(h/24)+'天'+(h%24)+'小时';
+  if(h>0)return h+'小时'+(m?m+'分':'');
+  if(m>0)return m+'分'+(ss?ss+'秒':'');
+  return ss+'秒';
+}
+function makeNpcPlot(used){
+  const pool=GARDEN_NPC.filter(id=>(used||[]).indexOf(id)<0);
+  const id=pick(pool.length?pool:GARDEN_NPC);
+  const c=weighted(GARDEN_CROPS),now=Date.now(),realm=npcMeta(id).realm||0;
+  return {id:id,crop:c.key,plantedAt:now,matureAt:now+c.grow*(.75+rnd()*.6),guard:+(1+realm*.18).toFixed(2)};
+}
+function replantNpc(p){
+  const c=weighted(GARDEN_CROPS),now=Date.now();
+  p.crop=c.key;p.plantedAt=now;p.matureAt=now+c.grow*(.75+rnd()*.6);
+}
+function freshGarden(){
+  const g={plots:[null,null,null,null,null,null],npcPlots:[],steals:[],losses:[],strikes:0,banUntil:0,lastRaidCheck:Date.now()};
+  const used=[];
+  for(let i=0;i<GARDEN_SLOTS;i++){const p=makeNpcPlot(used);used.push(p.id);g.npcPlots.push(p);}
+  return g;
+}
+function normGarden(g){
+  const d=freshGarden();
+  if(!g||typeof g!=='object')return d;
+  const out=Object.assign(d,g);
+  out.plots=Array.isArray(out.plots)?out.plots.slice(0,GARDEN_SLOTS):[];
+  while(out.plots.length<GARDEN_SLOTS)out.plots.push(null);
+  out.plots=out.plots.map(p=>{
+    if(!p||typeof p!=='object')return null;
+    const c=cropByKey(p.crop);
+    const plantedAt=Number.isFinite(+p.plantedAt)?+p.plantedAt:Date.now();
+    return {crop:c.key,plantedAt:plantedAt,matureAt:Number.isFinite(+p.matureAt)?+p.matureAt:plantedAt+c.grow};
+  });
+  out.npcPlots=(Array.isArray(out.npcPlots)?out.npcPlots:[]).filter(p=>p&&p.id).slice(0,GARDEN_SLOTS);
+  const used=out.npcPlots.map(p=>String(p.id));
+  while(out.npcPlots.length<GARDEN_SLOTS){const np=makeNpcPlot(used);used.push(np.id);out.npcPlots.push(np);}
+  out.npcPlots=out.npcPlots.map(p=>{
+    const c=cropByKey(p.crop);
+    return {id:String(p.id),crop:c.key,
+      plantedAt:Number.isFinite(+p.plantedAt)?+p.plantedAt:Date.now(),
+      matureAt:Number.isFinite(+p.matureAt)?+p.matureAt:Date.now()+c.grow,
+      guard:Number.isFinite(+p.guard)?+p.guard:1};
+  });
+  out.steals=Array.isArray(out.steals)?out.steals.slice(0,30):[];
+  out.losses=Array.isArray(out.losses)?out.losses.slice(0,30):[];
+  out.strikes=Number.isFinite(+out.strikes)?+out.strikes:0;
+  out.banUntil=Number.isFinite(+out.banUntil)?+out.banUntil:0;
+  out.lastRaidCheck=Number.isFinite(+out.lastRaidCheck)?+out.lastRaidCheck:Date.now();
+  return out;
+}
+function growScale(){return P.seal<40?.85:1;}
+function stealChance(p){
+  const c=cropByKey(p.crop);
+  return clamp(.88-c.rar*.05-p.guard*.05-P.seal*.0015-P.karma*.008,.12,.93);
+}
+function myRaidFactor(){return 1+(100-P.seal)/100*.8;}
+
+function pickSeed(k){if(!cropByKey(k))return;gardenSeed=k;renderGarden();}
+function plant(i){
+  if(!P||P.gameOver||!P.garden)return;
+  const g=P.garden,c=cropByKey(gardenSeed);
+  if(g.plots[i]){flashMsg('这块地已经种上了。','bad');return;}
+  if(P.stones<c.cost){flashMsg('灵石不足，买不起「'+c.name+'」种子（需 '+c.cost+'）。','bad');return;}
+  P.stones-=c.cost;
+  const now=Date.now(),grow=Math.round(c.grow*growScale());
+  g.plots[i]={crop:c.key,plantedAt:now,matureAt:now+grow};
+  const msg='在灵植园播下「'+c.name+'」，'+fmtDur(grow)+'后成熟'+(P.seal<40?'；封印薄弱、灵气外泄，成熟略快。':'。');
+  pushLog('【灵植园】'+msg,'');
+  flashMsg(msg,'good');save();render();
+}
+function harvest(i){
+  if(!P||P.gameOver||!P.garden)return;
+  const g=P.garden,p=g.plots[i];
+  if(!p)return;
+  if(Date.now()<p.matureAt){flashMsg('还没熟，再等等。','bad');return;}
+  const c=cropByKey(p.crop),val=Math.round(c.value*(.9+rnd()*.25));
+  const tainted=P.seal<40&&rnd()<.35;
+  P.vault.push({name:c.name,cat:'treasure',rar:c.rar,value:val,pair:null,taint:tainted?3:0});
+  P.codex[c.name]=(P.codex[c.name]||0)+1;
+  if(tainted)P.taint=clamp(P.taint+3,0,100);
+  g.plots[i]=null;
+  const msg='收获「'+c.name+'」（值 '+fmt(val)+'）入密库'+(tainted?'；封印薄弱，灵植吸了乱流，魔染 +3':'')+'。';
+  pushLog('【灵植园】'+msg,tainted?'bad':'good');
+  flashMsg(msg,tainted?'bad':'good');save();render();
+}
+function steal(i){
+  if(!P||P.gameOver||!P.garden)return;
+  const g=P.garden,p=g.npcPlots[i];
+  if(!p)return;
+  const now=Date.now();
+  if(now<g.banUntil){flashMsg('禁足中，去不了别人的菜地。','bad');return;}
+  if(now<p.matureAt){flashMsg('这畦还没熟。','bad');return;}
+  if(P.sense<6){flashMsg('神识不济，潜行不得（需 6）。','bad');return;}
+  P.sense-=6;
+  const c=cropByKey(p.crop),ch=stealChance(p),who=npcName(p.id);
+  if(rnd()<ch){
+    const val=Math.round(c.value*(.85+rnd()*.3));
+    const tainted=P.seal<40&&rnd()<.35;
+    P.vault.push({name:c.name,cat:'treasure',rar:c.rar,value:val,pair:null,taint:tainted?3:0});
+    P.codex[c.name]=(P.codex[c.name]||0)+1;
+    P.karma=Math.max(0,P.karma-1);
+    if(tainted)P.taint=clamp(P.taint+3,0,100);
+    let extra='';
+    if(rnd()<.14){P.suspicion=clamp(P.suspicion+3,0,100);extra='；有人远远看见，察觉 +3';}
+    g.steals.unshift({t:now,id:String(p.id),crop:c.key,ok:true,val:val});
+    if(g.steals.length>30)g.steals.length=30;
+    g.strikes=0;
+    const msg='摸进'+who+'的菜地，得「'+c.name+'」（值 '+fmt(val)+'）入密库；道心 -1'+extra+(tainted?'；灵植带染，魔染 +3':'')+'。';
+    pushLog('【偷菜】'+msg,'bad');flashMsg(msg,'bad');
+  }else{
+    const base=Math.round(40+c.value*.6);
+    const fine=Math.min(P.stones,Math.round(base*(P.karma>=15?.6:1)));
+    P.stones-=fine;P.suspicion=clamp(P.suspicion+8,0,100);P.karma=Math.max(0,P.karma-2);
+    let taint='';
+    if(P.seal<40){P.taint=clamp(P.taint+2,0,100);taint='；阵中乱流侵体，魔染 +2';}
+    g.strikes=(g.strikes||0)+1;
+    let ban='';
+    if(g.strikes>=3){g.strikes=0;g.banUntil=now+6*HOUR;ban='；执事记名三次，禁足六小时（可花 120 灵石赎身）';}
+    g.steals.unshift({t:now,id:String(p.id),crop:c.key,ok:false,fine:fine});
+    if(g.steals.length>30)g.steals.length=30;
+    const msg='被'+who+'逮个正着：罚灵石 '+fmt(fine)+'，察觉 +8，道心 -2'+taint+ban+'。';
+    pushLog('【偷菜】'+msg,'bad');flashMsg(msg,'bad');
+  }
+  replantNpc(p);
+  save();render();
+}
+function payBail(){
+  const g=P.garden;
+  if(!g||Date.now()>=g.banUntil)return;
+  if(P.stones<120){flashMsg('灵石不足 120，赎不了身。','bad');return;}
+  P.stones-=120;g.banUntil=0;g.strikes=0;
+  pushLog('【灵植园】交了 120 灵石罚金，执事撤了禁足。','');
+  flashMsg('禁足已撤。','good');save();render();
+}
+function brewable(){
+  const cnt={};
+  P.vault.forEach(v=>{
+    if(GARDEN_CROPS.some(c=>c.name===v.name))cnt[v.name]=(cnt[v.name]||0)+1;
+  });
+  return Object.keys(cnt).filter(n=>cnt[n]>=2).map(n=>({name:n,n:cnt[n]}));
+}
+function brew(name){
+  const idx=[];
+  P.vault.forEach((v,i)=>{if(v.name===name&&idx.length<2)idx.push(i);});
+  if(idx.length<2){flashMsg('密库里的「'+name+'」不够两份。','bad');return;}
+  if(P.stones<30){flashMsg('灵石不足 30。','bad');return;}
+  if(P.taint<=0&&P.sense>=senseMax()){flashMsg('神完气足，无需服丹。','bad');return;}
+  P.stones-=30;
+  idx.sort((a,b)=>b-a).forEach(i=>P.vault.splice(i,1));
+  P.sense=clamp(P.sense+20,0,senseMax());
+  P.taint=clamp(P.taint-4,0,100);
+  const msg='丹鼎房以两份「'+name+'」代炼成「养神丹」：神识 +20、魔染 -4。';
+  pushLog('【代炼】'+msg,'good');flashMsg(msg,'good');save();render();
+}
+/* 离线期间：成熟的菜按 20 分钟一个窗口被同门摸走，封印越低越容易被偷 */
+function simulateRaids(){
+  if(!P||!P.garden||P.gameOver)return false;
+  const g=P.garden,now=Date.now();
+  const last=Math.min(g.lastRaidCheck||now,now);
+  g.lastRaidCheck=now;
+  const W=20*MIN,wins=Math.floor(Math.min(now-last,72*HOUR)/W);
+  if(wins<=0)return false;
+  let changed=false;
+  const base=.10*myRaidFactor()*(1-Math.min(.3,P.karma*.004));
+  for(let w=0;w<Math.min(wins,72);w++){
+    const wEnd=last+(w+1)*W;
+    g.plots.forEach((p,i)=>{
+      if(!p||p.matureAt>wEnd)return;
+      if(rnd()<base){
+        const thief=pick(GARDEN_NPC);
+        g.losses.unshift({t:wEnd,id:String(thief),crop:p.crop});
+        if(g.losses.length>30)g.losses.length=30;
+        pushLog('【灵植园】'+npcName(thief)+'摸进你的菜地，偷走了「'+cropByKey(p.crop).name+'」。','bad');
+        g.plots[i]=null;changed=true;
+      }
+    });
+  }
+  if(changed)save();
+  return changed;
+}
+function gardenSigNow(){
+  const g=P.garden;if(!g)return '';
+  return g.plots.map(p=>p?(Date.now()>=p.matureAt?'1':'0'):'-').join('')+'|'+
+    g.npcPlots.map(p=>Date.now()>=p.matureAt?'1':'0').join('')+'|'+
+    (Date.now()<g.banUntil?'ban':'ok');
+}
+function updateCountdowns(){
+  const now=Date.now();
+  document.querySelectorAll('#gardenCard [data-until]').forEach(el=>{
+    const left=(+el.getAttribute('data-until'))-now;
+    el.textContent=left>0?fmtDur(left):'已成熟';
+  });
+  document.querySelectorAll('#gardenCard [data-ban]').forEach(el=>{
+    const left=(+el.getAttribute('data-ban'))-now;
+    el.textContent=left>0?fmtDur(left):'已解除';
+  });
+}
+function gardenTick(){
+  if(!P||!P.garden)return;
+  simulateRaids();
+  const sig=gardenSigNow();
+  if(sig!==gardenSig){gardenSig=sig;renderGarden();}
+  updateCountdowns();
+}
+function jumpGarden(instant){
+  const c=document.getElementById('gardenCard');if(!c)return;
+  c.classList.remove('collapsed');
+  c.scrollIntoView({behavior:instant?'auto':'smooth',block:'start'});
+}
+function recTime(t){
+  const d=new Date(t),p2=n=>String(n).padStart(2,'0');
+  return (d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes());
+}
+function renderGarden(){
+  const g=P&&P.garden;if(!g)return;
+  const myEl=document.getElementById('myPlots');
+  if(!myEl)return;
+  const now=Date.now();
+  const readyN=g.plots.filter(p=>p&&now>=p.matureAt).length;
+  document.getElementById('gardenTag').textContent=readyN?readyN+' 株已熟':'真实时间 · 可偷';
+  // 禁足条
+  const banEl=document.getElementById('gardenBan');
+  if(now<g.banUntil){
+    banEl.innerHTML=`<div class='banbar'><span>禁足中：<b data-ban='${g.banUntil}'>${fmtDur(g.banUntil-now)}</b> 不能偷菜</span><button class='sm red' onclick='payBail()'>交 120 灵石赎身</button></div>`;
+  }else banEl.innerHTML='';
+  // 我的菜地
+  const sel=cropByKey(gardenSeed);
+  myEl.innerHTML=g.plots.map((p,i)=>{
+    if(!p)return `<div class='plot empty' onclick='plant(${i})'><div class='ph'>＋ 空地</div><div class='pt'>点此播下<br>「${sel.name}」</div></div>`;
+    const c=cropByKey(p.crop),left=p.matureAt-now;
+    const pct=clamp((now-p.plantedAt)/Math.max(1,p.matureAt-p.plantedAt)*100,0,100);
+    const ok=left<=0;
+    return `<div class='plot ${ok?'ready':''}'><div class='ph'><span class='pic'>${c.ic}</span>${c.name}</div>`+
+      `<div class='pb'><i style='width:${pct}%;background:${ok?'var(--jade)':'var(--blue)'}'></i></div>`+
+      `<div class='pt'><span data-until='${p.matureAt}'>${left>0?fmtDur(left):'已成熟'}</span></div>`+
+      (ok?`<button class='gold' onclick='harvest(${i})'>收获</button>`:`<button class='sm' disabled>生长中</button>`)+`</div>`;
+  }).join('');
+  // 种子
+  document.getElementById('seedBar').innerHTML=GARDEN_CROPS.map(c=>
+    `<div class='seed ${gardenSeed===c.key?'on':''} ${P.stones<c.cost?'poor':''}' onclick="pickSeed('${c.key}')">${c.ic} ${c.name}<br><span style='color:var(--dim)'>${c.cost} 石 · ${fmtDur(c.grow)}</span></div>`).join('');
+  // 同门菜地
+  document.getElementById('npcPlots').innerHTML=g.npcPlots.map((p,i)=>{
+    const c=cropByKey(p.crop),left=p.matureAt-now,ok=left<=0;
+    const av=(typeof avatarOf==='function')?avatarOf(p.id):'';
+    const fb=(typeof avatarFallback==='function')?avatarFallback(p.id):'';
+    const ch=Math.round(stealChance(p)*100);
+    return `<div class='plot ${ok?'ready':''}'>`+
+      `<div class='ph'><img class='pav' src='${av}' data-fb='${fb}' alt='' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'><span style='min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>${npcName(p.id)}</span></div>`+
+      `<div class='pt'>${c.ic} ${c.name} · ${ok?'已成熟':`<span data-until='${p.matureAt}'>${fmtDur(left)}</span>`}</div>`+
+      (ok?`<button class='sm purple' onclick='steal(${i})'>偷 · ${ch}% · 神识6</button>`:`<button class='sm' disabled>生长中</button>`)+`</div>`;
+  }).join('');
+  // 成功率与代价
+  const c0=cropByKey(gardenSeed);
+  document.getElementById('stealNote').innerHTML=
+    `偷菜每次耗神识 6，成功则入密库并道心 −1。成功率 = 88% − 稀有度×5% − 守卫 − <b style='color:var(--jade)'>封印 ${P.seal}%×0.15%</b> − <b style='color:var(--jade)'>道心 ${P.karma}×0.8%</b>；被抓罚灵石 40＋作物值×60%${P.karma>=15?'（道心 ≥15 打六折）':''}、察觉 +8、道心 −2。`+
+    (P.seal<40?`<br><b style='color:var(--red)'>封印 ${P.seal}% 偏弱</b>：被偷概率 ×${myRaidFactor().toFixed(1)}，偷来的灵植 35% 带魔染，自家成熟快 15%。`:'');
+  // 代炼
+  const bs=brewable();
+  document.getElementById('brewBox').innerHTML=bs.length?bs.map(b=>
+    `<div class='row'><span><b>${b.name}</b> ×${b.n}<br><span style='color:var(--dim);font-size:10px'>养神丹：神识 +20、魔染 −4</span></span><button class='sm jade' onclick="brew('${b.name}')">代炼 · 30 石</button></div>`).join('')
+    :`<div class='note' style='margin:2px 0 0'>密库里同种灵植凑够 2 份，即可请丹鼎房代炼。</div>`;
+  // 记录
+  document.getElementById('gardenRecs').innerHTML=
+    `<div class='grec'><div class='gt'>我偷的 · ${g.steals.length} 次</div>`+
+      (g.steals.length?g.steals.slice(0,6).map(s=>{
+        const nm=npcName(s.id),cn=cropByKey(s.crop).name;
+        return `<div class='gi'><span style='color:${s.ok?'var(--jade)':'var(--red)'}'>${s.ok?'得手':'被抓'}</span> ${nm} · ${cn} ${s.ok?'+'+fmt(s.val):'−'+fmt(s.fine||0)}<br><span style='color:var(--dim)'>${recTime(s.t)}</span></div>`;
+      }).join(''):`<div class='gi'>还没有偷过。</div>`)+`</div>`+
+    `<div class='grec'><div class='gt'>被偷的 · ${g.losses.length} 次</div>`+
+      (g.losses.length?g.losses.slice(0,6).map(s=>
+        `<div class='gi'><span style='color:var(--red)'>失窃</span> ${npcName(s.id)} · ${cropByKey(s.crop).name}<br><span style='color:var(--dim)'>${recTime(s.t)}</span></div>`).join(''):`<div class='gi'>暂时没人动你的菜。</div>`)+`</div>`;
+  document.getElementById('gardenNote').innerHTML=
+    `作物按真实时间成熟，关掉页面也在长；离线期间成熟的菜可能被同门摸走。偷来的灵植直接进<b style='color:var(--ink)'>密库</b>，可走现有七折销赃，或凑两株请丹鼎房代炼。`+
+    (g.strikes?`　已被记名 <b style='color:var(--red)'>${g.strikes}/3</b> 次，第三次禁足六小时。`:'');
+  gardenSig=gardenSigNow();
+}
+function startGardenClock(){
+  if(typeof setInterval==='undefined')return;
+  setInterval(()=>{if(P&&P.garden)gardenTick();},3000);
+}
+
+/* ===================== 茧生成 ===================== */
+function rollItem(z,shell){
+  // 两段式抽取：① 品相（壳）定内容物大类 ② 类内按稀有度 × 区域系数抽具体物件
+  const mix=shell.mix;
+  const cats=Object.keys(mix).filter(k=>mix[k]>0&&CATPOOL[k]&&CATPOOL[k].length);
+  const cw=cats.map(k=>mix[k]*((k==='taint'||k==='person'||k==='void')?(1+z.risk*1.6):1));
+  let ct=cw.reduce((a,b)=>a+b,0),cr=Math.random()*ct,cat=cats[cats.length-1];
+  for(let i=0;i<cats.length;i++){cr-=cw[i];if(cr<=0){cat=cats[i];break;}}
+  let pool=CATPOOL[cat].filter(i=>i.rar<=shell.cap);
+  if(!pool.length)pool=CATPOOL[cat];
+  const w=pool.map(i=>{
+    let x=RAR_W[i.rar]*(1+z.bonus*(.35+i.rar*.45));
+    if(i.cat==='taint')x*=.62+z.risk*2.0;
+    if(i.cat==='void')x*=.70+z.risk*1.8;
+    if(i.cat==='person')x*=.58+z.risk*1.4;
+    if(P.personBoost&&i.cat==='person')x*=2.2;
+    if(P.eventRisk&&(i.cat==='taint'||i.cat==='void'))x*=1+P.eventRisk*3;
+    return Math.max(.01,x);
+  });
+  let s=w.reduce((a,b)=>a+b,0),r=Math.random()*s,it=pool[pool.length-1];
+  for(let i=0;i<pool.length;i++){r-=w[i];if(r<=0){it=pool[i];break;}}
+  return it;
+}
+function makeCocoon(z){
+  const shell=weighted(SHELLS);
+  const it=rollItem(z,shell);
+  let v=it.base*(1+z.bonus*.5)*(.85+Math.random()*.35);
+  if(shell.key==='broken')v*=.34;
+  if(shell.key==='half')v*=.55;
+  if(shell.key==='whisper')v*=1.10;
+  v=Math.max(0,Math.round(v));
+  return {id:P.seq++,zone:z.key,shell:shell.key,item:it.name,value:v,sealed:true,appraised:null,cut:(shell.key==='half')};
+}
+function itemByName(n){return ITEMS.find(i=>i.name===n)||ITEMS[0];}
+
+/* ===================== 永远遗失 · 货单追查 ===================== */
+function makeManifest(no){
+  return {no:no||('货单第 '+ri(100,9999)+' 号'),cargo:pick(LOST_CARGO),
+    need:ri(3,6),frag:0,status:'open',end:null,owner:pick(OWNER_IDS),
+    clue:pick([
+      '道标残片仍指着一处已被抹去的坐标。',
+      '旧货主的残页上，货号旁多了一枚指印。',
+      '封印眼的记录里，这一批货从未抵达。',
+      '有人记得它上了基站，却没人记得它下来。',
+      '三生簿旁注写着：此单「不予查证」。'
+    ])};
+}
+function openManifests(){return P.lost.filter(m=>m.status==='open');}
+function hasOpenManifest(){return openManifests().length>0;}
+/* 兼容旧存档：早期 lost 只是字符串数组 */
+function normalizeLost(){
+  if(!Array.isArray(P.lost))P.lost=[];
+  P.lost=P.lost.map(m=>typeof m==='string'?makeManifest(m):m);
+}
+function addClue(n,src){
+  const ms=openManifests();if(!ms.length)return false;
+  const m=ms[0];m.frag=Math.min(m.need,m.frag+n);
+  pushLog('【货单线索】'+src+'：'+m.no+' 线索 '+m.frag+'/'+m.need+'。',m.frag>=m.need?'info':'');
+  return true;
+}
+function traceManifest(i){
+  const m=P.lost[i];if(!m||m.status!=='open'||P.gameOver)return;
+  if(P.sense<12){pushLog('神识不济，追查不得。','bad');render();return;}
+  P.sense-=12;
+  const g=rnd()<.32?2:1;
+  m.frag=Math.min(m.need,m.frag+g);
+  pushLog('循道标追查「'+m.no+'」：'+m.clue+'　线索 +'+g+'（'+m.frag+'/'+m.need+'），神识 -12。','info');
+  if(m.frag>=m.need)closeManifest(m);
+  save();render();
+}
+function closeManifest(m){
+  const e=weighted(LOST_END);m.status='closed';m.end=e.label;
+  let tail='';
+  if(e.key==='recovered'){
+    const pool=ITEMS.filter(i=>i.cat==='treasure'&&i.rar>=2&&i.rar<=4);
+    const it=pick(pool),val=Math.round(it.base*(.9+rnd()*.5));
+    P.vault.push({name:it.name,cat:it.cat,rar:it.rar,value:val,pair:null,taint:0});
+    P.codex[it.name]=(P.codex[it.name]||0)+1;
+    const g=Math.round(40+val*.25);P.merit+=g;
+    tail='循道标寻回残货「'+it.name+'」（值 '+fmt(val)+'），入密库；贡献 +'+g+'。';
+  }else if(e.key==='swallowed'){
+    P.merit+=60;P.suspicion=clamp(P.suspicion+8,0,100);
+    tail='账册被人抹平，货早进了谁的私库。宗门给了 60 贡献封口，察觉 +8。';
+  }else{
+    P.merit+=30;
+    tail='目标坐标彻底湮灭，连曾否存在都无从查证。宗门记了一笔薄功，贡献 +30。';
+  }
+  pushLog('【货单结案 · '+e.label+'】'+m.no+'：'+tail,'good');
+}
+function flashMsg(txt,type){
+  const d=document.getElementById('toast');if(!d)return;
+  d.textContent=txt;d.className='toast show '+(type||'');
+  if(typeof setTimeout!=='undefined'){
+    clearTimeout(flashMsg._t);flashMsg._t=setTimeout(()=>{d.className='toast';},2300);
+  }
+}
+/* ===================== 主循环 ===================== */
+function patrol(){
+  if(P.gameOver)return;
+  const z=zone();
+  if(P.rank<z.minRank){pushLog('此裂缝非你所能近，先攒贡献晋阶。','bad');render();return;}
+  if(z.key==='void'&&!tool('anchor')){pushLog('位外虚空须持空间锚，否则神识一去不回。','bad');render();return;}
+  let cost=z.cost+(z.key==='void'&&!tool('anchor')?10:0);
+  if(P.sense<cost){pushLog('神识不济，须先歇一歇（下一回合回复）。','bad');P.sense=clamp(P.sense+14,0,senseMax());P.turn++;render();return;}
+  P.sense-=cost;
+  P.turn++;
+  P.sense=clamp(P.sense+16,0,senseMax());
+  // 清掉上一回合事件
+  P.event=null;P.eventBonus=0;P.eventRisk=0;P.blind=false;P.ownerAsk=false;P.personBoost=false;
+  // 随机事件
+  if(rnd()<.26){const e=pick(EVENTS);P.event=e;e.apply(P);pushLog('【'+e.name+'】'+e.desc,'info');}
+  let n=clamp(ri(1,3)+P.eventBonus,1,5);
+  for(let i=0;i<n;i++)P.queue.push(makeCocoon(z));
+  // 永远遗失：生成可追查货单
+  if(rnd()<.16){
+    const m=makeManifest();P.lost.push(m);
+    pushLog('【永远遗失】'+m.no+'（'+m.cargo+'）：折叠目标点湮灭，只剩一行货号。可按货单追查。','info');
+  }
+  // 巡缝偶得线索
+  if(rnd()<.12&&hasOpenManifest())addClue(1,'巡缝时拾到半枚道标印');
+  P.seal=clamp(P.seal-ri(0,2)+(P.event&&P.event.key==='seal'?12:0),0,100);
+  let wear='';
+  if(P.seal<40){const leak=P.seal<20?3:2;P.taint=clamp(P.taint+leak,0,100);wear+='；封印薄弱，渗出侵体，魔染 +'+leak;}
+  if(P.karma>=10&&P.taint>0){P.taint=clamp(P.taint-1,0,100);wear+='；道心澄明，魔染 -1';}
+  pushLog('巡视'+z.name+'，拾得 '+n+' 枚茧（神识 -'+cost+' / +16，封印 '+P.seal+'%）'+wear+'。','');
+  if(!P.current&&P.queue.length)selectCocoon(0);
+  checkEnd();save();render();
+}
+function setZone(k){const z=ZONES.find(x=>x.key===k);if(!z)return;if(P.rank<z.minRank){pushLog('「'+z.name+'」需晋至 '+RANKS[z.minRank].name+' 方可近。','bad');render();return;}P.zone=k;pushLog('改巡'+z.name+'。','');save();render();}
+function selectCocoon(i){
+  if(P.gameOver)return;
+  const c=P.queue[i];if(!c)return;
+  if(P.current&&P.stage==='opened')return; // 未决策不许换
+  P.current=c;P.stage='idle';P.lastResult=null;render();
+}
+function appraise(){
+  const c=P.current;if(!c||P.stage!=='idle'||c.appraised)return;
+  if(P.sense<8){pushLog('神识不足，探查不得。','bad');render();return;}
+  P.sense-=8;
+  const it=itemByName(c.item);
+  const b=P.bias;
+  const biasHit=b&&b.cat===it.cat;
+  let err=.24+it.rar*.055+(it.cat==='taint'?.16:0)+(it.cat==='person'?.10:0)-rank().bias*.12;
+  err-=Math.min(.18,P.karma*.012);
+  if(tool('compass'))err-=.20;
+  if(biasHit)err+=.34;
+  if(P.blind)err=.92;
+  err=clamp(err,.03,.95);
+  const wrong=rnd()<err;
+  let shown=c.value;
+  if(wrong)shown=Math.max(0,Math.round(c.value*(.28+rnd()*2.5)*(b&&biasHit&&b.dir==='high'?1.7:(b&&biasHit&&b.dir==='low'?.45:1))));
+  else shown=Math.round(c.value*(.9+rnd()*.2));
+  const cats=Object.keys(CATNAME).filter(k=>k!==it.cat);
+  const shownCat=wrong&&rnd()<.62?pick(cats):it.cat;
+  const dangerGuess=wrong&&rnd()<.55?(rnd()<.5?'似有魔染':'看着干净'):(it.taint>0||it.danger?'恐有沾染':'似无危险');
+  c.appraised={value:shown,cat:shownCat,danger:dangerGuess,wrong:wrong};
+  pushLog('以神识探「'+SHELLS.find(s=>s.key===c.shell).name+'」：估 '+fmt(shown)+' 灵石，疑为'+CATNAME[shownCat]+'，'+dangerGuess+'。','');
+  save();render();
+  const egg=document.querySelector('#stage .egg');
+  if(egg){egg.classList.add('scanning');if(typeof setTimeout!=='undefined')setTimeout(()=>egg.classList.remove('scanning'),850);}
+}
+function openCocoon(){
+  const c=P.current;if(!c||P.stage!=='idle')return;
+  if(P.sense<12){pushLog('神识不足以剖壳，先巡一回合回气。','bad');render();return;}
+  P.sense-=12;
+  c.sealed=false;P.stage='opening';P.opened++;
+  const it=itemByName(c.item);
+  P.codex[c.item]=(P.codex[c.item]||0)+1;
+  // 旧档本身即是线索
+  if(it.name==='旧货主的货单')addClue(1,'剖出「旧货主的货单」残页');
+  if(it.name==='网道道标残片')addClue(2,'道标残片仍在微弱地指路');
+  if(it.name==='道门封印残片')addClue(1,'封印残片记着旧坐标');
+  let notes=[],dmg=0;
+  const z=ZONES.find(x=>x.key===c.zone)||ZONES[0];
+  const riskAdd=P.eventRisk||0;
+  if(it.taint>0){
+    let t=it.taint*(tool('ward')?.5:1)+Math.round((z.risk+riskAdd)*14);
+    t=Math.max(1,Math.round(t*sealFactor()*(1-karmaGuard())));P.taint=clamp(P.taint+t,0,100);
+    notes.push('魔染 +'+t+'（'+(it.cat==='taint'?'四神残念':'乱流余污')+'；封印 '+P.seal+'% / 道心 '+P.karma+'）');dmg+=t;
+  }
+  if(it.danger==='tear'){P.sense=clamp(P.sense-8,0,senseMax());notes.push('时空乱流擦过神识，神识 -8');}
+  if(it.danger==='void'){P.sense=clamp(P.sense-6,0,senseMax());notes.push('乱流泄出，神识 -6，队列里一枚茧被卷散');const k=P.queue.findIndex(x=>x!==c);if(k>=0)P.queue.splice(k,1);}
+  if(it.danger==='possessed'){
+    const loss=Math.min(P.stones,ri(20,70));P.stones-=loss;
+    notes.push('茧中人睁了眼：夺去 '+loss+' 灵石，魔染再 +8');P.taint=clamp(P.taint+8,0,100);dmg+=8;
+  }
+  if(!notes.length)notes.push('壳开无声，未见异状。');
+  c.openNotes=notes;c.dmg=dmg;
+  pushLog('剖开'+SHELLS.find(s=>s.key===c.shell).name+'：得「'+it.name+'」，实值 '+fmt(c.value)+' 灵石。'+notes.join('；'),dmg>0?'bad':'good');
+  P.lastResult={name:it.name,cat:it.cat,rar:it.rar,value:c.value,desc:it.desc,notes:notes,danger:it.danger,taint:it.taint,pair:it.pair,alive:(it.danger==='alive'||it.danger==='possessed')};
+  checkEnd();save();render();
+  if(typeof setTimeout!=='undefined')setTimeout(()=>{
+    if(P&&P.stage==='opening'){P.stage='opened';save();render();}
+  },1450);
+}
+function skipOpen(){if(P&&P.stage==='opening'){P.stage='opened';save();render();}}
+function decide(act){
+  const c=P.current,r=P.lastResult;if(!c||P.stage!=='opened'||!r)return;
+  const it=itemByName(c.item);
+  let msg='';
+  if(act==='turnin'){
+    const gain=Math.max(1,Math.round(c.value*.6));
+    P.merit+=gain;P.suspicion=clamp(P.suspicion-6,0,100);P.taint=clamp(P.taint-4,0,100);P.seal=clamp(P.seal+2,0,100);
+    msg='上交宗门，得贡献 +'+gain+'；入库之后去向不明。察觉 -6，魔染 -4，封印 +2。';
+  }else if(act==='keep'){
+    P.vault.push({name:it.name,cat:it.cat,rar:it.rar,value:c.value,pair:it.pair,taint:it.taint});
+    let sp=5+(c.value>200?6:0)+(r.danger?5:0);
+    if(tool('box'))sp=Math.ceil(sp*.5);
+    P.suspicion=clamp(P.suspicion+sp,0,100);
+    let tAdd=0;
+    if(!tool('box')&&(it.taint>0||r.danger)){tAdd=Math.ceil((it.taint||6)/2);P.taint=clamp(P.taint+tAdd,0,100);}
+    msg='私藏入密库（值 '+fmt(c.value)+'）。察觉 +'+sp+(tAdd?'，魔染 +'+tAdd:'')+'。';
+  }else if(act==='seal'){
+    P.taint=clamp(P.taint-12,0,100);P.sense=clamp(P.sense-4,0,senseMax());P.seal=clamp(P.seal+3,0,100);
+    msg='就地封存销毁，魔染 -12、神识 -4，封印 +3，一无所获，但心里干净。';
+  }else if(act==='release'){
+    P.karma+=1;P.taint=clamp(P.taint-10,0,100);P.suspicion=clamp(P.suspicion-3,0,100);P.merit+=10;
+    msg='放他走了。贡献 +10（宗门记为放归），魔染 -10，道心 +1。';
+  }else if(act==='pair'){
+    const idx=P.vault.findIndex(v=>v.pair&&it.pair&&v.pair===it.pair&&v.name!==it.name);
+    if(idx<0){pushLog('密库里没有另一半，凑不成完器——先留着吧。','bad');render();return;}
+    const other=P.vault.splice(idx,1)[0];
+    const fullVal=Math.round((c.value+other.value)*3);
+    const fullName=it.name.replace(/·(上半截|下半截|左半|右半|前卷|后卷|雌|雄)/,'')+'（完器）';
+    P.vault.push({name:fullName,cat:'treasure',rar:Math.min(5,Math.max(it.rar,other.rar)+1),value:fullVal,pair:null,taint:0});
+    P.codex[fullName]=1;
+    msg='两半合一，「'+fullName+'」成，值 '+fmt(fullVal)+' 灵石！';
+  }
+  pushLog(msg,act==='keep'?'bad':'good');
+  flashMsg(msg,act==='keep'?'bad':'good');
+  // 移除该茧
+  const i=P.queue.indexOf(c);if(i>=0)P.queue.splice(i,1);
+  P.current=null;P.stage='idle';P.lastResult=null;
+  checkRank();checkEnd();save();render();
+}
+function sell(i){
+  const v=P.vault[i];if(!v)return;
+  const gain=Math.round(v.value*.7);
+  P.stones+=gain;P.suspicion=clamp(P.suspicion+8,0,100);
+  P.vault.splice(i,1);
+  pushLog('销赃「'+v.name+'」，得 '+fmt(gain)+' 灵石（七折），察觉 +8。','bad');
+  checkEnd();save();render();
+}
+function buy(k){
+  const t=TOOLS.find(x=>x.key===k);if(!t||tool(k))return;
+  if(k==='incense'){
+    if(!P.bias){pushLog('眼下并无成见，不必焚香。','');render();return;}
+    if(P.stones<t.cost){pushLog('灵石不足。','bad');render();return;}
+    P.stones-=t.cost;P.bias=null;pushLog('焚清心香，放下了一桩成见。','good');save();render();return;
+  }
+  if(P.stones<t.cost){pushLog('灵石不足（需 '+t.cost+'）。','bad');render();return;}
+  P.stones-=t.cost;P.tools[k]=true;
+  pushLog('购得「'+t.name+'」：'+t.desc,'good');save();render();
+}
+function ownerReturn(){
+  if(!P.ownerAsk||!P.vault.length){pushLog('无物可还，或无人来问。','');render();return;}
+  const v=P.vault.shift();const g=Math.round(v.value*.8)+30;
+  P.merit+=g;P.suspicion=clamp(P.suspicion-20,0,100);P.ownerAsk=false;
+  pushLog('将「'+v.name+'」交还旧货主，得贡献 +'+g+'，察觉 -20。','good');save();render();
+}
+function checkRank(){
+  while(P.rank<RANKS.length-1&&P.merit>=RANKS[P.rank+1].need){
+    const nr=RANKS[P.rank+1];P.rank++;
+    P.sense=senseMax();
+    // 高境更固执：晋阶时凝成一桩成见
+    const cats=['taint','person','junk','half','relic'];
+    P.bias={cat:pick(cats),dir:rnd()<.6?'high':'low'};
+    pushLog('晋为「'+nr.name+'」！解锁 '+ZONES[nr.zone-1].name+'，神识上限 '+nr.sense+'。然见识愈深，愈易执一己之见：对「'+CATNAME[P.bias.cat]+'」生了'+(P.bias.dir==='high'?'偏爱（恒高估）':'偏见（恒低估）')+'（§7.4）。','info');
+  }
+}
+function checkEnd(){
+  if(P.taint>=100&&!P.gameOver){
+    P.gameOver=true;
+    pushLog('魔染满盈。你低下头，看见自己手上也起了一层壳——原来拾茧人，终究也是茧中物。','bad');
+  }
+  if(P.suspicion>=100){
+    P.suspicion=40;P.vault=[];P.merit=Math.floor(P.merit*.5);
+    pushLog('【宗门清查】密库被罚没，贡献折半。执事没说什么，只是记了一笔。','bad');
+  }
+}
+function reincarnate(){
+  const keep={codex:P.codex,lost:P.lost};
+  const bonus=Math.min(200,Object.keys(keep.codex).length*4);
+  P=freshState(false);P.codex=keep.codex;P.lost=keep.lost;P.stones+=bonus;
+  pushLog('转世重开。拾遗录随你跨世，另得 '+bonus+' 灵石的「前世眼力」。','info');
+  for(let i=0;i<3;i++)P.queue.push(makeCocoon(ZONES[0]));
+  selectCocoon(0);save();render();
+}
+function toggleFold(id){
+  const el=document.getElementById(id);
+  if(el&&el.classList)el.classList.toggle('collapsed');
+}
+function resetGame(){P=freshState(true);for(let i=0;i<3;i++)P.queue.push(makeCocoon(ZONES[0]));P.current=P.queue[0];P.stage='idle';pushLog('网道崩溃后的第 '+P.turn+' 年。你领了三枚素茧，开始拾茧。','');save();render();}
+
+/* ===================== 渲染 ===================== */
+function advice(){
+  if(P.gameOver)return '<span class="ic">☠</span>魔染已满，你已成了茧中物。<b>转世重开</b>，拾遗录会随你跨世。';
+  if(P.taint>=75)return '<span class="ic">⚠</span>魔染逼近临界，宜<b>上交</b>或<b>就地封存</b>，勿再私藏魔染之物。';
+  if(P.seal<=20)return '<span class="ic">⚠</span>封印强度濒临崩溃，开壳沾染倍增；<b>上交</b>或<b>封存销毁</b>可加固封印。';
+  if(P.suspicion>=70)return '<span class="ic">⚠</span>宗门察觉已高，密库该清一清了；<b>上交</b>可降察觉，销赃反而更险。';
+  const ripe=P.garden?P.garden.plots.filter(x=>x&&Date.now()>=x.matureAt).length:0;
+  if(ripe)return '<span class="ic">🌿</span>灵植园有 <b>'+ripe+'</b> 株已熟，先去<b>收菜</b>。';
+  if(P.sense<14)return '<span class="ic">◈</span>神识见底，先<b>巡视裂缝</b>回气，再剖下一枚。';
+  if(!P.current&&P.queue.length)return '<span class="ic">▸</span>队列里还有 <b>'+P.queue.length+'</b> 枚茧，点一枚放上开茧台。';
+  if(!P.queue.length)return '<span class="ic">◈</span>茧已拾尽，<b>巡视裂缝</b>补货；区域越深，货越珍、染越重。';
+  if(P.current&&P.stage==='idle'&&!P.current.appraised)return '<span class="ic">◎</span>可先<b>神识鉴定</b>（估价未必准），也可直接<b>开茧</b>赌一把。';
+  if(P.current&&P.stage==='opened')return '<span class="ic">◇</span>开出来了——<b>上交宗门</b>换贡献，还是<b>私藏</b>搏全额？危险物宜封存。';
+  return '<span class="ic">◈</span>网道崩溃之后，值得做的只剩一件事：把茧打开。';
+}
+function renderTop(){
+  const sm=senseMax();
+  document.getElementById('topbar').innerHTML=
+    `<div class='vit'><span class='lab'>回合 / 年</span><span class='val'>${P.turn}</span></div>`+
+    `<div class='vit'><span class='lab'>职阶</span><span class='val' style='color:var(--gold)'>${rank().name}</span></div>`+
+    `<div class='vit'><span class='lab'>灵石</span><span class='val'>${fmt(P.stones)}</span></div>`+
+    `<div class='vit'><span class='lab'>宗门贡献</span><span class='val' style='color:var(--jade)'>${fmt(P.merit)}</span></div>`+
+    `<div class='vsep'></div>`+
+    `<div class='vit' style='min-width:96px'><span class='lab'>神识 ${P.sense}/${sm}</span><div class='mini'><i style='width:${clamp(P.sense/sm*100,0,100)}%;background:var(--blue)'></i></div></div>`+
+    `<div class='vit' style='min-width:96px'><span class='lab'>魔染 ${P.taint}/100</span><div class='mini'><i style='width:${P.taint}%;background:${P.taint>=75?'var(--red)':'var(--purple)'}'></i></div></div>`+
+    `<div class='vit' style='min-width:96px'><span class='lab'>宗门察觉 ${P.suspicion}/100</span><div class='mini'><i style='width:${P.suspicion}%;background:${P.suspicion>=70?'var(--red)':'var(--gold)'}'></i></div></div>`+
+    `<div class='vsep'></div>`+
+    `<div class='vit'><span class='lab'>开茧 / 图鉴</span><span class='val'>${P.opened} / ${Object.keys(P.codex).length}</span></div>`+
+    `<div class='vit' style='min-width:70px' title='道心：降低鉴定误差与开壳沾染；≥10 时每次巡缝自净 1 点魔染'><span class='lab'>道心</span><span class='val' style='color:var(--jade)'>${P.karma}</span></div>`+
+    `<div class='vit' style='min-width:102px' title='封印强度：越低，开壳沾染越重；上交或封存销毁可加固'><span class='lab'>封印强度 ${P.seal}%</span><div class='mini'><i style='width:${P.seal}%;background:${P.seal<40?'var(--red)':P.seal<70?'var(--gold)':'var(--jade)'}'></i></div></div>`;
+  document.getElementById('recbar').innerHTML=advice();
+  document.getElementById('overBox').innerHTML=P.gameOver?
+    `<div class='over'><h2>你也成了茧中物</h2><div style='color:var(--dim);font-size:12px;margin-bottom:10px'>魔染满盈，意识在网道里被四神浸透，肉身却落回人间。拾遗录记下了你见过的 ${Object.keys(P.codex).length} 种物件。</div><button class='gold' onclick='reincarnate()'>↻ 转世重开（保留图鉴）</button></div>`:'';
+}
+function renderStage(){
+  const el=document.getElementById('stage');
+  const tag=document.getElementById('stageTag');
+  if(P.gameOver){el.innerHTML='<div class="empty">这一世已了。转世之后，茧还在那里。</div>';tag.textContent='已终';return;}
+  const c=P.current;
+  if(!c){
+    tag.textContent='待拾茧';
+    el.innerHTML=`<div class='empty'>开茧台空着。${P.queue.length?'从下方队列点一枚茧放上来。':'先「巡视裂缝」补入新茧。'}</div>`;
+    return;
+  }
+  const sh=SHELLS.find(s=>s.key===c.shell),z=ZONES.find(x=>x.key===c.zone);
+  if(P.stage==='opening'){
+    tag.textContent='剖茧中 · '+sh.name;
+    const ic=CATIC[P.lastResult?P.lastResult.cat:'treasure']||'✦';
+    el.innerHTML=
+      `<div class='ritual'>
+        <div class='crackstage'><div class='half l'></div><div class='half r'></div><div class='flare'></div><div class='revealIcon'>${ic}</div></div>
+        <div class='steps'><span>一叩壳</span><span>二听息</span><span>三启封</span></div>
+        <div style='color:var(--dim);font-size:11px;margin-top:6px'>神识入壳，壳相自裂……</div>
+      </div>
+      <div class='btns'><button class='sm' onclick='skipOpen()'>略过动画</button></div>`;
+    return;
+  }
+  if(P.stage==='idle'){
+    tag.textContent='第 '+P.turn+' 年 · '+z.name;
+    let ap='';
+    if(c.appraised){
+      const a=c.appraised;
+      ap=`<div class='appraise'><b>神识探查</b>：估 <b>${fmt(a.value)}</b> 灵石，疑为「${CATNAME[a.cat]}」，<span class='${a.danger.indexOf('魔染')>=0||a.danger.indexOf('沾染')>=0?'warn':''}'>${a.danger}</span>。<br><span style='color:var(--dim);font-size:11px'>估值只是猜测——越珍稀、越魔染越易看错${P.bias?'；你此刻对「'+CATNAME[P.bias.cat]+'」有'+(P.bias.dir==='high'?'偏爱':'偏见'):''}${P.blind?'；本回合四神低语，鉴定全体失准':''}。</span></div>`;
+    }
+    el.innerHTML=
+      `<div class='egg'><div class='orb'>${sh.ic}</div><div class='info'><div class='nm'>${sh.name}</div>`+
+      `<div class='meta'>拾于：<b style='color:var(--ink)'>${z.name}</b>　｜　壳相：${sh.hint}</div>`+
+      `<div class='hint'>◇ 壳内是什么，无人能凭外观断定。</div></div></div>`+ap+
+      `<div class='btns'>`+
+        `<button class='jade' onclick='appraise()' ${c.appraised||P.sense<8?'disabled':''}>◎ 神识鉴定 <small>耗神识 8 · 估价未必准</small></button>`+
+        `<button class='gold rec' onclick='openCocoon()' ${P.sense<12?'disabled':''}>◈ 开　茧 <small>耗神识 12 · 见真章</small></button>`+
+        (P.queue.length>1?`<button class='sm' onclick='selectCocoon(${(P.queue.indexOf(c)+1)%P.queue.length})'>换一枚</button>`:'')+
+      `</div>`;
+    return;
+  }
+  // 已开
+  const r=P.lastResult;
+  tag.textContent='已剖 · '+sh.name;
+  const rr=rar(r.rar);
+  const dangerHtml=r.notes.length?`<div class='danger'><b>开壳之险</b>：${r.notes.join('；')}</div>`:`<div class='safe'>未见异状。</div>`;
+  const pairOk=r.pair&&P.vault.some(v=>v.pair===r.pair&&v.name!==r.name);
+  el.innerHTML=
+    `<div class='result'><div class='rhead'><span class='rname' style='color:${rr.c}'>${r.name}</span>`+
+      `<span class='rcat' style='color:${rr.c};border-color:${rr.c}'>${rr.n}</span><span class='rcat'>${CATNAME[r.cat]}</span>`+
+      (c.cut?`<span class='rcat' style='color:var(--red)'>被切成两半</span>`:'')+`</div>`+
+      `<div class='rdesc'>${r.desc}</div>`+
+      `<div class='rval'>实值 ${fmt(r.value)} 灵石</div>${dangerHtml}</div>`+
+      `<div class='btns'>`+
+        `<button class='jade' onclick="decide('turnin')">↑ 上交宗门 <small>得 ${Math.max(1,Math.round(r.value*.6))} 贡献 · 降察觉／魔染 · 封印 +2</small></button>`+
+        `<button class='purple' onclick="decide('keep')">◇ 私自藏下 <small>全额 ${fmt(r.value)} · 抬察觉</small></button>`+
+        (r.pair?`<button onclick="decide('pair')" ${pairOk?'':'disabled'}>⇔ 凑成完器 <small>${pairOk?'密库里有另一半！':'尚缺另一半'}</small></button>`:'')+
+        (r.alive?`<button class='jade' onclick="decide('release')">✿ 放归 <small>道心 +1 · 魔染 -10</small></button>`:'')+
+        `<button class='red' onclick="decide('seal')">⊘ 封存销毁 <small>魔染 -12 · 封印 +3 · 一无所获</small></button>`+
+      `</div>`;
+}
+function renderQueue(){
+  const el=document.getElementById('queue');
+  document.getElementById('queueTag').textContent=P.queue.length+' 枚 · 点击放上开茧台';
+  if(!P.queue.length){el.innerHTML="<div class='empty'>一枚不剩。巡视裂缝去。</div>";return;}
+  el.innerHTML=P.queue.map((c,i)=>{
+    const sh=SHELLS.find(s=>s.key===c.shell),z=ZONES.find(x=>x.key===c.zone);
+    const cur=P.current===c;
+    return `<div class='qitem ${cur?'cur':''}' onclick='selectCocoon(${i})'><span class='ic'>${sh.ic}</span><b>${sh.name}</b><span class='zn'>${z.name.slice(0,2)}${c.appraised?' · 已鉴':''}</span></div>`;
+  }).join('');
+}
+function renderZones(){
+  document.getElementById('zones').innerHTML=ZONES.map(z=>{
+    const locked=P.rank<z.minRank;
+    const voidLock=z.key==='void'&&!tool('anchor');
+    return `<button class='zbtn ${P.zone===z.key?'on':''} ${locked||voidLock?'lock':''}' onclick="setZone('${z.key}')">${z.name}${locked?' 🔒'+RANKS[z.minRank].name:(voidLock?' 🔒空间锚':'')}</button>`;
+  }).join('');
+  document.getElementById('zoneNote').textContent=zone().desc+
+    (P.event?'　【本回合：'+P.event.name+'】'+P.event.desc:'')+
+    (P.bias?'　｜ 成见：对「'+CATNAME[P.bias.cat]+'」'+(P.bias.dir==='high'?'恒高估':'恒低估')+'（清心香可祛）':'');
+  document.getElementById('patrolBtn').disabled=P.gameOver;
+}
+function renderSide(){
+  // 法器
+  document.getElementById('tools').innerHTML=TOOLS.map(t=>
+    `<div class='row'><span><b>${t.name}</b>${tool(t.key)&&t.key!=='incense'?' <span class="tag t-good">已备</span>':''}<br><span style='color:var(--dim);font-size:10px'>${t.desc}</span></span>`+
+    `<button class='sm' onclick="buy('${t.key}')" ${(tool(t.key)&&t.key!=='incense')?'disabled':''}>${t.cost} 石</button></div>`).join('')+
+    `<div class='note' style='margin-top:8px'>道心 <b style='color:var(--jade)'>${P.karma}</b>：鉴定误差 −${Math.round(Math.min(.18,P.karma*.012)*100)}%，开壳沾染 −${Math.round(karmaGuard()*100)}%${P.karma>=10?'，每次巡缝自净 1 点魔染':''}。<br>封印强度 <b style='color:${P.seal<40?'var(--red)':'var(--ink)'}'>${P.seal}%</b>：开壳沾染 ×${sealFactor().toFixed(2)}${P.seal<40?'（薄弱，巡缝额外渗染）':''}。</div>`+
+    `<div class='note' style='margin-top:8px'>灵石来自销赃（密库七折）。成见随晋阶而生，可焚香祛除。${P.ownerAsk?'<br><b style="color:var(--gold)">旧货主正在寻物：</b><button class="sm" onclick="ownerReturn()">交还一件密库之物</button>':''}</div>`;
+  // 密库
+  const v=document.getElementById('vault');
+  document.getElementById('vaultTag').textContent=P.vault.length+' 件 · 估值 '+fmt(P.vault.reduce((a,x)=>a+x.value,0));
+  v.innerHTML=P.vault.length?P.vault.map((x,i)=>
+    `<div class='itemline'><span class='dot' style='background:${rar(x.rar).c}'></span><span>${x.name}${x.pair?' <span class="tag t-info">半件</span>':''}</span><span class='v'>${fmt(x.value)}</span><button class='sm' onclick='sell(${i})'>销赃 ${Math.round(x.value*.7)}</button></div>`).join('')
+    :'<div class="empty">密库空空。私藏之物先存在这里。</div>';
+  // 图鉴
+  const cx=document.getElementById('codex'),keys=Object.keys(P.codex);
+  document.getElementById('codexTag').textContent=keys.length+' / '+ITEMS.length+' 种';
+  cx.innerHTML=keys.length?keys.map(k=>{const it=itemByName(k),r=rar(it.name===k?it.rar:3);return `<span class='pill' style='color:${r.c};border-color:${r.c}'>${k}${P.codex[k]>1?' ×'+P.codex[k]:''}</span>`;}).join(''):'<div class="empty">还没开出任何东西。</div>';
+
+  // 日志
+  document.getElementById('log').innerHTML=P.log.map(l=>`<div><span class='t'>第${l.t}年</span><span style='${l.k==='bad'?'color:var(--red)':l.k==='good'?'color:var(--jade)':l.k==='info'?'color:var(--gold)':''}'>${l.s}</span></div>`).join('');
+  document.getElementById('lore').innerHTML=LORE;
+}
+function renderLost(){
+  const el=document.getElementById('lost');if(!el)return;
+  const open=openManifests(),done=P.lost.filter(m=>m.status!=='open');
+  let h=`<div class='note'><b style='color:var(--gold)'>永远遗失 · 可追查货单</b>　<span style='color:var(--dim);font-size:10px'>剖出货单残页／道标残片可得线索；追查耗神识 12</span></div>`;
+  if(!P.lost.length)h+=`<div class='empty'>尚无遗失记载。巡视裂缝时偶有货单浮出。</div>`;
+  open.slice(-4).forEach(m=>{
+    const i=P.lost.indexOf(m);
+    const av=(typeof avatarOf!=='undefined'?avatarOf(m.owner):''),fb=(typeof avatarFallback!=='undefined'?avatarFallback(m.owner):'');
+    h+=`<div class='mf'><div class='mfh'><img class='mfav' src='${av}' data-fb='${fb}' alt='' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'><div><b>${m.no}</b> · ${m.cargo}<br><span style='color:var(--dim);font-size:10px'>${m.clue}</span></div></div>
+      <div class='bar'><i style='width:${Math.min(100,m.frag/m.need*100)}%;background:var(--gold)'></i></div>
+      <div class='mff'><span>线索 ${m.frag} / ${m.need}</span><button class='sm' onclick="traceManifest(${i})" ${P.sense<12||P.gameOver?'disabled':''}>◈ 追查（神识 12）</button></div></div>`;
+  });
+  if(open.length>4)h+=`<div class='note'>另有 ${open.length-4} 单待查，先结眼前的。</div>`;
+  if(done.length)h+=`<div class='note' style='margin-top:6px'>已结 ${done.length} 单：<br>${done.slice(-4).map(m=>'· '+m.no+' — '+m.end).join('<br>')}</div>`;
+  el.innerHTML=h;
+}
+function render(){renderTop();renderStage();renderQueue();renderZones();renderSide();renderLost();renderGarden();}
+
+/* ===================== 启动 ===================== */
+function init(){
+  const s=load();
+  if(s){P=s;if(!P.codex)P.codex={};if(!P.lost)P.lost=[];if(!P.vault)P.vault=[];if(!P.tools)P.tools={};normalizeLost();if(P.stage==='opening')P.stage='opened';}
+  else{P=freshState(false);for(let i=0;i<3;i++)P.queue.push(makeCocoon(ZONES[0]));P.current=P.queue[0];P.stage='idle';pushLog('网道崩溃后的第 1 年。你领了三枚茧，开始拾茧。','');}
+  P.garden=normGarden(P.garden);
+  simulateRaids();
+  render();
+  startGardenClock();
+  if(location.hash==='#garden')setTimeout(()=>jumpGarden(true),150);
+}
+init();
+</script>
+</body></html>

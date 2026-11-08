@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>青棠宗 · 宗门地图（地形 / 建筑 / 神念）</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#121a30; --panel:#16203a; --line:#2a3a5e; --ink:#dfe8ff; --dim:#8aa0c8;
+    --gold:#e9c46a; --jade:#5fd6c2; --red:#ff6b6b; --violet:#9d7bff; --blue:#5b9dff; --green:#5fd6c2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;background:radial-gradient(1200px 800px at 70% -10%,#1a2750 0%,var(--bg) 60%);color:var(--ink);min-height:100vh;padding:14px;font-size:13px}
+  h1{font-size:20px;color:var(--gold);text-shadow:0 0 12px rgba(233,196,106,.4)}
+  .sub{color:var(--dim);font-size:12px;margin-top:2px}
+  .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(90deg,var(--panel),#1b2746);border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-bottom:12px}
+  .nav{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+  .navbtn{text-decoration:none;padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:linear-gradient(180deg,#27407a,#1a2b52);color:var(--ink);font-size:12px}
+  .navbtn:hover{filter:brightness(1.2);border-color:var(--gold)}
+  .ctrl{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+  button.tg{padding:7px 13px;border:1px solid var(--line);border-radius:9px;background:var(--bg2);color:var(--ink);font-size:12px;cursor:pointer}
+  button.tg.on{border-color:var(--jade);color:var(--jade)}
+  button.primary{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;font-weight:700;border-color:var(--gold)}
+  .wrap{display:grid;grid-template-columns:1fr 340px;gap:12px;align-items:start}
+  @media(max-width:1000px){.wrap{grid-template-columns:1fr}}
+  .mapbox{background:linear-gradient(180deg,#0c1428,#0a0e1a);border:1px solid var(--line);border-radius:12px;padding:6px;overflow:hidden}
+  .mapbox svg{width:100%;height:auto;display:block}
+  .node{cursor:pointer}
+  .node:hover circle, .node:hover polygon{stroke:#fff;stroke-width:2}
+  .side{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .side h2{font-size:14px;color:var(--gold);margin-bottom:8px}
+  .side .meta{font-size:11px;color:var(--dim);line-height:1.7;margin:6px 0}
+  .badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:11px;font-weight:700}
+  .design p{font-size:12px;line-height:1.75;margin:7px 0;color:var(--ink)}
+  .design b{color:var(--gold)}
+  .design .k{color:var(--jade)}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:11px;color:var(--dim)}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .hint{color:var(--dim);font-size:11px;line-height:1.6;margin-top:8px}
+  .blist{margin-top:8px;max-height:240px;overflow:auto}
+  .blist .row{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:7px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--line)}
+  .blist .row:hover{background:var(--bg2)}
+  .note{color:var(--dim);font-size:11px;line-height:1.6;margin-top:8px}
+</style>
+</head>
+<body>
+<div class='top'>
+  <div>
+    <h1>青棠宗 · 宗门地图</h1>
+    <div class='sub'>地形 · 建筑 · 神念外放（3D / 平面双视图）</div>
+  </div>
+  <div class='nav'>
+    <a class='navbtn' href='index.html'>📊 数据看板</a>
+    <a class='navbtn' href='roster.html'>👤 仙人档案</a>
+    <a class='navbtn' href='mortal.html'>🌐 凡人群体</a>
+    <a class='navbtn' href='sect-sim.html'>⚙ 后台模型</a>
+  </div>
+</div>
+
+<div class='ctrl'>
+  <button class='tg on' id='btn2d'>📐 平面视图</button>
+  <button class='tg' id='btn3d'>🏔 3D 视图</button>
+  <button class='tg on' id='btnSense'>🔵 显示神念外放范围</button>
+  <button class='tg' id='btnLabels'>🏷 标注建筑名</button>
+  <span class='hint' style='margin:0'>点击任意建筑查看设计描写。高境建筑四周的圈＝该境界「神念外放」探测半径；圈越大越须远离他人居所。</span>
+</div>
+
+<div class='wrap'>
+  <div class='mapbox'>
+    <svg id='map' viewBox='0 0 1000 820' preserveAspectRatio='xMidYMid meet'></svg>
+  </div>
+  <div class='side'>
+    <h2 id='sideTitle'>📍 宗门整体情况</h2>
+    <div id='sideBody'>
+      <div class='meta'>
+        青棠峰主峰居北，东西两脉分列；南麓山门接凡间，山脚沉香湖环抱。<br>
+        筑基及以上<b style='color:var(--gold)'>可神念外放</b>，境界越高探测半径越大，故居所必大、必远、必隔；练气无神念，独可聚居。
+      </div>
+      <div class='legend'>
+        <span><i class='dot' style='background:var(--gold)'></i>核心·修炼</span>
+        <span><i class='dot' style='background:var(--green)'></i>生产·资源</span>
+        <span><i class='dot' style='background:var(--red)'></i>姻缘·社交</span>
+        <span><i class='dot' style='background:var(--violet)'></i>起居·疗养</span>
+        <span><i class='dot' style='background:var(--blue)'></i>弟子聚居</span>
+      </div>
+      <div class='blist' id='blist'></div>
+      <div class='note'>完整文字版设计描写见 <b style='color:var(--gold)'>sect-design.md</b>。</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== 神念外放模型（探测半径，单位：丈） ===== */
+const SENSE={lianqi:0,zhuji:30,jindan:90,yuanying:250,huashen:600,lianxu:1500,hedao:9999};
+const RNAME={lianqi:'练气',zhuji:'筑基',jindan:'金丹',yuanying:'元婴',huashen:'化神',lianxu:'炼虚',hedao:'合道'};
+const CAT={core:'#e9c46a',prod:'#5fd6c2',social:'#ff6b6b',rest:'#9d7bff',dorm:'#5b9dff'};
+const CATN={core:'核心·修炼',prod:'生产·资源',social:'姻缘·社交',rest:'起居·疗养',dorm:'弟子聚居'};
+
+/* ===== 建筑（平面坐标 x,y；elev=3D高度；size=足迹半径；rank=典型境界） ===== */
+const B=[
+ {id:'heshi',name:'合道台',cat:'core',rank:'hedao',x:500,y:150,elev:110,size:26,func:'合道圆满·镇守外神',
+  design:"<p><span class='k'>方位地形：</span>主峰之巅唯一平台，环以终年罡风与云海。</p><p><span class='k'>形制：</span>九重玉阶之上的圆形祭台，无墙无顶，台心嵌「道纹」阵眼。</p><p><span class='k'>神念/隐私：</span>合道真君神念等同法则、笼罩全宗，故<b>全宗仅此一台</b>，余者退避至其感知之外或受护持之界内；台周三千里设镇守之阵，既锁外神，亦屏蔽真君神念外溢扰民。</p><p><span class='k'>功能：</span>合道圆满、镇守图谋外神、显化道相。非炼虚圆满者不得登。</p>"},
+ {id:'zangjing',name:'藏经阁',cat:'core',rank:'lianxu',x:440,y:235,elev:90,size:22,func:'典藏功法·禁书',
+  design:"<p><span class='k'>方位地形：</span>主峰上腹，锚定主灵脉上源节点，地火寒泉交融，恒润不蠹。</p><p><span class='k'>形制：</span>九层飞檐木石楼阁，悬满玉简；三层以上非核心弟子不得入。</p><p><span class='k'>神念/隐私：</span>炼虚级重地，周遭留白≥1500丈无居所，以禁制隔绝神念窥探阁内功法。</p><p><span class='k'>功能：</span>典藏功法、姻缘古谱与禁书；《三生簿》《火候真解》皆藏于此。</p>"},
+ {id:'yanfa',name:'演法台',cat:'core',rank:'huashen',x:560,y:250,elev:75,size:24,func:'讲经·斗法·比试',
+  design:"<p><span class='k'>方位地形：</span>主峰上腹东侧，与藏经阁相望，台基下即主灵脉支脉。</p><p><span class='k'>形制：</span>汉白玉高台，周匝观礼席，台心嵌聚灵阵。</p><p><span class='k'>神念/隐私：</span>化神级，台周留白≥600丈。每逢突破论道金光腾起、全宗可见——此乃<b>刻意公开</b>的仪式空间，不惜神念外放。</p><p><span class='k'>功能：</span>讲经、斗法、比试；弟子扬名之所。</p>"},
+ {id:'wuku',name:'珍物库',cat:'core',rank:'lianxu',x:500,y:332,elev:46,size:18,func:'藏法宝·灵石·重宝',
+  design:"<p><span class='k'>方位地形：</span>主峰腹心地下，多重禁制守护，锚定最稳灵脉节点。</p><p><span class='k'>形制：</span>地下金库；地表仅露一方无字碑为记。</p><p><span class='k'>神念/隐私：</span>神念探测在此被禁制全面吸收，外部不可知内中虚实。</p><p><span class='k'>功能：</span>宗门财货心脏，收储青鸾剑、绕指柔等重宝与历年分润。</p>"},
+ {id:'qindian',name:'寝殿别院',cat:'rest',rank:'yuanying',x:470,y:415,elev:60,size:24,func:'起居·私居·结缘',
+  design:"<p><span class='k'>方位地形：</span>主峰下台地，按洞府而建的私居多簇。</p><p><span class='k'>形制：</span>陈设随个人财力，道侣多于此相聚。</p><p><span class='k'>神念/隐私：</span><b>本宗隐私原则最集中之处。</b>每处私居皆独立别院，距邻里≥250丈（元婴级以上更远），并以「隔念阵」封院——仙人不怕冷、不喜挨挤，更不容神念相扰。</p><p><span class='k'>功能：</span>起居、私居、结缘；红线仙常于月下此间私会。</p>"},
+ {id:'danfang',name:'丹鼎房',cat:'prod',rank:'jindan',x:200,y:440,elev:40,size:30,func:'炼丹·淬炼灵药',
+  design:"<p><span class='k'>方位地形：</span>西支脉丹霞谷地火口，三十六座丹炉借地火而燃。</p><p><span class='k'>形制：</span>石砌大屋连排，墙挂炮制图谱，偶闻炸炉之响。</p><p><span class='k'>神念/隐私：</span>金丹级，匠人居所沿谷分散为独户小院（间距≥180丈），既避丹毒又互不窥炉。</p><p><span class='k'>功能：</span>炼丹、淬炼灵药。</p>"},
+ {id:'shouyuan',name:'灵兽苑',cat:'prod',rank:'jindan',x:800,y:470,elev:42,size:32,func:'驯兽·灵语传讯',
+  design:"<p><span class='k'>方位地形：</span>东支脉栖霞岭兽栏群。</p><p><span class='k'>形制：</span>以禁制划分的栏舍，饲青鸾、仙鹤、墨蛇等。</p><p><span class='k'>神念/隐私：</span>金丹级，驯兽弟子常与灵兽同息，居所独院分散（≥180丈）；兽吼本就破去细微神念，天然成障。</p><p><span class='k'>功能：</span>驯化灵兽、灵语传讯。</p>"},
+ {id:'yaopu',name:'灵植苑',cat:'prod',rank:'jindan',x:170,y:580,elev:24,size:34,func:'植灵·御兽·育灵药',
+  design:"<p><span class='k'>方位地形：</span>丹霞谷缓坡梯田与暖房，借地火余温育灵植。</p><p><span class='k'>形制：</span>按品阶分区的灵雾梯田＋玻璃暖棚，深处有兽栏育灵宠幼崽。</p><p><span class='k'>神念/隐私：</span>筑基/金丹级，园丁居所嵌于梯田之间为独户小院（≥60–180丈），以灵雾天然降噪隔念。</p><p><span class='k'>功能：</span>植灵、御兽、培育灵药。</p>"},
+ {id:'hongxian',name:'红线仙司',cat:'social',rank:'yuanying',x:430,y:610,elev:50,size:24,func:'斡旋姻缘·卜算观心',
+  design:"<p><span class='k'>方位地形：</span>山门内缓坡，近南麓，便于暗中牵凡间与修士之缘。</p><p><span class='k'>形制：</span>满室垂红线与命盘，司中以三生石为凭。</p><p><span class='k'>神念/隐私：</span>元婴级。既要「观心」又需守秘——以三生石为枢，将外放神念收束为细丝，只牵命数不窥隐私；司周留白≥500丈，免他修士神念扰了牵缘。</p><p><span class='k'>功能：</span>斡旋姻缘、卜算观心，亦掌对外情报。</p>"},
+ {id:'hongluan',name:'红鸾别院',cat:'social',rank:'yuanying',x:620,y:600,elev:46,size:30,func:'音律歌舞·宴饮雅集',
+  design:"<p><span class='k'>方位地形：</span>沉香湖西水榭回廊。</p><p><span class='k'>形制：</span>临水楼台，四季有花，门下多俊男美女。</p><p><span class='k'>神念/隐私：</span>金丹/元婴级，宴饮雅集本就公开；独院散布湖畔（≥250丈），以水面与回廊柔化神念边界。</p><p><span class='k'>功能：</span>宗门结好外门的门面。</p>"},
+ {id:'keting',name:'迎宾客堂',cat:'social',rank:'jindan',x:500,y:710,elev:38,size:28,func:'接见外门·凡间贵客',
+  design:"<p><span class='k'>方位地形：</span>山门外第一进，最接凡尘。</p><p><span class='k'>形制：</span>金漆梁柱，名茶待客。</p><p><span class='k'>神念/隐私：</span>金丹级，外显型弟子于此周旋商贾高官；堂周留白适度（≥180丈），既显气派又不令来客被高阶神念震慑。</p><p><span class='k'>功能：</span>接见外门、凡间贵客；偶展仙迹。</p>"},
+ {id:'wenquan',name:'凝香汤泉',cat:'rest',rank:'jindan',x:715,y:700,elev:22,size:22,func:'沐浴·疗养·静思',
+  design:"<p><span class='k'>方位地形：</span>沉香湖东，引地火温热的灵泉。</p><p><span class='k'>形制：</span>半露天汤池连檐廊，水含香麝。</p><p><span class='k'>神念/隐私：</span>筑基/金丹级，沐浴更衣最忌被窥，故每池以屏扇与灵雾隔间，外放神念在此被水汽香雾吞没；仆役居所独户分散（≥60丈）。</p><p><span class='k'>功能：</span>沐浴、疗养、静思；亦为密谈之所。</p>"},
+ {id:'dorms',name:'弟子聚居区',cat:'dorm',rank:'lianqi',x:500,y:775,elev:14,size:40,func:'练气弟子起居·启蒙',
+  design:"<p><span class='k'>方位地形：</span>山脚最大台地，离主峰灵脉末端，灵气最薄却最安稳。</p><p><span class='k'>形制：</span>排屋与合院群，栋距仅数丈，共用水井、膳堂、演武场。</p><p><span class='k'>神念/隐私：</span><b>唯练气可群居</b>——练气无神念外放，五感有限，群居不互扰；此区刻意远居高阶神念圈之外（≥数里），免被上境神念「覆盖」。</p><p><span class='k'>功能：</span>新晋弟子起居、修行启蒙；筑基后迁出，各自寻山头立院。</p>"},
+];
+const BYID={};B.forEach(b=>BYID[b.id]=b);
+
+/* 神念圈半径（平面单位：1 单位≈6 丈） */
+const UNIT=6;
+function ringPlan(rank){const s=SENSE[rank];if(s>=9999)return -1;return s/UNIT;}
+
+/* ===== 状态 ===== */
+let mode='2d', showSense=true, showLabels=false, sel=null;
+
+/* ===== 2D 平面视图 ===== */
+function render2D(){
+  const W=1000,H=820;
+  let g="<rect width='1000' height='820' fill='#0a0e1a'/>";
+  // 山势等高线（同心圆，北=主峰）
+  for(let r=380;r>=60;r-=60){g+=`<circle cx='500' cy='300' r='${r}' fill='none' stroke='#16203a' stroke-width='1'/>`;}
+  g+=`<path d='M500,300 m-60,0 a60,30 0 1,0 120,0 a60,30 0 1,0 -120,0' fill='#15233f' opacity='0.5'/>`;
+  // 沉香湖
+  g+=`<ellipse cx='660' cy='705' rx='120' ry='60' fill='#10243a' stroke='#2a4a6a' stroke-width='1.5'/><text x='660' y='708' text-anchor='middle' fill='#5b9dff' font-size='12'>沉香湖</text>`;
+  // 灵脉
+  g+=`<path d='M500,800 L500,150' stroke='#5fd6c2' stroke-width='2' opacity='0.35' stroke-dasharray='6 6'/>`;
+  g+=`<path d='M500,330 L200,440 M500,330 L800,470' stroke='#5fd6c2' stroke-width='1.5' opacity='0.3' stroke-dasharray='6 6'/>`;
+  g+=`<path d='M500,760 L500,710' stroke='#e9c46a' stroke-width='2' opacity='0.4'/>`; // 登天阶
+
+  // 神念外放圈
+  if(showSense){
+    B.forEach(b=>{
+      const rp=ringPlan(b.rank);
+      if(rp<0){ // 合道：笼罩全宗
+        g+=`<circle cx='${b.x}' cy='${b.y}' r='480' fill='rgba(255,244,214,0.05)' stroke='rgba(255,244,214,0.4)' stroke-width='1.5' stroke-dasharray='4 8'/>`;
+        g+=`<text x='${b.x}' y='${b.y-490}' text-anchor='middle' fill='#fff4d6' font-size='11'>合道神念 · 笼罩全宗</text>`;
+      } else if(rp>0){
+        g+=`<circle cx='${b.x}' cy='${b.y}' r='${rp}' fill='${CAT[b.cat]}' fill-opacity='0.06' stroke='${CAT[b.cat]}' stroke-width='1.2' stroke-dasharray='4 6' opacity='0.8'/>`;
+      }
+    });
+  }
+  // 建筑足迹
+  B.forEach(b=>{
+    const col=CAT[b.cat];
+    const seld=(sel===b.id);
+    g+=`<g class='node' onclick='select("${b.id}")'>`;
+    g+=`<circle cx='${b.x}' cy='${b.y}' r='${b.size}' fill='${col}' fill-opacity='${seld?0.5:0.28}' stroke='${seld?'#fff':col}' stroke-width='${seld?2.5:1.5}'/>`;
+    g+=`<circle cx='${b.x}' cy='${b.y}' r='${b.size*0.5}' fill='none' stroke='${col}' stroke-width='1' opacity='0.5'/>`;
+    if(showLabels||seld){g+=`<text x='${b.x}' y='${b.y+b.size+13}' text-anchor='middle' fill='#dfe8ff' font-size='12' font-weight='700'>${b.name}</text>`;}
+    g+=`</g>`;
+  });
+  g+=`<text x='500' y='40' text-anchor='middle' fill='#e9c46a' font-size='15' font-weight='700'>青棠宗 · 平面视图（北=主峰）</text>`;
+  document.getElementById('map').innerHTML=g;
+}
+
+/* ===== 3D 等距视图 ===== */
+const S=0.62, SZ=0.5, OX=500, OY=250;
+function proj(gx,gy,z){return {x:OX+(gx-gy)*0.866*S, y:OY+(gx+gy)*0.5*S - z*SZ};}
+function render3D(){
+  let g="<rect width='1000' height='820' fill='#0a0e1a'/>";
+  // 地面大底
+  const c1=proj(120,120,0),c2=proj(880,120,0),c3=proj(880,800,0),c4=proj(120,800,0);
+  g+=`<polygon points='${c1.x},${c1.y} ${c2.x},${c2.y} ${c3.x},${c3.y} ${c4.x},${c4.y}' fill='#0c1428' stroke='#1b2746' stroke-width='1'/>`;
+  // 主峰山体（分层台地）
+  const px=500,py=300;
+  for(let i=0;i<6;i++){
+    const rr=300-i*48, z=i*16;
+    const a=proj(px-rr,py-rr,z),b=proj(px+rr,py-rr,z),c=proj(px+rr,py+rr,z),d=proj(px-rr,py+rr,z);
+    g+=`<polygon points='${a.x},${a.y} ${b.x},${b.y} ${c.x},${c.y} ${d.x},${d.y}' fill='#121d33' stroke='#1b2746' stroke-width='1' opacity='${0.5+i*0.07}'/>`;
+  }
+  // 沉香湖
+  const l1=proj(560,705,0),l2=proj(760,705,0),l3=proj(760,765,0),l4=proj(560,765,0);
+  g+=`<polygon points='${l1.x},${l1.y} ${l2.x},${l2.y} ${l3.x},${l3.y} ${l4.x},${l4.y}' fill='#10243a' stroke='#2a4a6a' stroke-width='1'/>`;
+  g+=`<text x='${(l1.x+l2.x)/2}' y='${(l1.y+l3.y)/2}' text-anchor='middle' fill='#5b9dff' font-size='11'>沉香湖</text>`;
+
+  // 神念圈（地面椭圆）
+  if(showSense){
+    B.forEach(b=>{
+      const rp=ringPlan(b.rank);
+      if(rp<0){
+        const c=proj(b.x,b.y,0);
+        g+=`<ellipse cx='${c.x}' cy='${c.y}' rx='${480*0.866*S}' ry='${480*0.5*S}' fill='rgba(255,244,214,0.05)' stroke='rgba(255,244,214,0.4)' stroke-width='1.2' stroke-dasharray='4 8'/>`;
+      } else if(rp>0){
+        const c=proj(b.x,b.y,0);
+        g+=`<ellipse cx='${c.x}' cy='${c.y}' rx='${rp*0.866*S}' ry='${rp*0.5*S}' fill='${CAT[b.cat]}' fill-opacity='0.06' stroke='${CAT[b.cat]}' stroke-width='1.1' stroke-dasharray='4 6' opacity='0.8'/>`;
+      }
+    });
+  }
+
+  // 建筑（按 gx+gy 升序，远者先画）
+  const order=B.slice().sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+  order.forEach(b=>{
+    const col=CAT[b.cat];const seld=(sel===b.id);
+    const s=b.size, z=b.elev;
+    const A=proj(b.x-s,b.y-s,0),Bp=proj(b.x+s,b.y-s,0),C=proj(b.x+s,b.y+s,0),D=proj(b.x-s,b.y+s,0);
+    const At=proj(b.x-s,b.y-s,z),Bt=proj(b.x+s,b.y-s,z),Ct=proj(b.x+s,b.y+s,z),Dt=proj(b.x-s,b.y+s,z);
+    g+=`<g class='node' onclick='select("${b.id}")'>`;
+    // 右侧面 (B-C)
+    g+=`<polygon points='${Bp.x},${Bp.y} ${C.x},${C.y} ${Ct.x},${Ct.y} ${Bt.x},${Bt.y}' fill='${shade(col,-0.25)}' stroke='${seld?'#fff':col}' stroke-width='${seld?2:0.8}'/>`;
+    // 前侧面 (C-D)
+    g+=`<polygon points='${C.x},${C.y} ${D.x},${D.y} ${Dt.x},${Dt.y} ${Ct.x},${Ct.y}' fill='${shade(col,-0.45)}' stroke='${seld?'#fff':col}' stroke-width='${seld?2:0.8}'/>`;
+    // 顶面
+    g+=`<polygon points='${At.x},${At.y} ${Bt.x},${Bt.y} ${Ct.x},${Ct.y} ${Dt.x},${Dt.y}' fill='${shade(col,0.15)}' stroke='${seld?'#fff':col}' stroke-width='${seld?2:1}'/>`;
+    if(showLabels||seld){g+=`<text x='${At.x}' y='${At.y-4}' text-anchor='middle' fill='#dfe8ff' font-size='12' font-weight='700'>${b.name}</text>`;}
+    g+=`</g>`;
+  });
+  g+=`<text x='500' y='34' text-anchor='middle' fill='#e9c46a' font-size='15' font-weight='700'>青棠宗 · 3D 视图（北=主峰，向后上方）</text>`;
+  document.getElementById('map').innerHTML=g;
+}
+function shade(hex,amt){
+  const c=hex.replace('#','');let r=parseInt(c.substr(0,2),16),g=parseInt(c.substr(2,2),16),b=parseInt(c.substr(4,2),16);
+  r=Math.max(0,Math.min(255,Math.round(r+r*amt)));g=Math.max(0,Math.min(255,Math.round(g+g*amt)));b=Math.max(0,Math.min(255,Math.round(b+b*amt)));
+  return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+
+/* ===== 渲染调度 ===== */
+function render(){if(mode==='3d')render3D();else render2D();}
+
+/* ===== 侧栏 / 选择 ===== */
+function select(id){
+  sel=id;render();
+  const b=BYID[id];
+  const rp=ringPlan(b.rank);
+  const senseTxt = rp<0 ? '笼罩全宗（等同法则）' : (rp>0 ? (SENSE[b.rank]+' 丈（≈'+(SENSE[b.rank]*3.33).toFixed(0)+' m）') : '无（五感范围）');
+  const minGap = rp<0 ? '独占一峰' : (SENSE[b.rank]>0 ? '≥ '+ (SENSE[b.rank]*2) +' 丈' : '仅避喧（数丈）');
+  document.getElementById('sideTitle').innerHTML="🏯 "+b.name;
+  document.getElementById('sideBody').innerHTML=
+    `<div style='display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px'>
+       <span class='badge' style='background:${CAT[b.cat]}'>${CATN[b.cat]}</span>
+       <span class='badge' style='background:#1b2746;color:#e9c46a'>典型境界：${RNAME[b.rank]}</span>
+     </div>
+     <div class='meta'>职能：${b.func}</div>
+     <div class='meta'>
+       <span class='k' style='color:var(--jade)'>神念外放：</span>${senseTxt}<br>
+       <span class='k' style='color:var(--jade)'>居所最小间距：</span>${minGap}
+     </div>
+     <div class='design'>${b.design}</div>
+     <div class='note'>点击地图其他建筑切换；点「平面/3D」切换视图。</div>`;
+}
+function buildList(){
+  document.getElementById('blist').innerHTML=B.map(b=>
+    `<div class='row' onclick='select("${b.id}")'><span style='width:10px;height:10px;border-radius:3px;background:${CAT[b.cat]};flex:none'></span><span style='flex:1'>${b.name}</span><span style='color:var(--dim);font-size:11px'>${RNAME[b.rank]}</span></div>`
+  ).join('');
+}
+
+/* ===== 交互 ===== */
+document.getElementById('btn2d').onclick=()=>{mode='2d';document.getElementById('btn2d').classList.add('on');document.getElementById('btn3d').classList.remove('on');render();};
+document.getElementById('btn3d').onclick=()=>{mode='3d';document.getElementById('btn3d').classList.add('on');document.getElementById('btn2d').classList.remove('on');render();};
+document.getElementById('btnSense').onclick=function(){showSense=!showSense;this.classList.toggle('on',showSense);render();};
+document.getElementById('btnLabels').onclick=function(){showLabels=!showLabels;this.classList.toggle('on',showLabels);render();};
+
+buildList();
+render();
+</script>
+</body>
+</html>

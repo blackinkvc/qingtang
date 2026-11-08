@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>青棠宗 · 立绘画廊（真实生图）</title>
+<style>
+  :root{--bg:#0a0e1a;--panel:#16203a;--panel2:#1b2746;--line:#2a3a5e;--ink:#dfe8ff;--dim:#8aa0c8;--gold:#e9c46a;--jade:#5fd6c2;--violet:#9d7bff;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;background:radial-gradient(1200px 800px at 70% -10%,#1a2750 0%,var(--bg) 60%);color:var(--ink);padding:18px;font-size:13px}
+  h1{color:var(--gold);font-size:20px;font-weight:700}
+  .sub{color:var(--dim);font-size:12px;margin-top:4px;line-height:1.7}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .card img{width:100%;display:block;background:#0a0e1a}
+  .card .head{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--panel2);font-size:12px}
+  .card .head b{color:var(--gold)}
+  .card .prompt{background:rgba(0,0,0,.25);border-top:1px solid var(--line);padding:9px 10px;font-size:11px;line-height:1.7;color:var(--ink);white-space:pre-wrap}
+  .note{margin-top:16px;color:var(--dim);font-size:11.5px;line-height:1.8;border-top:1px dashed var(--line);padding-top:12px}
+  code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:5px;color:var(--jade)}
+</style>
+</head>
+<body>
+<h1>青棠宗 · 立绘画廊（写实风格）</h1>
+<div class='sub'>以下为按「性别 / 境界 / 部门」生成的<b>真实生图立绘（写实摄影 / 电影级）</b>。<br>动漫风格原版已归档至 <code>portraits/anime/</code>。接生图 API 后，每位仙人都可凭专属 Prompt 生成独一无二的立绘：<code>genPrompt(c)</code> → 生图接口 → 缓存 <code>portraits/&lt;id&gt;.png</code> → 详情页优先展示专属图。</div>
+<div class='grid' id='grid'></div>
+<div class='note'>说明：立绘外观由「基础外貌（性别 / 容貌 / 发式）＋ 当前场合着装（部位覆盖依性格 / 财力 / 场合而定，并非全身都穿）＋ 体香光晕（境界越高越清正）＋ 所在场景」共同决定。同一人换场所、换心情、突破境界后，立绘与 Prompt 随之改变。下方每张立绘下方即其生图 Prompt（可直接喂给图像接口实时重绘）。</div>
+
+<script>
+/* 已生成的真实立绘（写实风格；动漫风格原版见 portraits/anime/） */
+const SAMPLES=[
+  {file:'portraits/Photorealistic_portrait_of_a_y_2026-11-03T10-51-42.webp', label:'练气 / 筑基 女修 · 红线仙风（写实）',
+   prompt:'Photorealistic portrait of a young Chinese cultivation woman, disciple of a matchmaker hall, wearing elegant pink-and-white layered hanfu with a flowing red ribbon, gentle smiling face, long black hair with red jade hairpin, holding a glowing red thread, soft warm romantic lighting, hyper-realistic skin texture, detailed silk fabric and jewelry, film photography, 8k.'},
+  {file:'portraits/Photorealistic_portrait_of_a_h_2026-11-03T10-51-53.webp', label:'练气 ~ 金丹 男修 · 剑修风（写实）',
+   prompt:'Photorealistic portrait of a handsome young Chinese male cultivator, white and jade-green layered immortal robe, long black hair tied with a silver guan, calm confident expression, holding a slender jade sword, misty mountain background, hyper-realistic skin, detailed fabric, cinematic lighting, fantasy film still.'},
+  {file:'portraits/Photorealistic_portrait_of_an__2026-11-03T10-52-10.webp', label:'元婴 + 女仙 · 空灵风（写实）',
+   prompt:'Photorealistic portrait of an ethereal Chinese fairy at high cultivation realm, translucent silver-white immortal robe embroidered with glowing blue runes, long flowing silver-white hair, serene transcendent expression, floating amid a starry void with divine aura, hyper-realistic, cinematic lighting, fantasy film.'},
+  {file:'portraits/Photorealistic_portrait_of_a_C_2026-11-03T10-53-20.webp', label:'丹鼎房 女修 · 丹修风（写实）',
+   prompt:'Photorealistic portrait of a Chinese female alchemist, purple and gold robe with alchemy furnace motifs, holding a glowing golden pill, long hair with golden hairpin, focused expression, background with floating herbs and a bronze cauldron, hyper-realistic skin, detailed fabric, cinematic lighting, fantasy film.'},
+  {file:'portraits/Photorealistic_portrait_of_a_C_2026-11-03T10-53-32.webp', label:'合道真君 · 金身风（写实）',
+   prompt:'Photorealistic portrait of a Chinese male immortal at the Hedao realm, magnificent golden-white immortal robe with cosmic star patterns, long white hair and white beard, majestic serene expression, radiating golden aura, floating above clouds, hyper-realistic, cinematic lighting, fantasy film epic.'},
+  {file:'portraits/Photorealistic_portrait_of_a_C_2026-11-03T10-53-42.webp', label:'出行女修 · 游历风（写实）',
+   prompt:'Photorealistic portrait of a Chinese female cultivator traveling, teal traveling robe with a wide straw hat in hand, long hair flowing in wind, holding a slender sword, outdoor riverside bamboo scenery, hyper-realistic skin, detailed fabric, cinematic natural lighting, fantasy film.'},
+];
+document.getElementById('grid').innerHTML=SAMPLES.map(s=>
+  `<div class='card'>
+     <img src='${s.file}' alt='${s.label}'>
+     <div class='head'><b>${s.label}</b></div>
+     <div class='prompt'>${s.prompt}</div>
+   </div>`).join('');
+</script>
+</body>
+</html>

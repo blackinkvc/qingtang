@@ -1,0 +1,907 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>青棠宗 · 轮回</title>
+<style>
+  :root{--bg:#0b0f1a;--card:#121826;--card2:#0f1626;--line:#26304a;--line2:#1d263c;--jade:#5fd6c2;--gold:#e9c46a;--red:#ff6b6b;--ink:#dfe8ff;--dim:#8294b8;--blue:#5b9dff;--purple:#b08cff;--r:12px;--gap:12px}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:radial-gradient(1200px 700px at 70% -10%,#16223e 0%,var(--bg) 60%);color:var(--ink);font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;font-size:14px;line-height:1.5;padding-bottom:40px}
+  .wrap{max-width:1180px;margin:0 auto;padding:14px}
+  header{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px;flex-wrap:wrap}
+  header h1{margin:0;font-size:20px;letter-spacing:2px;color:var(--gold)}
+  header .sub{color:var(--dim);font-size:12px}
+  header .hint{margin-left:auto;color:var(--dim);font-size:12px}
+  /* 顶部常驻状态条：一屏可见的核心状态 */
+  #topbar{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(18,24,38,.97),rgba(18,24,38,.9));backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+  .vit{display:flex;flex-direction:column;gap:3px;min-width:88px}
+  .vit .lab{font-size:10px;color:var(--dim);letter-spacing:.5px}
+  .vit .val{font-size:13px;font-weight:600;white-space:nowrap}
+  .mini{height:6px;border-radius:4px;background:var(--line2);overflow:hidden;width:100%}
+  .mini>i{display:block;height:100%;border-radius:4px}
+  .vsep{width:1px;align-self:stretch;background:var(--line)}
+  .need{display:flex;align-items:center;gap:4px;font-size:11px}
+  .need .ic{width:14px;text-align:center}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;margin-bottom:var(--gap);box-shadow:0 2px 10px rgba(0,0,0,.18)}
+  h3{margin:0 0 8px;font-size:13px;color:var(--gold);letter-spacing:1px;border-left:3px solid var(--gold);padding-left:8px}
+  .row{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line2);font-size:13px}
+  .row b{font-weight:600}
+  .bar{height:7px;border-radius:4px;background:var(--line2);overflow:hidden;margin-top:3px}
+  .bar>i{display:block;height:100%;border-radius:4px}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .btns.center{justify-content:center}
+  button{background:#1a2236;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;cursor:pointer;transition:transform .08s,border-color .15s,color .15s,box-shadow .15s}
+  button:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+  button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  button.gold{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;border-color:var(--gold);font-weight:700}
+  button.gold:hover{color:#1a1305;box-shadow:0 0 0 2px rgba(233,196,106,.3)}
+  button.jade{border-color:var(--jade);color:var(--jade)}
+  button.purple{border-color:var(--purple);color:var(--purple)}
+  button.rec{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 2px rgba(233,196,106,.25);animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 2px rgba(233,196,106,.2)}50%{box-shadow:0 0 0 3px rgba(233,196,106,.45)}}
+  /* 动作分组 */
+  .agroups{display:flex;flex-direction:column;gap:10px}
+  .agroup{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+  .agroup .gh{font-size:11px;color:var(--dim);letter-spacing:1px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .agroup .gh::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--jade)}
+  .abtns{display:flex;flex-wrap:wrap;gap:7px}
+  /* 建议横幅 */
+  .recbar{margin:2px 0 12px;padding:9px 12px;border-radius:10px;background:linear-gradient(90deg,rgba(233,196,106,.12),rgba(95,214,194,.06));border:1px solid rgba(233,196,106,.35);font-size:13px;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .recbar .ic{font-size:16px}
+  .recbar b{color:var(--gold)}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;background:#1a2236;border:1px solid var(--line);margin:2px}
+  .event{background:var(--card2);border:1px solid var(--line);border-left:3px solid var(--jade);border-radius:10px;padding:12px;margin:10px 0}
+  .event .cat{color:var(--jade);font-size:11px;letter-spacing:1px}
+  .event .desc{margin:7px 0 11px;color:#cdd8f0}
+  .opt{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 11px}
+  .opt small{color:var(--dim);display:block;margin-top:2px}
+  .log{max-height:240px;overflow:auto;font-size:12px;color:var(--dim)}
+  .log div{padding:3px 0;border-bottom:1px dashed var(--line2)}
+  .tag{font-size:11px;padding:1px 7px;border-radius:6px;margin-left:4px}
+  .t-good{background:#16331f;color:#7ee787}.t-bad{background:#3a1820;color:#ff8a8a}.t-info{background:#16223e;color:#9fb6ff}
+  .big{font-size:18px;color:var(--gold);font-weight:700}
+  .muted{color:var(--dim);font-size:12px}
+  .rel{display:flex;align-items:center;gap:6px;font-size:12px;margin:3px 0}
+  .rel .bar{flex:1}
+  .org{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px}
+  .org .col{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px}
+  .org .col h4{margin:0 0 6px;font-size:12px;color:var(--jade)}
+  .org .o{font-size:12px;padding:4px 0;border-bottom:1px dashed var(--line2)}
+  .org .o b{color:var(--gold)}
+  .tech{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .tech .t{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:12px;max-width:230px}
+  .tech .t.locked{opacity:.55}
+  #overlay{position:fixed;inset:0;background:rgba(5,8,16,.86);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+  #overlay .box{background:var(--card);border:1px solid var(--gold);border-radius:14px;padding:22px 26px;max-width:600px;width:100%;text-align:center;max-height:90vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+  #overlay h2{color:var(--gold);margin:0 0 8px}
+  .dept-pick{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
+  .dept-pick button.on{border-color:var(--jade);color:var(--jade);background:rgba(95,214,194,.1)}
+  /* 折叠/展开：默认收起次要信息，点标题展开 */
+  .ch{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between}
+  .ch::after{content:'▾';color:var(--dim);font-size:12px;margin-left:10px;font-weight:400}
+  .card.collapsed .ch::after{content:'▸'}
+  .card.collapsed .cbody{display:none}
+  .ch2{margin:0 0 8px;font-size:12px;color:var(--jade);letter-spacing:1px;border-left:3px solid var(--jade);padding-left:8px}
+  .cbody a{color:var(--blue);text-decoration:none;font-size:12px}
+  .cbody a:hover{color:var(--gold)}
+  .reslink{display:block;padding:8px 10px;margin:4px 0;background:var(--card2);border:1px solid var(--line);border-radius:9px;color:var(--blue);text-decoration:none;font-size:12px;transition:.15s}
+  .reslink:hover{border-color:var(--blue);color:var(--blue)}
+  .cx-flt{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+  .cx-flt button{font-size:11px;padding:3px 8px}
+  .cx-flt select{background:#1a2236;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:3px 6px;font-size:11px}
+  .codex{border-bottom:1px dashed var(--line2);padding:5px 0}
+  .codex .cx{font-size:13px}
+  .codex .cx-d{font-size:11px;color:#aab8d6;margin:2px 0}
+  @media(max-width:980px){.org{grid-template-columns:1fr 1fr}#topbar{position:static}}
+  @media(max-width:620px){.org{grid-template-columns:1fr}.vit{min-width:72px}}
+</style></head>
+<body>
+<div class='wrap'>
+  <header>
+    <h1>青棠宗 · 轮回</h1>
+    <span class='sub'>体验与选择 · 修仙 roguelike</span>
+    <span class='hint'>点各栏标题可展开 / 收起</span>
+  </header>
+
+  <div id='topbar'></div>
+
+  <div class='card' id='stageCard'>
+    <h3>时辰 · 一世修行</h3>
+    <div class='cbody'>
+      <div id='recbar' class='recbar' style='display:none'></div>
+      <div id='timebar' class='muted'></div>
+      <div class='agroups' id='actions'></div>
+      <div id='eventArea'></div>
+      <div class='muted' style='margin-top:8px'>五行学说存于世，然无五行灵气。灵气乃高层垄断之生物兴奋剂，服之神识清明。修炼即：以意志耐受更高剂量逼出潜能，过量则走火入魔，久则解基因锁定向进化。</div>
+    </div>
+  </div>
+
+  <div class='card collapsed' id='panelCard'>
+    <h3 class='ch'>此世修士 · 详档</h3>
+    <div class='cbody'><div id='panel'></div></div>
+  </div>
+
+  <div class='card collapsed' id='sideCard'>
+    <h3 class='ch'>道途 · 尘缘 · 天赋 · 资料</h3>
+    <div class='cbody'>
+      <h3 class='ch2'>功法</h3><div id='skills'></div>
+      <h3 class='ch2' style='margin-top:12px'>关系</h3><div id='rels'></div>
+      <h3 class='ch2' style='margin-top:12px'>轮回天赋</h3><div id='meta' class='muted'></div>
+      <h3 class='ch2' style='margin-top:12px'>素材库 / 关联页</h3>
+      <a class='reslink' href='wardrobe.html' target='_blank'>🧵 衣服素材库（10套）</a>
+      <a class='reslink' href='roster.html' target='_blank'>👤 仙人档案（苏绾活档）</a>
+      <a class='reslink' href='sect-map-real.html' target='_blank'>🛰 宗门真实地图（全景）</a>
+    </div>
+  </div>
+
+  <div class='card collapsed' id='orgCard'>
+    <h3 class='ch'>势力等级 · 组织阶梯</h3>
+    <div class='cbody'>
+      <div class='org' id='orgs'></div>
+      <div class='muted' style='margin-top:8px'>部门 / 宗门 / 公司（世俗伪装）/ 政权 各设七阶，对应行动累积经验晋阶。</div>
+      <div class='btns center' style='margin-top:8px'><button class='purple' onclick='diploEvent()'>🕊 外交斡旋</button></div>
+    </div>
+  </div>
+
+  <div class='card collapsed' id='techCard'>
+    <h3 class='ch'>科技树 · 生物工程</h3>
+    <div class='cbody'>
+      <div class='tech' id='techs'></div>
+      <div class='muted' style='margin-top:8px'>消耗灵石研习；生物精炼 / 神经耐受 / 基因锁 / 贸易网 / 外交 / 世俗伪装。</div>
+    </div>
+  </div>
+
+  <div class='card collapsed' id='invCard'>
+    <h3 class='ch'>坊市 · 背包</h3>
+    <div class='cbody'>
+      <div id='inv' class='muted'></div>
+      <div class='btns center' style='margin-top:8px'><button onclick='doAction("craft")'>⚗ 合成（耗灵气20）</button>
+        <button class='jade' onclick='doAction("sp")'>售丹药</button>
+        <button class='jade' onclick='doAction("st")'>售法器</button>
+        <button class='jade' onclick='doAction("sd")'>售纱衣</button></div>
+    </div>
+  </div>
+
+  <div class='card collapsed' id='worldCard'>
+    <h3 class='ch'>天地 · 气候奇观</h3>
+    <div class='cbody'><div id='world'></div></div>
+  </div>
+
+  <div class='card collapsed' id='codexCard'>
+    <h3 class='ch'>图鉴 · 动植物</h3>
+    <div class='cbody'><div id='codex'></div></div>
+  </div>
+
+  <div class='card collapsed' id='logCard'>
+    <h3 class='ch'>修行日志</h3>
+    <div class='cbody'><div class='log' id='log'></div></div>
+  </div>
+</div>
+
+<div id='overlay'><div class='box' id='obox'></div></div>
+
+<script>
+/* ============ 常量：青棠宗设定 ============ */
+const ELES=['金','木','水','火','土']; // 五行学说仅作哲学/功法分类，世界无「五行灵气」
+/* 境界：6 阶金字塔 + 合道（超脱）。dose=该境灵气日剂量（随境×2）。
+   注：合道之上另有「道境」（超然境，全界仅阿撒托斯·混沌之主，见 WORLD-LORE §十），
+   非修士可企及，故不纳入玩家可突破境界表；本表止于合道（通关即「合道·超脱」）。 */
+const REALMS=[
+  {key:'lianqi', name:'练气',layers:9,life:80,   sense:0,     xpMax:900,   need:null,      dose:2},
+  {key:'zhuji',  name:'筑基',layers:0,life:200,  sense:30,    xpMax:2200,  need:'筑基丹',  dose:4},
+  {key:'jindan', name:'金丹',layers:0,life:500,  sense:90,    xpMax:6000,  need:'结丹宝材',dose:8},
+  {key:'yuanying',name:'元婴',layers:0,life:1200,sense:250,   xpMax:15000, need:'元婴秘药',dose:16},
+  {key:'huashen',name:'化神',layers:0,life:3000, sense:600,   xpMax:40000, need:'化神丹',  dose:32},
+  {key:'lianxu', name:'炼虚',layers:0,life:8000, sense:1500,  xpMax:100000,need:'炼虚灵物',dose:64},
+  {key:'hedao',  name:'合道',layers:0,life:99999,sense:99999, xpMax:0,     need:'渡劫',    dose:128}
+];
+const DEPTS={
+  hongxian:{name:'红线仙司',skill:'红线缚灵',desc:'斡旋姻缘、卜算观心'},
+  danding:{name:'丹鼎房',skill:'丹火真诀',desc:'炼丹、淬炼灵药'},
+  shouyuan:{name:'灵兽苑',skill:'御兽诀',desc:'驯化灵兽、灵语'},
+  yaopu:{name:'灵植苑',skill:'植灵术',desc:'植灵、御兽、培育'},
+  yanfa:{name:'演法台',skill:'演法剑',desc:'讲经、斗法、比试'},
+  zangjing:{name:'藏经阁',skill:'三生悟',desc:'典藏功法、悟道'}
+};
+const SKILLS={
+  qingtang:{name:'青棠秘典',desc:'通用心法：修炼速度+15%',cult:0.15,break:0},
+  hongxian:{name:'红线缚灵',desc:'神念+，社交/姻缘事件加成',cult:0,break:0,social:true},
+  danding:{name:'丹火真诀',desc:'精炼产出+50%、合成更易',cult:0.05,break:0,alchemy:0.5},
+  shouyuan:{name:'御兽诀',desc:'灵兽机缘更易触发',cult:0,break:0,beast:true},
+  yaopu:{name:'植灵术',desc:'灵植机缘更易触发',cult:0,break:0,herb:true},
+  yanfa:{name:'演法剑',desc:'突破心境+',cult:0,break:0.03},
+  zangjing:{name:'三生悟',desc:'突破率+5%',cult:0.03,break:0.05}
+};
+const NPCS={
+  suwan:{name:'苏绾 · 红线仙女',about:'红线仙司主司，牵缘卜算'},
+  danchi:{name:'丹痴 · 丹鼎长老',about:'终年守炉，吝于赠丹'},
+  shounv:{name:'兽娘 · 灵兽苑',about:'与灵兽同息，性烈'},
+  zhangjiao:{name:'掌教 · 青霄太衍真人',about:'修为仅初入炼虚，统御六司，外神之事力有不逮'},
+  hongluan:{name:'红鸾 · 别院主人',about:'抚琴待客，多情'}
+};
+/* 职业：部门→职业，七级阶梯 */
+const JOB_TIERS=['初境','登堂','入室','大成','宗匠','大宗师','通圣'];
+const JOBS={
+  dan:{name:'丹师',dept:'danding',act:'refine'},
+  shou:{name:'御兽师',dept:'shouyuan',act:'gatherf'},
+  zhi:{name:'植灵师',dept:'yaopu',act:'gather'},
+  hong:{name:'红线仙使',dept:'hongxian',act:'social'},
+  yan:{name:'讲经师',dept:'yanfa',act:'cult'},
+  zang:{name:'典藏士',dept:'zangjing',act:'study'},
+  san:{name:'散修',dept:'',act:'wander'}
+};
+function deptJob(d){for(const k in JOBS)if(JOBS[k].dept===d)return k;return 'san';}
+/* 组织七阶阶梯与经验阈值 */
+const DEPT_TIERS=['杂役所','外门','内门','精锐','核心','秘传','祖庭'];
+const SECT_TIERS=['散修聚合','初立宗门','一方小宗','地域中宗','修行大宗','人间圣地','万古道统'];
+const CO_TIERS  =['草创','起步','成长','企稳','上市','行业巨头','跨域财团'];
+const REG_TIERS =['坊里','城邑','城邦','郡国','王朝','星海联邦','永恒秩序'];
+const ORG_EXP=[0,120,360,840,1800,3600,7200];
+/* 科技树 */
+const TECHS={
+  refine:{name:'生物精炼术',desc:'灵气精炼产出 +30%',cost:40,req:null},
+  tol:{name:'神经耐受训练',desc:'意志容量 W 上限 +20',cost:50,req:null},
+  gene:{name:'基因锁定向进化',desc:'每层基因锁 +8% 修为',cost:80,req:'refine'},
+  market:{name:'仙门贸易网',desc:'坊市售价 +40%',cost:60,req:null},
+  diplo:{name:'外交通识',desc:'外交好感 +50%',cost:70,req:null},
+  veil:{name:'世俗伪装术',desc:'公司伪装暴露风险大减',cost:90,req:'market'}
+};
+/* ============ 世界态：基础自然因素 → 气候 / 天气 ============ */
+/* 天气与气候的“成因”拆解为更基础的自然因素：温度/湿度/气压/风速/日照/灵气场。
+   气候=长期因素基线+地势；天气=由当前因素组合判定。仙人可借灵气与功法扰动因素以改天。 */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+const RNG=mulberry32(20261104);
+const rint=(a,b)=>a+Math.floor(RNG()*(b-a+1));
+const pick=arr=>arr[Math.floor(RNG()*arr.length)];
+const CLIMATES=[
+ {key:'valley', name:'灵秀山谷', f:{temp:18,moist:55,press:52,wind:25,solar:60,qi:45}, locs:['阴坡林缘','溪畔石隙','向阳草甸','古松之下'], note:'宗门所在，四季温润'},
+ {key:'rain',   name:'幽深雨林', f:{temp:26,moist:88,press:48,wind:18,solar:45,qi:55}, locs:['巨木树冠','腐叶沼泽','藤蔓幽洞','雨幕深潭'], note:'瘴雾弥漫，异兽潜行'},
+ {key:'cold',   name:'苦寒北原', f:{temp:-8,moist:35,press:58,wind:55,solar:40,qi:38}, locs:['冰封裂隙','雪原背风','冻湖岸边','极光之下'], note:'风雪载途，生灵蛰伏'},
+ {key:'desert', name:'炎燥荒漠', f:{temp:38,moist:18,press:45,wind:40,solar:90,qi:50}, locs:['熔岩缝畔','沙丘背阴','枯骨绿洲','日晒岩台'], note:'炙沙千里，火属灵植遍生'},
+ {key:'sea',    name:'云海秘境', f:{temp:14,moist:70,press:50,wind:30,solar:55,qi:70}, locs:['浮岛云石','雾生悬台','潮音洞窟','虹桥之侧'], note:'浮岛悬空，灵雾缭绕'},
+ {key:'volcano',name:'火山熔域', f:{temp:44,moist:25,press:42,wind:35,solar:75,qi:60}, locs:['熔岩缝','硫泉畔','焦岩台','火湖岸'], note:'地火奔涌，火灵炽盛'},
+ {key:'swamp',  name:'幽冥沼泽', f:{temp:16,moist:92,press:47,wind:12,solar:30,qi:58}, locs:['腐沼深处','鬼火滩','朽木根穴','瘴气林'], note:'死气沉沉，诡植丛生'},
+ {key:'isles',  name:'碧波群岛', f:{temp:22,moist:78,press:52,wind:45,solar:65,qi:52}, locs:['珊瑚礁畔','浪蚀洞','咸风崖','月港湾'], note:'海气润泽，水族繁盛'},
+ {key:'steppe', name:'苍茫草原', f:{temp:12,moist:50,press:55,wind:60,solar:62,qi:40}, locs:['风蚀丘陵','兽道草海','孤岩下','溪源处'], note:'天高地阔，兽群奔逐'},
+ {key:'cliff',  name:'千岩险壑', f:{temp:10,moist:45,press:56,wind:50,solar:50,qi:48}, locs:['断崖石缝','深谷背阴','飞瀑侧','孤峰顶'], note:'岩骨嶙峋，灵禽栖险'},
+ {key:'waste',  name:'星陨荒原', f:{temp:4,moist:30,press:60,wind:65,solar:55,qi:65}, locs:['陨铁坑','寒风垭口','星骸残骸','荒碛尽头'], note:'星力渗地，异象频生'},
+ {key:'forest', name:'古木森林', f:{temp:20,moist:80,press:50,wind:20,solar:42,qi:53}, locs:['古木中空','苔被深林','树根洞','萤光谷'], note:'万木参天，灵息氤氲'}
+];
+/* 天气由自然因素组合判定；各天气对玩法的影响（影响加深） */
+const WEATHER_EFF={
+ '晴':   {floraMul:1.0,faunaMul:1.0,cultMul:1.15,refineMul:1.0,cold:0,note:'天光澄澈，静修纳气尤佳'},
+ '多云': {floraMul:1.0,faunaMul:1.0,cultMul:1.0,refineMul:1.0,cold:0,note:'云幕低垂'},
+ '阴':   {floraMul:0.9,faunaMul:1.0,cultMul:0.9,refineMul:0.95,cold:0,note:'天色阴沉，灵息滞涩'},
+ '雨':   {floraMul:1.3,faunaMul:1.0,cultMul:1.0,refineMul:1.05,cold:0,note:'灵雨润物，灵植丰沛'},
+ '风雨': {floraMul:1.2,faunaMul:0.8,cultMul:0.95,refineMul:1.0,cold:0,note:'风雨交加，御兽维艰'},
+ '雷暴': {floraMul:1.1,faunaMul:0.7,cultMul:0.7,refineMul:1.2,cold:0,note:'雷火淬灵，凶吉参半，静修易引心魔'},
+ '雪':   {floraMul:0.6,faunaMul:0.7,cultMul:0.95,refineMul:0.95,cold:1,note:'银装素裹，生灵蛰伏'},
+ '暴雪': {floraMul:0.4,faunaMul:0.5,cultMul:0.85,refineMul:0.9,cold:2,note:'风雪肆虐，采撷艰难'},
+ '雾':   {floraMul:1.1,faunaMul:1.0,cultMul:1.0,refineMul:1.05,cold:0,note:'灵雾蔽日，机缘潜藏'},
+ '大风': {floraMul:0.9,faunaMul:0.6,cultMul:1.0,refineMul:1.0,cold:0,note:'罡风呼啸，御兽艰难'},
+ '沙暴': {floraMul:0.7,faunaMul:0.6,cultMul:0.6,refineMul:0.95,cold:0,note:'飞沙走石，张目维艰'},
+ '灵潮': {floraMul:1.2,faunaMul:1.1,cultMul:1.1,refineMul:1.4,cold:0,note:'灵气如潮，淬炼大进'},
+ '灵霞': {floraMul:1.1,faunaMul:1.0,cultMul:1.2,refineMul:1.2,cold:0,note:'霞光蕴灵，修行顺遂'},
+ '霜':   {floraMul:0.8,faunaMul:0.9,cultMul:0.95,refineMul:0.95,cold:1,note:'寒霜凝结，晨露成冰'}
+};
+function classifyWeather(f){
+  // 由基础自然因素给每种天气算权重（影响加深），并带天象惯性，使天气多样且受因素主导
+  const cand={};
+  const add=(n,w)=>{if(w>0)cand[n]=(cand[n]||0)+w;};
+  add('多云',18+Math.max(0,55-f.moist)*0.3);
+  add('阴',Math.max(0,58-f.solar)*1.3);
+  add('晴',Math.max(0,f.solar-52)*1.2+Math.max(0,52-f.moist)*0.8+(f.press>55?8:0));
+  add('雨',Math.max(0,f.moist-52)*1.6);
+  if(f.moist>58&&f.wind>38)add('风雨',(f.moist-55)+(f.wind-38)*0.9);
+  if(f.moist>=70&&f.temp>=22&&f.press<56)add('雷暴',(f.moist-68)*2+(f.temp-22));
+  if(f.temp<6)add('雪',(10-f.temp)*3);
+  if(f.temp<-3&&f.moist>60)add('暴雪',(4-f.temp)*4*(f.moist>65?1.4:0.4));
+  if(f.moist>48&&f.wind<30)add('雾',(f.moist-48)+(30-f.wind)*1.4);
+  if(f.wind>48)add('大风',(f.wind-44)*2.2);
+  if(f.temp>30&&f.moist<38)add('沙暴',(f.temp-28)*2*(f.moist<36?1.6:0.25));
+  if(f.qi>62&&f.moist>52)add('灵潮',(f.qi-58)*2*(f.moist>55?1.3:0.35));
+  if(f.qi>66&&f.solar>56)add('灵霞',(f.qi-62)*1.5*(f.solar>58?1.3:0.3));
+  if(f.temp<10&&f.moist>46)add('霜',(14-f.temp)*1.4*(f.moist>52?1:0.3));
+  const cur=WORLD.weather&&WORLD.weather.name;
+  if(cur&&cand[cur])cand[cur]*=2.4; // 天象惯性
+  let tot=0;for(const k in cand)tot+=cand[k];
+  let r=Math.random()*tot;
+  for(const k in cand){if((r-=cand[k])<=0)return k;}
+  return '多云';
+}
+/* ---- 动植物图鉴生成（确定性随机，稳定可复现）：各 100 种，带完整档案 ---- */
+const PLANT_P=['玄','赤','寒','碧','幽','金','玉','霜','灵','星','青','紫','丹','墨','芒'];
+const PLANT_R=['焰','露','芝','兰','蕨','参','苔','穗','莲','藤','果','茸','蕊','苓','英','蔓'];
+const PLANT_S=['草','花','树','藤','菇','兰','芝','木','芦','苒'];
+const BEAST_P=['玄','赤','寒','碧','幽','金','玉','霜','灵','星','青','紫','丹','墨','白','银'];
+const BEAST_R=['角','鳞','羽','爪','尾','瞳','纹','魂','脊','牙','鬃','翎'];
+const BEAST_S=['鹿','狐','鹤','狼','蛛','蛟','兔','貂','蜥','鹰','鲤','獒','鸾','螭','蟒','猿','隼','麂'];
+const BEH_PLANT=['光合自养','寄生他木','腐生食朽','食虫诱捕','附生石上','攀援蔓生'];
+const BEH_BEAST=['草食温驯','肉食猎杀','杂食机敏','灵嗜魂魄','群猎协作','独行夜出','迁徙逐水','穴居蛰伏'];
+const DENS=['独居','成对','小群','大群','群落','迁徙群'];
+const PARTS=['角','鳞','羽','骨','筋','皮','芯','涎'];
+function genSpecies(type){
+  const arr=[],seen=new Set();
+  const P1=type==='植'?PLANT_P:BEAST_P,R1=type==='植'?PLANT_R:BEAST_R,S1=type==='植'?PLANT_S:BEAST_S;
+  const beh=type==='植'?BEH_PLANT:BEH_BEAST;
+  while(arr.length<100){
+    const nm=pick(P1)+pick(R1)+pick(S1);
+    if(seen.has(nm))continue;seen.add(nm);
+    const cl=pick(CLIMATES);
+    const rarity=RNG()<0.6?1:(RNG()<0.67?2:3);
+    const qi=Math.max(2,Math.min(30,Math.round((rarity===1?5:rarity===2?10:17)+cl.f.qi*0.12+rint(0,4))));
+    const danger=type==='植'?0:(RNG()<0.5?0:(RNG()<0.6?1:(RNG()<0.7?2:3)));
+    arr.push({name:nm,type:type==='植'?'植':'兽',climate:cl.key,climateName:cl.name,loc:pick(cl.locs),behavior:pick(beh),density:pick(DENS),rarity,qi,danger,part:pick(PARTS)});
+  }
+  return arr;
+}
+const FLORA=genSpecies('植'),FAUNA=genSpecies('兽');
+const ALLN=FLORA.concat(FAUNA).map(s=>s.name);
+FLORA.concat(FAUNA).forEach(s=>{
+  const mate=pick(ALLN.filter(n=>n!==s.name));
+  const rel=RNG()<0.5?('常与《'+mate+'》共域而生'):(RNG()<0.6?('天敌为《'+mate+'》'):'独栖无争，少有天敌');
+  s.community=s.density+'，栖于'+s.loc+'，'+rel;
+  if(s.type==='植'){s.product='采得灵植样本，宜精炼灵气或入丹';s.note=s.climateName+'所产，'+s.behavior+'，灵气蕴于'+s.loc;}
+  else{s.product='猎得灵兽样本，其'+s.part+'可制器、入药或炼宝';s.note=s.climateName+'生灵，'+s.behavior+(s.danger>=2?'，性烈凶戾':(s.danger>=1?'，略有凶性':'，性尚温驯'));}
+});
+/* 仙人改天：扰动自然因素以改天象，需灵气与境界/功法相宜 */
+const WEATHER_OPS=[
+  {key:'晴', label:'☀ 祈晴', qi:30,realm:0,skill:null,dao:0, desc:'散阴霾、开云幕', apply:{press:22,moist:-25,solar:20}},
+  {key:'雨', label:'🌧 布雨', qi:50,realm:1,skill:null,dao:0, desc:'云行雨施，润泽灵植', apply:{moist:30,press:-10,wind:5}},
+  {key:'风', label:'🌬 驭风', qi:40,realm:0,skill:null,dao:0, desc:'驱散瘴雾', apply:{wind:32,moist:-12}},
+  {key:'雷', label:'⚡ 敕雷', qi:80,realm:3,skill:null,dao:60,desc:'引天雷淬体（元婴+·道心≥60）', apply:{moist:15,press:-15,qi:10}},
+  {key:'灵潮',label:'🌊 聚灵潮',qi:60,realm:2,skill:'yanfa',dao:0,desc:'汇灵成潮（金丹+·演法）', apply:{qi:25,moist:10}}
+];
+let CODEX_FILTER={type:'all',climate:'all'};
+const QIMAX=600, CASH0=200;
+
+/* ============ 状态 ============ */
+let P=null, META={talent:0,apt:0,comp:0,res:0,skill:0,reroll:0,w:0,best:-1}, YEAR=0, SHICHEN=0, alive=true, busy=false;
+let WORLD={climate:CLIMATES[0],f:{...CLIMATES[0].f},weather:{name:'晴',eff:WEATHER_EFF['晴']}};
+function stepWorld(){
+  const c=WORLD.climate.f;
+  for(const k of ['temp','moist','press','wind','solar','qi']){
+    if(k==='temp'){WORLD.f.temp+=(c.temp-WORLD.f.temp)*0.20+(Math.random()-0.5)*4;WORLD.f.temp=Math.max(-40,Math.min(60,WORLD.f.temp));}
+    else{WORLD.f[k]+=(c[k]-WORLD.f[k])*0.20;WORLD.f[k]=Math.max(0,Math.min(100,WORLD.f[k]+(Math.random()-0.5)*6));}
+  }
+  if(Math.random()<0.12){ // 天气系统偶发扰动（锋面 / 灵潮前兆 / 罡风），使同一气候内天气亦多变
+    const k=pick(['moist','wind','qi','temp','solar']);
+    const d=(Math.random()<0.5?-1:1)*(15+Math.random()*25);
+    if(k==='temp')WORLD.f.temp=Math.max(-40,Math.min(60,WORLD.f.temp+d));else WORLD.f[k]=Math.max(0,Math.min(100,WORLD.f[k]+d));
+  }
+  const wn=classifyWeather(WORLD.f);WORLD.weather={name:wn,eff:WEATHER_EFF[wn]};
+}
+function resetWorld(){WORLD={climate:CLIMATES[0],f:{...CLIMATES[0].f}};stepWorld();}
+stepWorld();
+let ORG={
+  dept:{danding:{lv:1,exp:0},shouyuan:{lv:1,exp:0},yaopu:{lv:1,exp:0},hongxian:{lv:1,exp:0},yanfa:{lv:1,exp:0},zangjing:{lv:1,exp:0}},
+  sect:{qingtang:{lv:1,exp:0}},
+  company:{tangyi:{lv:1,exp:0},hongluan:{lv:1,exp:0},hongxian:{lv:1,exp:0},xianmen:{lv:1,exp:0}},
+  regime:{shisu:{lv:1,exp:0},lianmeng:{lv:1,exp:0}}
+};
+const SHICHENS=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const LOG=[];
+function log(t,tag){LOG.unshift((YEAR?('['+YEAR+'世] '):'')+t);renderLog();}
+function bar(pct,color){return '<div class="bar"><i style="width:'+Math.max(0,Math.min(100,pct))+'%;background:'+color+'"></i></div>';}
+
+/* ============ 投胎：先天禀赋（取代灵根） ============ */
+function rollBirth(){
+  return {apt:30+Math.floor(Math.random()*60)+META.apt,
+          comp:30+Math.floor(Math.random()*60)+META.comp,
+          W:0};
+}
+let curBirth=null;
+
+/* ============ 新建一世 ============ */
+function startLife(birth,dept){
+  const job=deptJob(dept);
+  const Wmax=60+META.w*10;
+  P={apt:birth.apt,comp:birth.comp,realm:0,layer:1,xp:0,life:REALMS[0].life,dao:50,demon:0,
+     res:30+META.res*20,cash:CASH0,qi:10,
+     W:Math.round(Wmax*0.5),Wmax,geneLocks:0,
+     dept,job,jobLv:1,jobXp:0,
+     skills:['qingtang'],techs:{},
+     inv:{herb:0,flesh:0,pill:0,tool:0,dress:0},
+     rels:{},codex:{},
+     needs:{food:80,tire:80,social:70,clean:80}};
+  resetWorld();
+  ['suwan','danchi','shounv','zhangjiao','hongluan'].forEach(k=>P.rels[k]=dept==='hongxian'&&k==='suwan'?30:8);
+  YEAR=0;SHICHEN=0;alive=true;busy=false;LOG.length=0;
+  if(META.skill>0){const extra=Object.keys(SKILLS).filter(k=>k!=='qingtang'&&!P.skills.includes(k));if(extra.length)P.skills.push(extra[Math.floor(Math.random()*extra.length)]);}
+  log('此世生于青棠宗，先天资质 '+P.apt+'、悟性 '+P.comp+'、意志容量 '+Math.round(P.W)+'/'+P.Wmax+'。','info');
+  if(dept&&DEPTS[dept]&&SKILLS[dept]){if(!P.skills.includes(dept))P.skills.push(dept);log('入 '+DEPTS[dept].name+'，得传《'+SKILLS[dept].name+'》，职司《'+JOBS[job].name+'》。','good');}
+  renderAll();
+}
+
+/* ============ 主循环：时间 / 需求 ============ */
+function advance(n){SHICHEN+=n;while(SHICHEN>=12){SHICHEN-=12;YEAR++;P.life--;}P.life-=Math.floor(n/3);tickNeeds(n);}
+function tickNeeds(n){
+  const cold=WORLD.f.temp<5?1:0, hot=WORLD.f.temp>32?1:0, wet=WORLD.f.moist>80?1:0, windy=WORLD.f.wind>60?1:0;
+  const d={food:4+cold*1,tire:6+cold*2+hot*1+windy*1,social:3,clean:3+wet*2+hot*1};
+  for(const k in d)P.needs[k]=Math.max(0,Math.min(100,P.needs[k]-d[k]*n));
+  if(P.needs.food<=0)P.demon+=1;
+  if(P.needs.tire<=0)P.demon+=1;
+  if(P.needs.social<=0){for(const k in P.rels)P.rels[k]=Math.max(0,(P.rels[k]||0)-1);P.dao=Math.max(0,P.dao-0.5);}
+  if(P.needs.clean<=0)P.demon+=1;
+}
+function cultSpeed(){
+  let s=4+(P.realm+1)*2;
+  s*=(0.6+P.apt/120);
+  P.skills.forEach(k=>s*=(1+(SKILLS[k].cult||0)));
+  s*=(1+P.dao/200);
+  if(P.techs.gene)s*=(1+0.08*P.geneLocks);
+  return Math.max(1,s);
+}
+function doAction(a){
+  if(busy||!alive)return;busy=true;
+  if(a==='cult')cult();
+  else if(a==='wander'){P.needs.social=Math.max(0,P.needs.social-5);advance(1);if(Math.random()<0.4)shiftClimate();if(!maybeEvent(['秘境','机缘','灾劫']))afterTurn();}
+  else if(a==='social'){P.needs.social=Math.min(100,P.needs.social+18);advance(1);gainJob('social');if(!maybeEvent(['人际','姻缘']))afterTurn();}
+  else if(a==='train')trainW();
+  else if(a==='eat'){P.needs.food=Math.min(100,P.needs.food+35);P.needs.clean=Math.max(0,P.needs.clean-4);advance(1);log('于膳房用膳，饥馁得解。','good');afterTurn();}
+  else if(a==='bathe'){P.needs.clean=Math.min(100,P.needs.clean+40);P.needs.tire=Math.max(0,P.needs.tire-6);advance(1);log('汤泉沐浴，尘俗尽涤、倦意稍消。','good');afterTurn();}
+  else if(a==='gather')gather();
+  else if(a==='weather'){showWeatherControl();}
+  else if(a==='refine')refine();
+  else if(a==='craft')craft();
+  else if(a==='sp')sell('pill');
+  else if(a==='st')sell('tool');
+  else if(a==='sd')sell('dress');
+  else if(a==='study'){advance(1);P.dao=Math.min(100,P.dao+1);P.xp+=Math.round(cultSpeed()*0.4);gainJob('study');log('于藏经阁参悟道藏，道心 +1。','good');afterTurn();}
+  else if(a==='rest'){advance(2);P.dao=Math.min(100,P.dao+2);P.demon=Math.max(0,P.demon-3);P.needs.tire=Math.min(100,P.needs.tire+20);log('焚香调息两时辰，道心 +2、心魔 −3。','good');afterTurn();}
+  else if(a==='break'){breakthrough();if(alive)afterTurn();}
+}
+function cult(){
+  advance(1);
+  const dose=REALMS[P.realm].dose, cm=WORLD.weather.eff.cultMul;
+  const g=Math.round(cultSpeed()*(0.85+Math.random()*0.3)*cm);
+  if(P.qi>=dose){
+    P.qi-=dose;P.xp+=g;P.W=Math.min(P.Wmax,P.W+1);gainJob('cult');
+    const tag=cm>=1.1?'佳':(cm<0.9?'滞':'平');
+    log('静修：纳灵气 '+dose+'，修为 +'+g+'（'+WORLD.weather.name+'·纳气'+tag+'），意志 +1。','good');
+    if(WORLD.weather.name==='雷暴'&&P.W<32){P.demon+=4;log('雷暴中强引天雷淬体，意志不足，心魔 +4。','bad');}
+  }else{
+    P.xp+=Math.round(g*0.3);P.demon+=2;
+    log('灵气不足（需 '+dose+'，存 '+Math.round(P.qi)+'），修为微增、心魔 +2。','bad');
+  }
+  afterTurn();
+}
+function trainW(){
+  advance(1);P.needs.tire=Math.max(0,P.needs.tire-8);
+  P.W=Math.min(P.Wmax,P.W+2);P.dao=Math.min(100,P.dao+1);
+  log('砥砺意志、耐受灵气，意志容量 +2（W='+Math.round(P.W)+'）。','good');
+  afterTurn();
+}
+/* C：采集 → 精炼 → 合成 → 坊市 */
+function pickRarity(pool){
+  const w=pool.map(s=>({s,w:s.rarity===1?6:s.rarity===2?3:1}));
+  let tot=w.reduce((a,b)=>a+b.w,0),r=Math.random()*tot;
+  for(const x of w){if((r-=x.w)<=0)return x.s;}
+  return pool[0];
+}
+function gather(){
+  advance(1);
+  const d=P.dept;let pool,kind,act;
+  if(d==='shouyuan'){pool=FAUNA.filter(f=>f.climate===WORLD.climate.key);kind='flesh';act='gatherf';}
+  else{pool=FLORA.filter(f=>f.climate===WORLD.climate.key);kind='herb';act='gather';}
+  if(!pool.length)pool=(d==='shouyuan'?FAUNA:FLORA);
+  const sp=pickRarity(pool);
+  const mul=kind==='herb'?WORLD.weather.eff.floraMul:WORLD.weather.eff.faunaMul;
+  const g=Math.max(1,Math.round((1+Math.floor(Math.random()*2))*mul));
+  P.inv[kind]+=g;
+  P.codex[sp.name]=Object.assign({},sp,{count:(P.codex[sp.name]?P.codex[sp.name].count:0)+g});
+  gainJob(act);gainOrg('sect','qingtang',8);
+  log('于'+WORLD.climate.name+'（'+WORLD.weather.name+'）采得《'+sp.name+'》×'+g+'（'+(kind==='herb'?'灵植':'灵兽')+'样本）。','info');
+  if(kind==='flesh'&&sp.danger>=2&&d!=='shouyuan'){P.demon+=2;log('⚠ 此兽凶戾（危险'+sp.danger+'），非御兽司采之遭反噬，心魔 +2。','bad');}
+  afterTurn();
+}
+function refine(){
+  advance(1);
+  const have=P.inv.herb+P.inv.flesh;
+  if(have<2){log('原料不足，需灵植/灵兽样本≥2。','bad');afterTurn();return;}
+  const h=Math.min(P.inv.herb,2),f=Math.min(P.inv.flesh,2-h);P.inv.herb-=h;P.inv.flesh-=f;
+  let y=(28+P.apt*0.2)*(0.7+WORLD.f.qi/100)*WORLD.weather.eff.refineMul;if(P.techs.refine)y*=1.3;if(P.skills.includes('danding'))y*=1.2;y=Math.round(y);
+  P.qi=Math.min(QIMAX,P.qi+y);gainJob('refine');gainOrg('sect','qingtang',10);
+  log('丹鼎房以生物精炼术淬得灵气 +'+y+'（存量 '+Math.round(P.qi)+'）。','good');
+  afterTurn();
+}
+function craft(){
+  if(!alive)return;
+  advance(1);
+  if(P.qi<20){log('灵气不足（需≥20）无法合成。','bad');afterTurn();return;}
+  const ch=P.dept;let item='pill',name='丹药';
+  if(ch==='danding'){item='pill';name='丹药';}
+  else if(ch==='shouyuan'){item='tool';name='御兽法器';}
+  else if(ch==='yaopu'){item='pill';name='灵植丹露';}
+  else if(ch==='hongxian'){item='dress';name='红线纱衣';}
+  else if(ch==='yanfa'){item='tool';name='演法剑符';}
+  P.qi-=20;P.inv[item]++;gainJob('craft');gainOrg('sect','qingtang',6);
+  log('合成'+name+'×1（灵气−20，存 '+Math.round(P.qi)+'）。','info');
+  afterTurn();
+}
+function sell(kind){
+  if(!alive)return;
+  if(!(P.inv[kind]>0)){log('无'+kind+'可售。','bad');afterTurn();return;}
+  P.inv[kind]--;
+  let base={pill:25,tool:40,dress:60}[kind]||20;if(P.techs.market)base*=1.4;base=Math.round(base);
+  P.res+=Math.round(base*0.4);P.cash+=base;
+  gainOrg('company','xianmen',base*0.3);
+  gainOrg('company',P.dept==='hongxian'?'hongxian':'tangyi',base*0.2);
+  gainOrg('regime','shisu',base*0.1);
+  log('坊市售出'+kind+'，得灵石 +'+Math.round(base*0.4)+'、世俗货币 +'+base+'（公司营收↑）。','good');
+  afterTurn();
+}
+/* 职业经验 / 部门晋阶 */
+function gainJob(act){
+  const jk=JOBS[P.job].act;
+  if(act!==jk)return;
+  P.jobXp+=22;
+  while(P.jobLv<7&&P.jobXp>=ORG_EXP[P.jobLv-1]){P.jobXp-=ORG_EXP[P.jobLv-1];P.jobLv++;log('职务精进：《'+JOBS[P.job].name+'》晋至 '+JOB_TIERS[P.jobLv-1]+'，加成提升。','good');if(P.dept)gainOrg('dept',P.dept,45);}
+}
+/* 组织经验 / 晋阶 */
+function gainOrg(cat,key,amt){
+  const o=ORG[cat]&&ORG[cat][key];if(!o)return;
+  o.exp+=amt;
+  while(o.lv<7&&o.exp>=ORG_EXP[o.lv-1]){o.exp-=ORG_EXP[o.lv-1];o.lv++;
+    const name=cat==='dept'?DEPT_TIERS[o.lv-1]:cat==='sect'?SECT_TIERS[o.lv-1]:cat==='company'?CO_TIERS[o.lv-1]:REG_TIERS[o.lv-1];
+    log('【势力】'+(cat==='dept'?DEPTS[key].name:(cat==='sect'?'青棠宗':cat==='company'?companyName(key):'世俗政权'))+' 晋阶至 '+name+'。','good');
+    if(cat==='sect'){P.res+=20;}
+  }
+}
+function companyName(k){return {tangyi:'棠医连锁',hongluan:'红鸾交友',hongxian:'红线仙·姻缘',xianmen:'仙门贸易'}[k]||k;}
+
+/* ============ 随机事件：体验与选择 ============ */
+const EVENTS=[
+ {cat:'秘境',title:'古洞遗蜕',desc:'山腹裂隙现古修坐化洞府，壁刻残诀，洞心悬浮一枚不明灵珠。',
+  opts:[{t:'参悟残诀',e:{xp:120,dao:4,demon:3,note:'悟性大增，却引一丝心魔'}},
+        {t:'夺灵珠而去',e:{res:40,dao:-2,note:'获益颇丰，心有贪扰'}},
+        {t:'恭敬退去',e:{dao:6,note:'不取非分之物，道心澄明'}}]},
+ {cat:'机缘',title:'灵脉异动',desc:'主灵脉支脉涌清灵之气，灵雾翻腾，正是打坐吸纳良机。',
+  opts:[{t:'引气入体',e:{qi:200,dao:3,note:'修为大进'}},
+        {t:'供奉宗门',e:{dao:8,res:-10,note:'舍弃机缘以全宗门，道心大涨'}}]},
+ {cat:'人际',title:'同门相轻',desc:'一名弟子当众讥你禀赋平庸、难成大器。',
+  opts:[{t:'含笑不语',e:{dao:5,note:'不动如山，涵养见长'}},
+        {t:'反唇相讥',e:{demon:6,rel:{danchi:-4},note:'口舌爽快，却生心魔'}},
+        {t:'以修行立誓',e:{dao:3,xp:60,note:'化羞辱为道心'}}]},
+ {cat:'姻缘',title:'月下红线',desc:'苏绾于红鸾别院抚琴，腕间红丝绦微动，似有牵缘之意。',
+  opts:[{t:'和琴而坐',e:{rel:{suwan:18},dao:4,res:10,note:'与苏绾情愫暗生'}},
+        {t:'请教牵缘之道',e:{rel:{suwan:8},xp:80,note:'得红线仙司点拨'}},
+        {t:'婉拒离去',e:{dao:2,note:'心无旁骛'}}]},
+ {cat:'灾劫',title:'心魔窃语',desc:'深夜入定，识海现旧日幻象，黑气绕心不散。',
+  opts:[{t:'诵经镇之',e:{dao:6,demon:Math.max(0,-4),note:'以悟镇魔'}},
+        {t:'强压不理',e:{demon:10,dao:-3,note:'心魔更盛'}},
+        {t:'顺之观之',e:{demon:4,xp:100,note:'于魔中觅得一丝道'}}]},
+ {cat:'秘境',title:'外神低语',desc:'虚空裂隙渗出不属于此界的气息，似在引诱你窥探门后之秘。',
+  opts:[{t:'红线仙司同窥',e:{rel:{suwan:6},xp:150,dao:2,note:'借跨界之谊窥得一二'}},
+        {t:'上报掌教',e:{rel:{zhangjiao:14},dao:5,note:'忠谨得真君青眼'}},
+        {t:'独自探看',e:{demon:14,xp:260,note:'得大机缘，亦惹大患'}}]},
+ {cat:'灵气',title:'剂量临界',desc:'你欲强提灵气剂量以速成，然意志容量已近极限，神经刺痛。',
+  opts:[{t:'徐徐加量',e:{W:4,dao:2,note:'以意志耐受更高剂量'}},
+        {t:'冒险猛灌',e:{xp:300,demon:18,note:'大进亦大险'}},
+        {t:'就此收手',e:{dao:3,note:'稳守道心'}}]},
+ {cat:'公司',title:'世俗订单',desc:'「棠医连锁」传来大批原料订单，价优但需抽调灵植样本。',
+  opts:[{t:'接单供货',e:{cash:80,res:10,note:'世俗货币大增，公司营收↑'}},
+        {t:'优先宗门',e:{dao:5,res:-6,note:'以宗门为重'}}]},
+ {cat:'外交',title:'仙门会盟',desc:'邻近宗门遣使来聘，欲结灵气互市之好，亦暗藏攀比。',
+  opts:[{t:'结为盟友',e:{rel:{zhangjiao:8},note:'宗门声望↑',org:{sect:60}}},
+        {t:'虚与委蛇',e:{res:20,note:'不露底细'}},
+        {t:'拒之门外',e:{dao:4,note:'清者自清'}}]}
+];
+function maybeEvent(cats){const pool=EVENTS.filter(e=>cats.includes(e.cat));if(!pool.length)return false;const ev=pool[Math.floor(Math.random()*pool.length)];showEvent(ev);return true;}
+function shiftClimate(){
+  const others=CLIMATES.filter(c=>c.key!==WORLD.climate.key);
+  WORLD.climate=others[Math.floor(Math.random()*others.length)];
+  log('外出游历，地势变迁，转入「'+WORLD.climate.name+'」。','info');
+}
+function afterTurn(){
+  stepWorld();
+  if(P.xp>=REALMS[P.realm].xpMax&&REALMS[P.realm].need)log('修为已圆满，可于行动中选「突破」。','info');
+  checkDeath();
+  busy=false;renderAll();
+  if(alive&&Math.random()<0.18)maybeEvent(['秘境','人际','机缘']);
+}
+function showEvent(ev){
+  busy=true;
+  document.getElementById('eventArea').innerHTML=
+    '<div class="event"><div class="cat">'+ev.cat+' · 抉择</div><div style="font-size:15px;color:var(--ink)">'+ev.title+'</div><div class="desc">'+ev.desc+'</div>'+
+    ev.opts.map((o,i)=>'<button class="opt" onclick="chooseOpt('+i+')">'+o.t+'<small>'+(o.e.note||'')+'</small></button>').join('')+'</div>';
+  window._ev=ev;
+}
+function chooseOpt(i){
+  const o=window._ev.opts[i];applyEffect(o.e);
+  document.getElementById('eventArea').innerHTML='';window._ev=null;busy=false;renderAll();
+}
+function applyEffect(e){
+  if(e.xp)P.xp+=e.xp;
+  if(e.qi!==undefined)P.qi=Math.min(QIMAX,P.qi+e.qi);
+  if(e.res!==undefined)P.res=Math.max(0,P.res+e.res);
+  if(e.cash!==undefined)P.cash+=e.cash;
+  if(e.W!==undefined)P.W=Math.min(P.Wmax,P.W+e.W);
+  if(e.dao!==undefined)P.dao=Math.max(0,Math.min(100,P.dao+e.dao));
+  if(e.demon!==undefined)P.demon=Math.max(0,Math.min(100,P.demon+e.demon));
+  if(e.rel)for(const k in e.rel){P.rels[k]=(P.rels[k]||0)+e.rel[k];}
+  if(e.org)for(const k in e.org)gainOrg('sect','qingtang',e.org[k]);
+  let msg=(e.note||'你做出了选择。');log(msg,e.dao>0?'good':(e.demon>0?'bad':'info'));
+  checkDeath();
+}
+
+/* ============ 突破系统（占位：用户将重写，套用 灵气/意志W/基因锁 模型） ============ */
+function breakthrough(){
+  const R=REALMS[P.realm];
+  if(P.realm>=REALMS.length-1){log('已是合道，超脱轮回。','good');return;}
+  const next=REALMS[P.realm+1];
+  // 意志耐受检查：下一境剂量超过意志容量，则走火入魔风险骤增（灵气模型）
+  const doseNext=next.dose;
+  if(R.need && P.res<40){log('突破需天材地宝（灵石≥40 充作），当前不足。','bad');return;}
+  if(R.need)P.res-=40;P.xp=0;
+  let Pp=0.55*(0.7+P.apt/130)*(1+P.dao/100)-P.demon*0.08;
+  P.skills.forEach(k=>Pp+=(SKILLS[k].break||0));
+  if(P.W<doseNext)Pp-=(doseNext-P.W)*0.01; // 意志不足→概率下降
+  Pp=Math.max(0.02,Math.min(0.98,Pp));
+  log('于 '+R.name+' 圆满之境尝试突破至 '+next.name+'（灵气剂量'+doseNext+' / 意志'+Math.round(P.W)+'），天机概率 '+Math.round(Pp*100)+'%。','info');
+  if(Math.random()<Pp){
+    P.realm++;P.layer=1;P.geneLocks++;P.life=next.life;
+    log('⚡ 突破成功！晋入 '+next.name+'，寿元延展至 '+next.life+' 年，基因锁解第 '+P.geneLocks+' 道。','good');
+    if(next.key==='hedao'){log('合道圆满，镇守外神，超脱轮回——此世功成。','good');winGame();}
+  }else{
+    const big=P.demon>55&&Math.random()<0.4;
+    if(big){log('走火入魔！识海崩散，道消身死。','bad');die('走火入魔');}
+    else{P.dao=Math.max(0,P.dao-4);P.demon=Math.min(100,P.demon+6);log('突破受挫，修为散去、道心 −4、心魔 +6。','bad');}
+  }
+}
+
+/* ============ 死亡 / 轮回 ============ */
+function checkDeath(){if(P.life<=0&&alive){log('寿元已尽，坐化于青棠。','bad');die('寿终');}}
+function die(reason){
+  alive=false;busy=true;
+  const gain=Math.max(1,P.realm*2+(P.dao>70?2:0)+(P.geneLocks>3?1:0));
+  META.talent+=gain;META.best=Math.max(META.best,P.realm);
+  showOverlay('<h2>一世终结</h2><p class="muted">'+reason+'。</p>'+
+    '<p>历经 '+YEAR+' 世岁月，止于 <b style="color:var(--gold)">'+REALMS[P.realm].name+'</b>，基因锁 '+P.geneLocks+' 道，道心 '+P.dao+'。</p>'+
+    '<p>轮回结算：<b style="color:var(--jade)">+'+gain+' 天赋点</b>（累计 '+META.talent+'）。</p>'+
+    talentUI()+'<button class="gold" onclick="reincarnate()">转世重开</button>');
+}
+function winGame(){
+  alive=false;busy=true;META.talent+=20;META.best=6;
+  showOverlay('<h2>合道 · 超脱</h2><p>你于青棠峰顶镇守外神，道果圆满，超脱轮回。</p><p>天赋点 +20（累计 '+META.talent+'）。</p>'+talentUI()+'<button class="gold" onclick="reincarnate()">再启新世</button>');
+}
+function talentUI(){
+  return '<div style="text-align:left;margin:14px 0;font-size:13px">'+
+    '<div>天赋点：<b class="big">'+META.talent+'</b> ｜ 历史最高：'+(META.best>=0?REALMS[META.best].name:'无')+'</div>'+
+    '<div class="muted" style="margin-top:8px">转世后可花天赋点强化：已投 资质+'+META.apt+' / 悟性+'+META.comp+' / 灵石+'+META.res+' / 意志+'+META.w+' / 预知功法'+META.skill+' / 重投禀赋'+META.reroll+'</div>'+
+    '<div class="btns" style="justify-content:center">'+
+    '<button class="jade" onclick="spend(\'apt\')">资质+5 ('+aptCost()+')</button>'+
+    '<button class="jade" onclick="spend(\'comp\')">悟性+5 ('+aptCost()+')</button>'+
+    '<button class="jade" onclick="spend(\'res\')">灵石+20 ('+aptCost()+')</button>'+
+    '<button class="jade" onclick="spend(\'w\')">意志+10 ('+aptCost()+')</button>'+
+    '<button class="jade" onclick="spend(\'skill\')">预知功法 ('+aptCost()+')</button>'+
+    '<button class="jade" onclick="spend(\'reroll\')">重投禀赋 ('+aptCost()+')</button></div></div>';
+}
+function aptCost(){return 3;}
+function spend(t){if(META.talent<aptCost())return;META.talent-=aptCost();if(t==='apt')META.apt+=5;if(t==='comp')META.comp+=5;if(t==='res')META.res+=1;if(t==='w')META.w+=1;if(t==='skill')META.skill+=1;if(t==='reroll')META.reroll+=1;renderOverlay();}
+function renderOverlay(){const b=document.getElementById('obox');const title=b.querySelector('h2').outerHTML;const p=b.querySelector('p').outerHTML;document.getElementById('obox').innerHTML=title+p+talentUI()+'<button class="gold" onclick="reincarnate()">转世重开</button>';}
+function reincarnate(){hideOverlay();createChar();}
+
+/* ============ 角色创建（无灵根，改为先天禀赋） ============ */
+function createChar(){
+  curBirth=rollBirth();if(META.reroll>0){curBirth=rollBirth();META.reroll--;}
+  let deptHTML=Object.entries(DEPTS).map(([k,v])=>'<button onclick="pickDept(\''+k+'\')" id="dp_'+k+'">'+v.name+'</button>').join('')+
+    '<button onclick="pickDept(\'\')" id="dp_">散修</button>';
+  const b=curBirth;
+  showOverlay('<h2>投胎 · 青棠宗</h2>'+
+    '<div class="muted">天赋点 <b style="color:var(--jade)">'+META.talent+'</b> ｜ 历史最高 '+(META.best>=0?REALMS[META.best].name:'无')+'</div>'+
+    '<div style="margin:12px 0">天定禀赋（随机，可重投）：<br>'+
+    '<span class="pill" id="p_apt" style="border-color:var(--jade);color:var(--jade)">资质 '+b.apt+'</span> '+
+    '<span class="pill" id="p_comp" style="border-color:var(--gold);color:var(--gold)">悟性 '+b.comp+'</span> '+
+    '<span class="pill" style="border-color:var(--blue);color:var(--blue)">意志容量≈'+(60+META.w*10)+'</span>'+
+    '<div class="btns center" style="margin-top:8px"><button onclick="rerollBirth()">🎲 重投禀赋</button></div></div>'+
+    '<div>出身（决定初始职业，不选为散修）：<div class="dept-pick">'+deptHTML+'</div></div>'+
+    '<div class="btns center"><button class="gold" onclick="confirmChar()">落生此世</button></div>');
+  window._dept='';
+}
+function rerollBirth(){curBirth=rollBirth();document.getElementById('p_apt').textContent='资质 '+curBirth.apt;document.getElementById('p_comp').textContent='悟性 '+curBirth.comp;}
+function pickDept(k){window._dept=k;document.querySelectorAll('.dept-pick button').forEach(b=>b.classList.remove('on'));document.getElementById('dp_'+k).classList.add('on');}
+function confirmChar(){if(window._dept===undefined)window._dept='';hideOverlay();startLife(curBirth,window._dept);}
+
+/* ============ 外交（D策略层） ============ */
+function diploEvent(){
+  if(busy||!alive)return;busy=true;
+  const ev={cat:'外交',title:'出使周旋',desc:'你奉命出使，与世俗政权、邻宗及旗下公司周旋，一言一行皆关宗门声望。',
+    opts:[
+      {t:'厚结世俗官府',e:{org:{sect:40},rel:{},cash:30,note:'政权好感↑，世俗货币+',reg:1}},
+      {t:'联姻红线仙司',e:{rel:{suwan:14},org:{sect:30},note:'红线仙司助力，宗门声望↑'}},
+      {t:'暗通仙门贸易',e:{res:30,cash:40,note:'灵石与货币双收',co:1}},
+      {t:'严守清规',e:{dao:4,note:'不染尘俗，道心+'} }
+    ]};
+  showEvent(ev);
+}
+// 在 applyEffect 中扩展外交加成
+const _applyEffect=applyEffect;
+applyEffect=function(e){
+  _applyEffect(e);
+  if(e.reg){gainOrg('regime','shisu',e.reg*30);}
+  if(e.co){gainOrg('company','xianmen',e.co*20);gainOrg('company',P.dept==='hongxian'?'hongxian':'tangyi',e.co*10);}
+  if(P.techs.diplo&&e.rel){for(const k in e.rel)e.rel[k]*=1.5;}
+  renderAll();
+};
+
+/* ============ 仙人改天：呼风唤雨 ============ */
+function showWeatherControl(){
+  if(busy||!alive)return;busy=true;
+  let h='<h2>呼风唤雨</h2><p class="muted">扰动自然因素以改天象，须耗灵气且境界/功法相宜。当前：灵气 '+Math.round(P.qi)+' ｜ 境界 '+REALMS[P.realm].name+' ｜ 道心 '+Math.round(P.dao)+' ｜ 意志 '+Math.round(P.W)+'/'+P.Wmax+'。</p><div class="btns" style="justify-content:center">';
+  WEATHER_OPS.forEach((o,i)=>{
+    const ok=P.qi>=o.qi&&P.realm>=o.realm&&P.dao>=o.dao&&(!o.skill||P.skills.includes(o.skill));
+    h+='<button class="'+(ok?'jade':'')+'" '+(ok?'':'disabled')+' onclick="applyWeather('+i+')">'+o.label+'<br><small>'+(ok?o.desc:'条件不足')+'</small></button>';
+  });
+  h+='<button onclick="closeWeather()">作罢</button></div>';
+  showOverlay(h);
+}
+function applyWeather(i){
+  const o=WEATHER_OPS[i];
+  P.qi-=o.qi;
+  for(const k in o.apply){if(k==='temp')WORLD.f.temp=Math.max(-40,Math.min(60,WORLD.f.temp+o.apply[k]));else WORLD.f[k]=Math.max(0,Math.min(100,WORLD.f[k]+o.apply[k]));}
+  if(o.key==='雷'&&P.W<40){P.demon+=8;log('敕雷反噬！意志不足以驭天雷，心魔 +8。','bad');}
+  WORLD.weather={name:null}; // 屏蔽天象惯性，使改天即时生效；其后回合因素渐回基线，天象随之回落
+  const wn=classifyWeather(WORLD.f);WORLD.weather={name:wn,eff:WEATHER_EFF[wn]};
+  log('运转神通《'+o.key+'》，扰动天地因素，天象骤变。','good');
+  hideOverlay();busy=false;renderAll();
+}
+function closeWeather(){hideOverlay();busy=false;renderAll();}
+/* ============ 渲染 ============ */
+function renderAll(){renderTopbar();renderPanel();renderActions();renderSkills();renderRels();renderMeta();renderTime();renderOrgs();renderTechs();renderInv();renderLog();renderWorld();renderCodex();}
+function renderTopbar(){
+  const R=REALMS[P.realm];
+  const mini=(p,c)=>'<div class="mini"><i style="width:'+Math.max(0,Math.min(100,p))+'%;background:'+c+'"></i></div>';
+  const vit=(lab,val,p,c)=>'<div class="vit"><span class="lab">'+lab+'</span><span class="val">'+val+'</span>'+mini(p,c)+'</div>';
+  const chip=(lab,val)=>'<div class="vit"><span class="lab">'+lab+'</span><span class="val">'+val+'</span></div>';
+  const need=(ic,val,col)=>'<div class="need"><span class="ic">'+ic+'</span>'+mini(Math.min(100,val),col)+'</div>';
+  const sep='<div class="vsep"></div>';
+  let h='';
+  h+=vit('境界',R.name+(R.layers?(' '+P.layer+'/'+R.layers):''),R.xpMax?P.xp/R.xpMax*100:0,'var(--jade)');
+  h+=vit('灵气',Math.round(P.qi)+'/'+QIMAX,P.qi/QIMAX*100,'var(--blue)');
+  h+=vit('寿命',Math.max(0,P.life)+' 年',Math.min(100,P.life/REALMS[REALMS.length-1].life*100),'var(--gold)');
+  h+=sep;
+  h+=vit('道心',Math.round(P.dao),P.dao,'var(--jade)');
+  h+=vit('心魔',Math.round(P.demon),P.demon,'var(--red)');
+  h+=sep;
+  h+='<div class="vit"><span class="lab">起居</span><div style="display:flex;gap:8px;margin-top:3px">'
+     +need('🍚',P.needs.food,'#e9c46a')+need('😴',P.needs.tire,'#5b9dff')+need('🤝',P.needs.social,'#b08cff')+need('🛁',P.needs.clean,'#7ee787')+'</div></div>';
+  h+=sep;
+  h+=chip('天气',WORLD.weather.name);
+  h+=chip('天赋','★'+META.talent);
+  document.getElementById('topbar').innerHTML=h;
+}
+function renderTime(){document.getElementById('timebar').innerHTML='第 <b>'+YEAR+'</b> 世 · <b>'+SHICHENS[SHICHEN]+'</b> 时 ｜ '+WORLD.climate.name+' · '+WORLD.weather.name+' ｜ 寿元 <b>'+Math.max(0,P.life)+'</b> 年';}
+function renderPanel(){
+  const R=REALMS[P.realm];
+  document.getElementById('panel').innerHTML=
+    '<div class="row"><span>境界</span><b>'+R.name+(R.layers?(' · '+P.layer+'/'+R.layers+'层'):'')+'</b></div>'+
+    '<div class="row"><span>修为</span><b>'+Math.round(P.xp)+' / '+R.xpMax+'</b></div>'+bar(P.xp/R.xpMax*100,'var(--jade)')+
+    '<div class="row"><span>资质 / 悟性</span><b>'+P.apt+' / '+P.comp+'</b></div>'+
+    '<div class="row"><span>意志容量 W</span><b>'+Math.round(P.W)+' / '+P.Wmax+'</b></div>'+bar(P.W/P.Wmax*100,'var(--blue)')+
+    '<div class="row"><span>基因锁</span><b>'+P.geneLocks+' 道</b></div>'+
+    '<div class="row"><span>灵气剂量(本境)</span><b>'+R.dose+'</b></div>'+
+    '<div class="row"><span>灵石 / 世俗币</span><b>'+P.res+' / '+P.cash+'</b></div>'+
+    '<div class="row"><span>职业</span><b>'+JOBS[P.job].name+' · '+JOB_TIERS[P.jobLv-1]+'</b></div>'+bar(P.jobXp/(ORG_EXP[P.jobLv-1]||1)*100,'var(--purple)')+
+    '<div class="row"><span>道心</span><b style="color:var(--jade)">'+P.dao+'</b></div>'+bar(P.dao,'var(--jade)')+
+    '<div class="row"><span>心魔</span><b style="color:var(--red)">'+P.demon+'</b></div>'+bar(P.demon,'var(--red)')+
+    '<h3 style="margin-top:12px">需求 · 起居</h3>'+
+    '<div class="row"><span>饥馁</span><b>'+Math.round(P.needs.food)+'</b></div>'+bar(P.needs.food,'#e9c46a')+
+    '<div class="row"><span>倦惫</span><b>'+Math.round(P.needs.tire)+'</b></div>'+bar(P.needs.tire,'#5b9dff')+
+    '<div class="row"><span>孤寂</span><b>'+Math.round(P.needs.social)+'</b></div>'+bar(P.needs.social,'#b08cff')+
+    '<div class="row"><span>尘俗</span><b>'+Math.round(P.needs.clean)+'</b></div>'+bar(P.needs.clean,'#7ee787');
+}
+function renderActions(){
+  const R=REALMS[P.realm];const canBreak=R.need&&P.xp>=R.xpMax&&P.res>=40;
+  // 当前推荐动作
+  let recA='cult',recTxt='灵气充沛，【静修】攒修为',recIc='🧘';
+  if(P.needs.food<30){recA='eat';recTxt='饥馁，宜【用膳】';recIc='🍚';}
+  else if(P.needs.tire<25){recA='bathe';recTxt='倦惫，宜【沐浴】或【休憩】';recIc='😴';}
+  else if(P.needs.social<25){recA='social';recTxt='孤寂，宜【社交结缘】';recIc='🤝';}
+  else if(P.qi<R.dose){recA='gather';recTxt='灵气不足，宜【采集】→【精炼】';recIc='🌿';}
+  else if(canBreak){recA='break';recTxt='修为圆满，可【突破】晋境！';recIc='⚡';}
+  const rb=document.getElementById('recbar');
+  rb.style.display='flex';
+  rb.innerHTML='<span class="ic">'+recIc+'</span><span>'+recTxt+'</span>';
+
+  const grp=(title,btns)=>'<div class="agroup"><div class="gh">'+title+'</div><div class="abtns">'+btns.join('')+'</div></div>';
+  const B=(a,label,cls)=>'<button class="'+(a===recA?'rec ':'')+(cls||'')+'" '+(a==='break'&&!canBreak?'disabled':'')+' onclick="doAction(\''+a+'\')">'+label+'</button>';
+  document.getElementById('actions').innerHTML=
+    grp('修行 · 进境',[
+      B('cult','🧘 静修'),B('study','📜 参悟'),B('train','💪 砥砺意志'),
+      B('break','⚡ 突破',canBreak?'gold':'gold')
+    ])+
+    grp('起居 · 调息',[
+      B('eat','🍚 用膳'),B('bathe','🛁 沐浴'),B('rest','🌙 休憩'),B('social','🤝 社交结缘')
+    ])+
+    grp('营生 · 采集炼化',[
+      B('gather','🌿 采集'),B('refine','⚗ 精炼'),B('craft','⚗ 合成'),
+      B('weather','🌤 呼风唤雨','purple')
+    ])+
+    grp('坊市 · 售出',[
+      B('sp','售丹药','jade'),B('st','售法器','jade'),B('sd','售纱衣','jade')
+    ])+
+    grp('游历 · 奇遇',[
+      B('wander','🏞 外出奇遇')
+    ]);
+}
+function renderSkills(){document.getElementById('skills').innerHTML=P.skills.map(k=>'<div class="pill" style="border-color:var(--gold);color:var(--gold)">'+SKILLS[k].name+'</div><div class="muted" style="font-size:11px;margin:2px 0 6px">'+SKILLS[k].desc+'</div>').join('');}
+function renderRels(){document.getElementById('rels').innerHTML=Object.entries(NPCS).map(([k,v])=>{const r=Math.max(0,Math.min(100,P.rels[k]||0));return '<div class="rel"><span style="width:110px">'+v.name+'</span><div class="bar"><i style="width:'+r+'%;background:'+(r>50?'var(--jade)':'var(--dim)')+'"></i></div><span>'+Math.round(r)+'</span></div>';}).join('');}
+function renderMeta(){document.getElementById('meta').innerHTML='天赋点 <b class="big" style="font-size:15px">'+META.talent+'</b> ｜ 历史最高 '+(META.best>=0?REALMS[META.best].name:'无')+'<br><span class="muted">转世结算时于弹窗内分配。</span>';}
+function renderOrgs(){
+  const col=(title,cat,tiers,items)=>{
+    let h='<div class="col"><h4>'+title+'</h4>';
+    for(const k in items){const o=items[k];const nm=cat==='dept'?DEPTS[k].name:(cat==='sect'?'青棠宗':cat==='company'?companyName(k):'世俗政权');
+      h+='<div class="o"><b>'+nm+'</b><br>'+tiers[o.lv-1]+' <span class="muted">('+Math.round(o.exp)+'/'+((o.lv<7?ORG_EXP[o.lv-1]:'满'))+')</span></div>';}
+    return h+'</div>';
+  };
+  document.getElementById('orgs').innerHTML=
+    col('部门', 'dept',DEPT_TIERS,ORG.dept)+
+    col('宗门', 'sect',SECT_TIERS,ORG.sect)+
+    col('公司', 'company',CO_TIERS,ORG.company)+
+    col('政权', 'regime',REG_TIERS,ORG.regime);
+}
+function renderTechs(){
+  document.getElementById('techs').innerHTML=Object.entries(TECHS).map(([k,t])=>{
+    const has=P.techs[k];const reqOk=!t.req||P.techs[t.req];
+    const cls=has?'':(reqOk?'':'locked');
+    const btn=has?'<span class="pill" style="color:var(--jade);border-color:var(--jade)">已研习</span>':
+      '<button class="'+(reqOk?'jade':'')+'" '+(reqOk?'':'disabled')+' onclick="unlockTech(\''+k+'\')">研习 ('+t.cost+'灵石)</button>';
+    return '<div class="t '+cls+'"><b>'+t.name+'</b><div class="muted" style="margin:3px 0">'+t.desc+(t.req&&!P.techs[t.req]?'（需《'+TECHS[t.req].name+'》）':'')+'</div>'+btn+'</div>';
+  }).join('');
+}
+function unlockTech(k){
+  const t=TECHS[k];if(P.techs[k])return;
+  if(t.req&&!P.techs[t.req]){log('需先研习《'+TECHS[t.req].name+'》。','bad');renderAll();return;}
+  if(P.res<t.cost){log('灵石不足（需'+t.cost+'）。','bad');renderAll();return;}
+  P.res-=t.cost;P.techs[k]=true;if(k==='tol')P.Wmax+=20;
+  log('研习《'+t.name+'》成功。','good');renderAll();
+}
+function renderInv(){
+  const inv=P.inv;
+  document.getElementById('inv').innerHTML=
+    '灵植样本 '+inv.herb+' ｜ 灵兽样本 '+inv.flesh+'<br>'+
+    '丹药 '+inv.pill+' ｜ 法器 '+inv.tool+' ｜ 纱衣 '+inv.dress+'<br>'+
+    '<span class="muted">采集→精炼(得灵气)→合成(耗灵气20)→坊市售出换灵石/世俗币。世俗币喂公司营收、政权等级。</span>';
+}
+function renderLog(){document.getElementById('log').innerHTML=LOG.slice(0,80).map(t=>'<div>'+t+'</div>').join('');}
+function renderWorld(){
+  const f=WORLD.f,w=WORLD.weather;
+  const tc=f.temp<5?'var(--blue)':(f.temp>32?'var(--red)':'var(--jade)');
+  const fac=(lbl,val,col)=>'<div class="row"><span>'+lbl+'</span><b style="color:'+col+'">'+Math.round(val)+(lbl==='温度'?'℃':'%')+'</b></div>'+bar((lbl==='温度'?Math.max(0,(val+20)/80):val/100)*100,col);
+  document.getElementById('world').innerHTML=
+    '<div class="row"><span>气候</span><b>'+WORLD.climate.name+'</b></div>'+
+    '<div class="muted" style="font-size:11px;margin:-2px 0 6px">'+WORLD.climate.note+'</div>'+
+    '<div class="row"><span>天气（由因素判定）</span><b>'+w.name+'</b></div>'+
+    '<div class="muted" style="font-size:11px;margin:-2px 0 6px">'+w.eff.note+'</div>'+
+    fac('温度',f.temp,tc)+fac('湿度',f.moist,'var(--blue)')+fac('气压',f.press,'#e9c46a')+
+    fac('风速',f.wind,'#5b9dff')+fac('日照',f.solar,'#e9c46a')+fac('灵气场',f.qi,'var(--jade)');
+}
+function setCodexFilter(t,c){if(t!==undefined)CODEX_FILTER.type=t;if(c!==undefined)CODEX_FILTER.climate=c;renderCodex();}
+function renderCodex(){
+  const c=P.codex||{},keys=Object.keys(c),total=FLORA.length+FAUNA.length;
+  let h='<div class="muted" style="font-size:11px;margin-bottom:4px">已录 '+keys.length+' / '+total+' 种（采集 / 狩猎自动入册）</div>';
+  h+='<div class="cx-flt"><button class="'+(CODEX_FILTER.type==='all'?'jade':'')+'" onclick="setCodexFilter(\'all\',CODEX_FILTER.climate)">全部</button>'+
+     '<button class="'+(CODEX_FILTER.type==='植'?'jade':'')+'" onclick="setCodexFilter(\'植\',CODEX_FILTER.climate)">🌿 植</button>'+
+     '<button class="'+(CODEX_FILTER.type==='兽'?'jade':'')+'" onclick="setCodexFilter(\'兽\',CODEX_FILTER.climate)">🐾 兽</button>'+
+     '<select onchange="setCodexFilter(CODEX_FILTER.type,this.value)"><option value="all">全部气候</option>'+CLIMATES.map(cl=>'<option value="'+cl.key+'" '+(CODEX_FILTER.climate===cl.key?'selected':'')+'>'+cl.name+'</option>').join('')+'</select></div>';
+  const list=keys.filter(k=>(CODEX_FILTER.type==='all'||c[k].type===CODEX_FILTER.type)&&(CODEX_FILTER.climate==='all'||c[k].climate===CODEX_FILTER.climate));
+  if(!list.length)h+='<div class="muted">此条件下尚无记录。</div>';
+  else h+=list.map(k=>{const s=c[k];const stars='★'.repeat(s.rarity)+'☆'.repeat(3-s.rarity);
+    return '<div class="codex"><div class="cx"><b>'+(s.type==='植'?'🌿':'🐾')+'《'+k+'》</b> <span class="muted">['+s.climateName+'·'+s.loc+']</span></div>'+
+    '<div class="cx-d">群落：'+s.community+' ｜ 习性：'+s.behavior+' ｜ 灵气 '+s.qi+' ｜ 稀有 '+stars+(s.type==='兽'?(' ｜ 凶性 '+s.danger):'')+'</div>'+
+    '<div class="cx-d">可产：'+s.product+'</div>'+
+    '<div class="cx-n muted">注：'+s.note+'</div></div>';}).join('');
+  const und=total-keys.length;
+  if(und>0)h+='<div class="muted" style="margin-top:6px">尚有 '+und+' 种未录（继续采集 / 狩猎以补全图鉴）。</div>';
+  document.getElementById('codex').innerHTML=h;
+}
+
+/* ============ overlay ============ */
+function showOverlay(h){document.getElementById('obox').innerHTML=h;document.getElementById('overlay').style.display='flex';}
+function hideOverlay(){document.getElementById('overlay').style.display='none';}
+
+/* ============ 启动 ============ */
+/* 折叠/展开：点各栏标题收起详情；默认仅主舞台与此世修士展开，其余收起 */
+document.querySelectorAll('.ch').forEach(h=>h.addEventListener('click',()=>h.closest('.card').classList.toggle('collapsed')));
+createChar();
+</script></body></html>

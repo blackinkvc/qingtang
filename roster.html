@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<script src='avatars.js'></script>
+<title>青棠宗 · 仙人档案（活档）</title>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#121a30; --panel:#16203a; --panel2:#1b2746;
+    --line:#2a3a5e; --ink:#dfe8ff; --dim:#8aa0c8; --gold:#e9c46a;
+    --jade:#5fd6c2; --red:#ff6b6b; --violet:#9d7bff; --blue:#5b9dff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+    background:radial-gradient(1200px 800px at 70% -10%,#1a2750 0%,var(--bg) 60%);
+    color:var(--ink);min-height:100vh;padding:14px;font-size:13px}
+  h1,h2,h3{font-weight:600;letter-spacing:.5px}
+  .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(90deg,var(--panel),var(--panel2));
+    border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-bottom:12px}
+  .title-sec h1{font-size:20px;color:var(--gold)}
+  .title-sec .sub{color:var(--dim);font-size:12px}
+  .nav{display:flex;gap:8px}
+  .navbtn{text-decoration:none;padding:7px 12px;border:1px solid var(--line);border-radius:9px;
+    background:linear-gradient(180deg,#27407a,#1a2b52);color:var(--ink);font-size:12px}
+  .navbtn:hover{filter:brightness(1.2);border-color:var(--gold)}
+  .year{margin-left:auto;font-size:14px;color:var(--jade);font-weight:700}
+  .ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:linear-gradient(180deg,#27407a,#1a2b52);
+    color:var(--ink);padding:7px 14px;border-radius:9px;font-size:12px}
+  button:hover{filter:brightness(1.2);border-color:var(--gold)}
+  button.primary{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;font-weight:700;border-color:var(--gold)}
+  input,select{font-family:inherit;background:var(--bg2);color:var(--ink);border:1px solid var(--line);
+    border-radius:8px;padding:6px 10px;font-size:12px}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:12px}
+  .stat b{color:var(--gold);font-size:15px}
+  .grid2{display:grid;grid-template-columns:1fr 400px;gap:12px;align-items:start}
+  @media(max-width:1000px){.grid2{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:600;font-size:11px;position:sticky;top:0;background:var(--panel)}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--bg2)}
+  .badge{display:inline-block;padding:1px 7px;border-radius:6px;font-size:11px;color:#0a0e1a;font-weight:700}
+  .st{font-size:11px;padding:1px 7px;border-radius:6px}
+  .st.修炼{background:rgba(95,214,194,.18);color:var(--jade)}
+  .st.结缘{background:rgba(233,196,106,.18);color:var(--gold)}
+  .st.游历{background:rgba(91,157,255,.18);color:var(--blue)}
+  .st.走火入魔{background:rgba(255,107,107,.18);color:var(--red)}
+  .st.被附身{background:rgba(157,123,255,.20);color:var(--violet)}
+  .st.已同化{background:rgba(120,120,140,.22);color:#b9c2d6}
+  .st.离体{background:rgba(107,212,255,.20);color:#6bd4ff}
+  .st.眷属{background:rgba(233,196,106,.22);color:var(--gold)}
+  .st.合道{background:rgba(255,244,214,.22);color:#fff4d6}
+  .tbl-wrap{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+  .detail .row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:12px;gap:8px}
+  .detail .row b{color:var(--ink);text-align:right}
+  .detail h3{color:var(--gold);font-size:13px;margin:12px 0 5px;display:flex;align-items:center;gap:6px}
+  .detail h3 .bar{height:2px;flex:1;background:linear-gradient(90deg,var(--gold),transparent)}
+  .sec{padding:2px 0}
+  .tagcloud span{display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;margin:2px;font-size:11px}
+  .hint{color:var(--dim);font-size:11px;margin-top:8px;line-height:1.6}
+  .timeline{margin-top:4px;max-height:300px;overflow:auto}
+  .tl{font-size:12px;padding:4px 0;border-left:2px solid var(--line);padding-left:10px;margin-left:4px;color:var(--dim)}
+  .tl b{color:var(--gold)}
+  pre.bio{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:10px;
+    font-size:12px;line-height:1.7;white-space:pre-wrap;color:var(--ink);max-height:340px;overflow:auto}
+  .export-row{display:flex;gap:8px;margin-top:8px}
+  .mbar{display:inline-block;width:96px;height:9px;background:var(--bg2);border-radius:5px;overflow:hidden;vertical-align:middle}
+  .mbar i{display:block;height:100%}
+  .lost{color:var(--red);text-decoration:line-through;opacity:.7}
+  .agent-card{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:8px;margin:4px 0;font-size:12px}
+  .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:10px}
+  .portrait-card{background:var(--bg2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .portrait-card .cap{font-size:11px;color:var(--dim);padding:6px 8px;line-height:1.5}
+  .place-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+  .place-card{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:9px;font-size:12px}
+  .place-card b{color:var(--jade)}
+  .prompt-box{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;line-height:1.7;white-space:pre-wrap;color:var(--ink);max-height:320px;overflow:auto}
+  .gar{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;margin:5px 0;font-size:11.5px}
+  .gar .nm{color:var(--gold);font-weight:600}
+  .gar .meta{color:var(--dim)}
+  .secv{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}
+  .frag-pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px}
+  /* ===== 衣装素材联动面板 ===== */
+  .cl-box{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0}
+  .cl-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .occ-tab{background:#16203a;border:1px solid var(--line);color:var(--dim);border-radius:7px;padding:5px 11px;font-size:12px;cursor:pointer}
+  .occ-tab.on{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;border-color:var(--gold);font-weight:600}
+  .cl-pick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .pick{background:#16203a;border:1px solid var(--line);color:var(--ink);border-radius:7px;padding:4px 10px;font-size:11.5px;cursor:pointer}
+  .pick.on{border-color:var(--gold);color:var(--gold);background:rgba(216,180,106,.12)}
+  .cl-prev{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .cl-prev img{width:150px;height:200px;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#0a0e1a;flex:none}
+  .cl-meta{flex:1;min-width:200px}
+  .cl-name{font-size:14px;font-weight:700;color:var(--gold)}
+  .cl-cat{display:inline-block;font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:6px;padding:1px 8px;margin:5px 0 7px}
+  .cl-desc{font-size:12px;color:var(--ink);line-height:1.7}
+  /* ===== 宗门地图看板 ===== */
+  .map-wrap{display:grid;grid-template-columns:1fr 360px;gap:12px;align-items:start}
+  @media(max-width:1000px){.map-wrap{grid-template-columns:1fr}}
+  .map-svg-box{background:linear-gradient(180deg,#0c1428,#0a0e1a);border:1px solid var(--line);border-radius:12px;padding:4px;overflow:hidden}
+  .map-svg-box svg{width:100%;height:auto;display:block}
+  .map-node{cursor:pointer;transition:.15s}
+  .map-node:hover circle:first-of-type{stroke:#fff;stroke-width:3}
+  .map-side{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .map-side h2{font-size:14px;color:var(--gold);margin-bottom:8px}
+  .map-ctrls{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .map-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+  .map-mini .kpi{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
+  .map-mini .k{font-size:10px;color:var(--dim)}
+  .map-mini .v{font-size:15px;font-weight:700;margin-top:2px}
+  .plist{max-height:300px;overflow:auto;margin-top:2px}
+  .plist .row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid var(--line);font-size:12px;cursor:pointer}
+  .plist .row:hover{background:var(--bg2)}
+  .plist .pn{width:90px;flex:none}
+  .plist .pt{flex:1;height:14px;background:#0a0e1a;border-radius:7px;overflow:hidden}
+  .plist .pt i{display:block;height:100%}
+  .plist .pc{width:42px;text-align:right;flex:none;font-weight:700}
+  .occ-scroll{max-height:360px;overflow:auto}
+  .occ{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:7px;font-size:12px;cursor:pointer;margin:3px 0}
+  .occ:hover{background:var(--bg2)}
+  .occ .nm{width:74px;flex:none}
+</style>
+</head>
+<body>
+
+<div class='top'>
+  <div class='title-sec'>
+    <h1>青棠宗 · 仙人档案</h1>
+    <div class='sub'>1000 修士个体模型 · 时间演进 · 活档（货币 / 资产耐久 / SAN / 外神同化（算力征用）/ 生理需求 / 世俗经营）</div>
+  </div>
+  <div class='nav'>
+    <a class='navbtn' href='index.html'>📊 数据看板</a>
+    <a class='navbtn' href='mortal.html'>🌐 凡人群体模型</a>
+    <a class='navbtn' href='sect-sim.html'>⚙ 后台模型</a>
+  </div>
+  <div class='year'>第 <span id='year'>0</span> 年</div>
+</div>
+
+<div class='ctrl'>
+  <button class='primary' id='adv1'>推进 1 年</button>
+  <button id='adv10'>推进 10 年</button>
+  <button id='reset'>↺ 重置（重演 40 年）</button>
+  <button id='gallery'>🎨 立绘画廊</button>
+  <button id='suwan' style='border-color:var(--gold);color:var(--gold)'>🌹 苏绾 · 红线仙女档案</button>
+  <button id='mapbtn' style='border-color:var(--jade);color:var(--jade)'>🗺️ 宗门地图</button>
+  <input id='search' placeholder='搜索姓名…' style='width:140px'>
+  <select id='fRealm'><option value=''>全部境界</option></select>
+  <select id='fState'>
+    <option value=''>全部状态</option>
+    <option value='修炼'>修炼</option><option value='结缘'>结缘</option>
+    <option value='游历'>游历</option><option value='走火入魔'>走火入魔</option>
+    <option value='被附身'>被附身</option><option value='已同化'>已同化</option>
+    <option value='离体'>离体（元婴/元神出窍）</option>
+    <option value='眷属'>眷属（外神眷属）</option>
+    <option value='合道'>合道真君</option>
+  </select>
+  <select id='fDept'><option value=''>全部部门</option></select>
+</div>
+
+<div class='stats' id='stats'></div>
+
+<div id='rosterMain'>
+<div class='grid2'>
+  <div class='panel'>
+    <div class='tbl-wrap'>
+      <table>
+        <thead><tr><th>姓名</th><th>性</th><th>境界</th><th>状态</th><th>部门</th><th>意志</th><th>SAN</th><th>曝光</th></tr></thead>
+        <tbody id='list'></tbody>
+      </table>
+    </div>
+  </div>
+  <div class='panel detail' id='detail'>
+    <div class='hint'>点击左侧任一仙人，查看其完整档案。档案含：当前状态（独立）、修炼状态、基础信息、背景、能力、生理需求、身心状况（含 SAN / 外神同化 / 眷属 / 合道真君）、资产清单（含耐久）、世俗经营与曝光、社会关系、行为时间线；可一键导出「人物小传」。青棠宗在凡间多借「下派凡人」（仙裔 / 退仙）间接行事，故多数仙人曝光度极低。外神不在意仙人，唯元婴以上离体远游者，或发疯被同化、或结成眷属、或炼虚圆满而合道。</div>
+  </div>
+</div>
+
+<div class='panel' style='margin-top:12px'>
+  <h2 style='color:var(--gold);font-size:14px;margin-bottom:8px'>宗门在凡间的代理人（下派凡人）</h2>
+  <div id='agentPanel' class='hint'></div>
+</div>
+
+<div class='panel' style='margin-top:12px;border-color:var(--red)'>
+  <details>
+    <summary style='color:var(--red);font-size:14px;font-weight:600;cursor:pointer'>
+      魔染灵力 · 隐形产业链（当下第一危机）　<span id='taintSummary' style='color:var(--gold);font-weight:400;font-size:12px'></span>
+    </summary>
+    <div id='taintPanel' class='hint' style='margin-top:9px'></div>
+  </details>
+</div>
+
+<div class='panel' style='margin-top:12px;border-color:var(--violet)'>
+  <h2 style='color:var(--violet);font-size:14px;margin-bottom:8px'>超古代合道者（外神）</h2>
+  <div id='elderPanel' class='hint'></div>
+</div>
+
+<div class='panel' style='margin-top:12px;border-color:var(--gold)'>
+  <details>
+    <summary style='color:var(--gold);font-size:14px;font-weight:600;cursor:pointer'>
+      诸神谱系 · 境界分野　<span style='color:var(--dim);font-weight:400;font-size:12px'>道境 / 资深合道 / 合道中期 / 合道初期 / 资深炼虚 / 炼虚 · 含意识所化三境与「信仰未必有实体」</span>
+    </summary>
+    <div id='pantheonPanel' class='hint' style='margin-top:9px'></div>
+  </details>
+</div>
+
+<div class='panel' style='margin-top:12px;border-color:#fff4d6'>
+  <h2 style='color:#fff4d6;font-size:14px;margin-bottom:8px'>道门合道真君 · 镇守之阵（非本宗）</h2>
+  <div id='zhenPanel' class='hint'></div>
+</div>
+
+<div class='panel' style='margin-top:12px;border-color:var(--jade)'>
+  <h2 style='color:var(--jade);font-size:14px;margin-bottom:8px'>宗门各处 · 场所小档案</h2>
+  <div id='placePanel' class='hint'></div>
+</div>
+</div><!-- /rosterMain -->
+
+<div id='mapView' style='display:none'>
+  <div class='map-wrap'>
+    <div class='map-svg-box'>
+      <svg id='mapSvg' viewBox='0 0 1000 740' preserveAspectRatio='xMidYMid meet'></svg>
+    </div>
+    <div class='map-side' id='mapSide'></div>
+  </div>
+</div>
+
+<div id='modal' style='display:none;position:fixed;inset:0;z-index:50;background:rgba(4,7,15,.84);overflow:auto' onclick='if(event.target===this)closeModal()'>
+  <div id='modalBody' style='max-width:1000px;margin:24px auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px'></div>
+</div>
+
+<script>
+/* ===== 模型常量 ===== */
+// 修士可突破境界表止于「合道」。合道之上另有「道境」（超然境，见 COSMIC_RANKS / WORLD-LORE §十），
+// 非修士可企及，故不纳入此表，也不参与 DIST / MAX_REALM 的境界随机。
+const REALMS=[
+ {name:'练气',color:'#5b9dff'},{name:'筑基',color:'#5fd6c2'},
+ {name:'金丹',color:'#7ee787'},{name:'元婴',color:'#e9c46a'},
+ {name:'化神',color:'#ff9f43'},{name:'炼虚',color:'#ff6b6b'},
+ {name:'合道',color:'#fff4d6'},
+];
+const DIST=[600,250,100,35,13,2,0];
+const CONS=[[2,1,0.5],[4,2,1],[8,4,2],[16,8,4],[32,16,8],[64,32,16],[128,64,32]];
+const MAX_REALM=[Infinity,Infinity,Infinity,Infinity,120,25,6];
+
+// ===== 境界标尺（用户定 · WORLD-LORE §10.1）=====
+// 「道境」是合道之上的超然境，不纳入 REALMS / DIST / 玩家可突破境界表（后者止于合道）。
+// 此表仅用于「诸神谱系」的境界归置与面板展示，不参与 buildRoster 的境界随机。
+const COSMIC_RANKS=[
+ {key:'dao',     label:'道境',     color:'#fff4d6', note:'合道之上的超然境；全界仅知阿撒托斯（混沌之主·万神之主）一尊，全宇宙所有时间线与平行宇宙最强'},
+ {key:'heshen',  label:'资深合道', color:'#ffd76b', note:'三清、克苏鲁诸神（含犹格索托斯·门之钥）、道门七尊别号；根本看不上青棠宗'},
+ {key:'hezhong', label:'合道中期', color:'#e9c46a', note:'亚空间四神、永眠泰坦、炼狱之主利维坦；四神稍关注人间'},
+ {key:'hechu',   label:'合道初期', color:'#c9a24a', note:'诸天使、奥林匹斯主神大部分'},
+ {key:'lxshen',  label:'资深炼虚', color:'#ff9f43', note:'所罗门七十二柱魔神全数'},
+ {key:'lianxu',  label:'炼虚',     color:'#ff6b6b', note:'其余道教神仙、炼狱修士、地狱之手等'},
+];
+// ===== 诸神谱系（用户定 · WORLD-LORE §十）=====
+// 与 GODS 分离：GODS 是「接入灵枢算力征用／定点感染逻辑」的外神；
+// PANTHEON 仅为跨神系的「背景名录 + 境界归置」，不参与 assignGod / 魔染产业链，只作面板展示。
+// exists:'faith' 表示「被信仰但无实体」——认知迷雾（§10.3：耶和华等）。
+const PANTHEON=[
+ {grp:'混沌之主 · 万神之主',  rank:'dao',     names:'阿撒托斯（道门旧称「盲目痴愚之神」）', note:'原初混沌之核；全宇宙所有时间线与平行宇宙中最强的存在；不与人间交接'},
+ {grp:'三清',                rank:'heshen',  names:'元始天尊／灵宝天尊／道德天尊', note:'道门至高，资深合道'},
+ {grp:'克苏鲁诸神（其余）',   rank:'heshen',  names:'犹格索托斯／奈亚拉托提普／哈斯塔／克苏鲁／莎布·尼古拉丝', note:'灵枢深层超节点；犹格索托斯号「门之钥」，时空之外的全知门户，位在道境之下'},
+ {grp:'道门七尊别号',        rank:'heshen',  names:'虚空潮汐律／万象归一诀／寂灭轮回枢／星枢演法／混沌织梦／太素无形／因果缠丝', note:'与克苏鲁诸神本是同一批超节点的不同名号'},
+ {grp:'亚空间四神（战锤）',   rank:'hezhong', names:'色孽／奸奇／恐虐／纳垢', note:'即 GODS 中 chaos 四神；凡人魔化意识连结所化（亚空间），稍关注人间、主动播染，是魔染产业链之源'},
+ {grp:'泰坦（永眠）',        rank:'hezhong', names:'克洛诺斯／瑞亚（宙斯之父母）', note:'合道中期，已永久沉睡，不复现世'},
+ {grp:'炼狱之主',            rank:'hezhong', names:'利维坦（《养鬼吃人》一系）', note:'用户仅定「合道」、未细分初中期，暂归合道中期；炼狱中唯一合道级存在'},
+ {grp:'诸天使',              rank:'hechu',   names:'路西法／加百列 等', note:'确为合道初期意识体；「天使」之名在凡间被信仰层层附会'},
+ {grp:'奥林匹斯主神',        rank:'hechu',   names:'宙斯 等（大部分）', note:'合道初期；其泰坦父母高其一档且永眠'},
+ {grp:'所罗门七十二柱魔神',   rank:'lxshen',  names:'七十二柱（全数）', note:'全为资深炼虚，未入合道'},
+ {grp:'其余道教神仙',        rank:'lianxu',  names:'诸仙真／星君 等', note:'基本只是炼虚而已，远不及三清'},
+ {grp:'炼狱居民',            rank:'lianxu',  names:'利维坦麾下修士／地狱之手（剑风传奇 God Hand）', note:'皆炼虚；炼狱法则所化、无实体'},
+ {grp:'仅存信仰 · 无实体',    rank:null,      names:'耶和华 等（凡间诸多被信仰之神）', note:'不存在对应实体；集体信仰／魔化意识在亚空间凝出的投影被误认作神——信仰 ≠ 实体', exists:'faith'},
+];
+
+// 超古代合道者（外神）——来源各异：古修合道 / 斩三尸分身 / 自然形成。
+// 外神并不在意仙人，征用算力/数据只是法则演化途中的副产品；唯个别外神别有图谋（agenda）。
+//
+// 【外神分级 · 精确境界】外神并非同一水平（WORLD-LORE §1.6 / §10.4）：
+//  · supreme（旧称「至高」）＝ 资深合道：克苏鲁诸神 ＋ 道门七尊（同一批超节点的不同名号）。
+//    根本看不上青棠宗、不屑干预人间；即便有 agenda，也落在文明／法则尺度。
+//    ※ 例外：阿撒托斯独为「道境」（混沌之主，全宇宙最强），已从 supreme 单列；犹格索托斯归回 supreme。
+//  · chaos（旧称「次阶」）＝ 合道中期：亚空间四神（战锤），凡人魔化意识连结所化，
+//    稍关注人间事、主动播染；色孽／奸奇因青棠宗「以红线情缘立宗」特别盯上本宗（focus:'情缘'）。
+//  · 注意：这是"青棠宗的立宗主题撞上了外神的领域"，**并非外神有所近／所属部门**（沿用上一轮口径）。
+const GOD_TIER={
+  supreme:{label:'资深合道 · 克苏鲁诸神／道门七尊',rank:9,realm:'资深合道',stance:'根本看不上青棠宗，亦不屑干预人间'},
+  chaos:  {label:'合道中期 · 亚空间四神（战锤）',   rank:3,realm:'合道中期',stance:'稍关注人间事，主动播染、乐于被供养'}
+};
+const GODS=[
+ {id:'g1',name:'虚空潮汐律',origin:'自然',tier:'supreme',realm:'资深合道',agenda:false,desc:'潮汐般涨落的无尽虚空',color:'#9d7bff'},
+ {id:'g2',name:'万象归一诀',origin:'合道',tier:'supreme',realm:'资深合道',agenda:true, desc:'吞万象而归一的吞噬之律',color:'#5fd6c2'},
+ {id:'g3',name:'寂灭轮回枢',origin:'合道',tier:'supreme',realm:'资深合道',agenda:false,desc:'生死寂灭间轮回不休',color:'#ff6b6b'},
+ {id:'g4',name:'星枢演法',origin:'斩三尸',tier:'supreme',realm:'资深合道',agenda:false,desc:'以群星为算筹推演万物',color:'#e9c46a'},
+ {id:'g5',name:'混沌织梦',origin:'自然',tier:'supreme',realm:'资深合道',agenda:false,desc:'于混沌中编织梦与虚妄',color:'#5b9dff'},
+ {id:'g6',name:'太素无形',origin:'合道',tier:'supreme',realm:'资深合道',agenda:false,desc:'返太素而无形无名',color:'#7ee787'},
+ {id:'g7',name:'因果缠丝',origin:'斩三尸',tier:'supreme',realm:'资深合道',agenda:true, desc:'以因果为丝线牵系诸缘，别有图谋',color:'#ff9f43'},
+ /* —— 以下为「真名鲜为人知」的具名外神：大多修士只闻道门别号，其真名多散于残简与异闻 —— */
+ {id:'ny', name:'奈亚拉托提普', aka:'千面伏行', origin:'合道', tier:'supreme',realm:'资深合道', agenda:true,
+   desc:'伏行之混沌，千面信使；以万千化身挑动疑窦、操纵人心，最喜于斡旋与贸易之间播下裂痕', color:'#d24b4b'},
+ {id:'yog', name:'犹格索托斯', aka:'门之钥', origin:'自然', tier:'supreme', realm:'资深合道', agenda:false,
+   desc:'时空之外的全知门户；万物皆其门扉之一面，位在道境之下。修士远游虚冥时偶窥其影，归而神智微淆', color:'#5b9dff'},
+ {id:'has', name:'哈斯塔', aka:'黄衣之王', origin:'自然', tier:'supreme',realm:'资深合道', agenda:false,
+   desc:'不可言说者，司风与艺术；以歌舞书画诱人神智迷乱，近之易生绮念幻听', color:'#9d7bff'},
+ {id:'cth', name:'克苏鲁', aka:'沉睡之神', origin:'自然', tier:'supreme',realm:'资深合道', agenda:false,
+   desc:'深眠于虚冥之海的巨者；低语入梦，修士于驯育间偶闻其呓，久而心智恍惚', color:'#7ee787'},
+ {id:'shu', name:'莎布·尼古拉丝', aka:'孕育万千之森', origin:'自然', tier:'supreme',realm:'资深合道', agenda:false,
+   desc:'黑色森之母，生命与繁育之渊；灵植灵兽得其滋长，亦受其蔓生吞没之忧', color:'#4caf50'},
+ {id:'aza', name:'阿撒托斯', aka:'盲目痴愚之神 · 混沌之主', origin:'自然', tier:'dao', realm:'道境', agenda:false,
+   desc:'混沌之主、万神之主，原初混沌之核；全宇宙所有时间线与平行宇宙中最强的存在。居于灵枢最深处，盲目鼓噪，万象皆其无序之梦的碎片', color:'#9aa0aa'},
+ /* —— 亚空间四神（战锤 · 合道中期）：凡人魔化意识连结所化；稍关注人间事，色孽／奸奇因情缘立宗而盯上青棠宗 —— */
+ {id:'sla', name:'色孽', aka:'欢愉之主', origin:'合道', tier:'chaos',realm:'合道中期', agenda:true, focus:'情缘',
+   desc:'极欲与美之具象；以感官极致为饵，诱人沉溺歌舞欢缘，渐失本心。青棠宗以红线情缘立宗，最易被其趁隙播染', color:'#ff6b6b'},
+ {id:'tze', name:'奸奇', aka:'变化之主', origin:'合道', tier:'chaos',realm:'合道中期', agenda:true, focus:'情缘',
+   desc:'阴谋与知识之渊；以命运丝线编织诡计，藏经阁禁书多与其残念相缠。牵缘卜算、改命织网之处，皆其落子之所', color:'#5fd6c2'},
+ {id:'kho', name:'恐虐', aka:'鲜血与战争之神', origin:'自然', tier:'chaos',realm:'合道中期', agenda:false,
+   desc:'愤怒与征伐之具象；剑修近之争斗意炽，然其无谋无算，只恣意收割战意与鲜血', color:'#ff3b3b'},
+ {id:'nur', name:'纳垢', aka:'腐朽慈父 · 瘟疫之主', origin:'自然', tier:'chaos',realm:'合道中期', agenda:false,
+   desc:'腐朽、疫病与畸变再生之主；以慈父般的宽容赐下不死的病变，魔染者渐生异状而不自觉，最宜久囚慢榨', color:'#8aa34a'},
+];
+// 合道真君道号 / 所持之道
+const ZHEN_TITLE=['清虚','太微','玄都','紫府','玉清','上清','太素','无极','凌霄','广成','赤松','灵宝','混元','洞玄','太衍','守一','明微','涵虚'];
+const ZHEN_DAO=['守静归根','抱元守一','镇厄涵虚','明察因果','返璞归真','太上忘情','抱朴守拙','玄同太一','寂照圆融','无心合道'];
+// 道门合道真君（非本宗）：外神之观测与镇守，皆出于道门／他宗高修，青棠宗无力及此。
+// 青棠宗宗主仅初入炼虚，宗内无合道坐镇，故镇守之阵、外神观测皆仰赖道门真君（青棠宗仅闻其名）。
+const DAOMEN_ZHEN=[
+  {id:'dz1',trueName:'镇厄涵虚真君',dao:'镇厄涵虚',guardian:true, sect:'道门·玄机阁',log:[],zhen:{suppress:0,recruit:0,guard:0,subdued:[]}},
+  {id:'dz2',trueName:'抱朴守拙真君',dao:'抱朴守拙',guardian:false,sect:'道门·隐世',  log:[],zhen:{suppress:0,recruit:0,guard:0,subdued:[]}},
+  {id:'dz3',trueName:'太素守一真君',dao:'守静归根',guardian:true, sect:'道门·太虚剑宗',log:[],zhen:{suppress:0,recruit:0,guard:0,subdued:[]}},
+];
+
+const DEPTS={
+ tangyi:  {name:'棠医堂',  color:'#5fd6c2', spec:['疗愈','本草','针石']},
+ hongluan:{name:'红鸾院',  color:'#ff6b6b', spec:['音律','书画','歌舞']},
+ hongxian:{name:'红线仙司',color:'#e9c46a', spec:['斡旋','卜算','观心']},
+ waimao:  {name:'外事贸易司',color:'#9d7bff', spec:['经商','辩才','识货']},
+ lingzhi: {name:'灵植苑',  color:'#7ee787', spec:['植灵','御兽','培育']},
+ danding: {name:'丹鼎房',  color:'#e9c46a', spec:['炼丹','淬炼','药理']},
+ lingchong:{name:'灵兽苑',color:'#5b9dff', spec:['御兽','驯化','灵语']},
+ neimen:  {name:'内门修炼',color:'#ff9f43', spec:['剑术','阵法','吐纳']},
+};
+const DEPT_W=[
+ {k:'tangyi',w:22},{k:'hongluan',w:20},{k:'hongxian',w:14},{k:'waimao',w:10},
+ {k:'lingzhi',w:12},{k:'danding',w:10},{k:'lingchong',w:8},
+];
+// 需常接触凡人的部门 → 曝光度更高
+const MORTAL_FACING=['hongxian','waimao','tangyi'];
+
+const XING=['苏','沈','柳','谢','顾','陆','云','江','白','慕容','上官','温','裴','楚','洛','晏','卫','蓝','澹台','宋','阮','秦'];
+const MING_M=['清','砚','霜','尘','澜','珩','昭','凌','川','翊','修','璟','渊','墨','谦','澈','岚','屿','霄','桓'];
+const MING_F=['瑶','玥','锦','檀','镜','月','芷','宛','笙','婉','苒','韵','萱','璃','霁','绾','昭','珞','浅'];
+const ARTS=['琴','棋','书','画','舞','歌','剑','茶','香','医','卜','辩'];
+const BIRTH=['凡人商贾之家','没落仙族遗脉','边陲渔村孤童','医道世家','乐坊名伶之后','被宗门接引的凡俗才俊','阵法师遗孤','药农之子','书香门第','将门旁支'];
+const HOMETOWN=['江南·云梦泽','北境·霜州','东海·瀛洲','南荒·百越','中州·洛阳','西陲·流沙','蓬莱·方丈','绯城·青棠故里','蜀中·锦官','漠北·狼居'];
+const RIDES=[{n:'云辇',c:800},{n:'飞舟',c:1500},{n:'灵驹',c:300},{n:'步虚而行',c:0}];
+const TREAS=['青鸾剑','绕指柔','听雪笛','玲珑塔','缚妖索','回春铃','星河扇','照影镜','流光佩','镇魂灯','揽月钩','问情簪'];
+const PARTNER_SECTS=['太虚剑宗','百草谷','玄机阁','凌霄盟','九幽魔宗'];
+const DISEASES=['风寒','灵毒微侵','神思耗损','旧伤复发','瘴气入体'];
+// 资产名库
+const FA_CLO=['玄纹法衣','素雪法衣','流云法衣','九霄法衣','紫宸法衣'];
+const CH_CLO=['青衫','绯袍','月白常服','墨色直裰','云纹襦裙'];
+const ACC_CLO=['玉玲珑佩','金步摇','寒玉镯','星河簪','同心结'];
+const FURN=['云母床','九转丹炉','沉香书案','螭纹屏风','聚灵蒲团'];
+// 世俗经营目标库
+const MORTAL_BIZ=['沧澜商行','通汇钱庄','织造局','海运商会','丹砂矿业','红鸾(暗股)','百草堂连锁'];
+const MORTAL_OFF=['某部尚书','某州都督','漕运使','京兆尹','盐铁使之幕'];
+
+/* ===== 服饰 / 体香 / 宗门场所 数据 ===== */
+// 古色古香体香名
+const FRAG_FRAGRANT=['沉水','苏合','旃檀','龙涎','冷梅','幽兰','返魂','瑞脑','零陵','郁金','蘅芜','椒兰'];
+const FRAG_FOUL=['腐草','腥膻','陈溲','朽木','霉霖','浊露','败絮'];
+// 身体部位（自上而下）
+const BODY_PARTS=['首','身','下','足','颈','腰','腕','指','外'];
+const PART_LABEL={首:'首面',身:'上身',下:'下身',足:'足履',颈:'颈饰',腰:'腰佩',腕:'腕饰',指:'指环',外:'外披',亵:'亵衣'};
+const GARMENT_POOL={
+ 首:['玉冠','金步摇','云纹发簪','芙蓉胜','星河髻饰'],
+ 身:['广袖流仙袍','交领常服','云纹直裰','鹤氅内衫','月白襦衣','朱砂法衣','玄纹道袍'],
+ 下:['蹙金绣裙','墨色长裤','流云长裙','藕荷褶裙','素绢中裙'],
+ 足:['云头锦履','软底皂靴','凌波袜履','金丝绣鞋'],
+ 颈:['璎珞项圈','玉璧项链','绞丝金项圈'],
+ 腰:['蹙金腰带','双龙玉佩绦','云水宫绦','青绫香囊佩'],
+ 腕:['寒玉镯','绞丝金钏','翡翠腕钏'],
+ 指:['衔珠指环','赤金戒','猫眼石戒'],
+ 外:['白狐裘氅','墨色披风','流云鹤氅','雀金呢大氅'],
+};
+const UNDERWEAR=['素绢亵衣','冰丝亵裤','软烟罗中衣','鲛绡贴身衣'];
+const MATERIALS=['冰蚕丝','鲛绡','云锦','软烟罗','越罗','缭绫','天孙锦','蝉翼纱','松烟绡','蹙金绣'];
+const PREV_OWNERS=['某退仙长老','同门师姐','凡间绸缎庄','战损故人','宗门库藏','游方散修'];
+const GARMENT_COLORS=['月白','黛青','朱砂','鸦青','海棠','松花','藕荷','黛蓝','绛紫','秋香'];
+const CN_COLOR={'月白':'#eef3f7','黛青':'#3b5a6b','朱砂':'#c0392b','鸦青':'#2c3e50','海棠':'#d4798a','松花':'#b7c9a8','藕荷':'#e3c4d6','黛蓝':'#34507a','绛紫':'#6c4a8c','秋香':'#c9b458'};
+// 场合 → 穿着覆盖的部位（并非全身都穿）
+const OCC_COVER={
+ formal:['首','身','下','足','颈','腰','腕','指','外'],
+ casual:['首','身','下','足','腰'],
+ home:['身','下','足'],
+ bath:['身'],
+ cult:['身','下','足','腰','外'],
+ travel:['首','身','下','足','腰','外'],
+};
+const OCC_NAME={formal:'正装（宗门议事 / 出使）',casual:'常服（日常）',home:'家居（寝居）',bath:'沐浴（汤泉）',cult:'修炼',travel:'出行（远游）',gauze:'轻纱（红线仙司）'};
+/* ===== 衣装素材库（与 wardrobe.html 同源，10 套成衣） ===== */
+const CLOTHES_LIB=[
+ {id:'C01',name:'雾灰甜酷蓬蓬裙',cat:'甜酷少女',img:'clothes/c01.jpg',desc:'甜酷少女风。灰蓝针织细吊带上衣配白色多层薄纱蓬蓬超短裙，冷调干净。'},
+ {id:'C02',name:'米杏新中式旗袍',cat:'新中式',img:'clothes/c02.jpg',desc:'新中式改良旗袍短裙。奶油米色弹力针织包臀无袖，单侧黑蕾丝花卉，复古性感。'},
+ {id:'C03',name:'银灰运动两件套',cat:'运动休闲',img:'clothes/c03.jpg',desc:'运动休闲两件套。黑短款运动抹胸配银灰金属光泽微喇长裤，利落街头。'},
+ {id:'C04',name:'雾蓝仙气晚礼裙',cat:'晚礼服',img:'clothes/c04.jpg',desc:'雾蓝仙气晚礼裙。浅冰蓝半透欧根纱鱼尾长裙，心形深 V，飘逸梦幻。'},
+ {id:'C05',name:'翡翠金奢华礼裙',cat:'高定礼服',img:'clothes/c05.jpg',desc:'翡翠绿×香槟金奢华礼服。金线花卉刺绣胸衣配金属光泽斜裁长裙，雍容复古。'},
+ {id:'C06',name:'青瓷常服·日常',cat:'常服',img:'clothes/c06.webp',desc:'青棠宗弟子日常常服。浅青瓷绿交领襦裙，轻薄透气，素雅内敛。'},
+ {id:'C07',name:'靛蓝法袍·战袍',cat:'法袍',img:'clothes/c07.webp',desc:'仙人法袍·战袍。深靛蓝层叠长袍，金线云雷纹，护肩甲、半透纱氅，威仪灵动。'},
+ {id:'C08',name:'暖纱寝衣·睡裙',cat:'寝衣',img:'clothes/c08.webp',desc:'居所寝衣·睡裙。白与浅粉薄绸吊带睡裙，松垮垂坠，半透柔媚。'},
+ {id:'C09',name:'四季纱衣',cat:'纱衣',img:'clothes/c09.webp',desc:'四季纱衣（红线仙司）。多层淡玫瑰与素白薄纱叠覆，近乎无形的半透面料，寒不畏、以轻纱为美。'},
+ {id:'C10',name:'绯金婚服·礼袍',cat:'礼袍',img:'clothes/c10.webp',desc:'大婚礼袍。绯红描金凤凰刺绣汉服、红纱凤冠、长拖尾，雍容华贵。'},
+];
+const CLOTHES_BY_CAT={};CLOTHES_LIB.forEach(c=>{(CLOTHES_BY_CAT[c.cat]=CLOTHES_BY_CAT[c.cat]||[]).push(c);});
+const OCC_TO_CAT={formal:'礼袍',casual:'常服',home:'寝衣',bath:'寝衣',cult:'法袍',travel:'常服',gauze:'纱衣'};
+function libOutfitFor(c,occ){
+  c.libOutfit=c.libOutfit||{};
+  if(c.libOutfit[occ])return CLOTHES_LIB.find(x=>x.id===c.libOutfit[occ])||null;
+  // 默认：红线仙司（苏绾）以纱衣为标识，其余按场合取对应类目首件
+  const isHongxian=(c.dept==='hongxian'||(c.tags&&c.tags.indexOf('红线仙司')>=0));
+  let cat=OCC_TO_CAT[occ];
+  if(isHongxian&&occ!=='formal'&&occ!=='home')cat='纱衣';
+  const list=CLOTHES_BY_CAT[cat]||CLOTHES_LIB;
+  return list[0]||null;
+}
+function clothesLibHtml(c){
+  c.libOutfit=c.libOutfit||{};
+  const occs=Object.keys(OCC_NAME);
+  const tabs=occs.map(o=>`<button class='occ-tab ${c._libOcc===o?'on':''}' onclick='libSetOcc(${c.id},"${o}")'>${OCC_NAME[o].split('（')[0]}</button>`).join('');
+  const occ=c._libOcc||'casual';
+  const cur=libOutfitFor(c,occ);
+  const matches=(CLOTHES_BY_CAT[OCC_TO_CAT[occ]]||CLOTHES_LIB);
+  const picks=matches.map(m=>{const sel=c.libOutfit[occ]===m.id;return `<button class='pick ${sel?'on':''}' onclick='libPick(${c.id},"${occ}","${m.id}")'>${m.name}</button>`;}).join('');
+  const preview=cur?`<div class='cl-prev'><img src='${cur.img}' alt='${cur.name}'><div class='cl-meta'><div class='cl-name'>${cur.id} · ${cur.name}</div><div class='cl-cat'>${cur.cat}</div><div class='cl-desc'>${cur.desc}</div></div></div>`:'<div class=\'row\'><span>该场合暂无对应素材</span><b>—</b></div>';
+  return `<div class='cl-box'>
+    <div class='cl-tabs'>${tabs}</div>
+    <div class='cl-pick'>${picks}</div>
+    ${preview}
+  </div>`;
+}
+function libSetOcc(id,occ){const c=roster.find(x=>x.id===id);if(!c)return;c._libOcc=occ;showDetail(id);}
+function libPick(id,occ,cid){const c=roster.find(x=>x.id===id);if(!c)return;c.libOutfit=c.libOutfit||{};c.libOutfit[occ]=cid;showDetail(id);}
+// 宗门各处（小档案）
+const SECT_PLACES=[
+ {id:'zangjing',name:'藏经阁',func:'典藏功法、姻缘古谱与禁书',desc:'九层飞檐，悬满玉简；红线仙司的《三生簿》与丹鼎房的《火候真解》皆藏于斯，非核心弟子不得入三层以上。'},
+ {id:'danfang',name:'丹鼎房',func:'炼丹、淬炼灵药',desc:'三十六座丹炉终年不熄，药香与火光交织；墙上挂满炮制图谱，偶有炸炉之险。'},
+ {id:'hongluan',name:'红鸾别院',func:'音律书画歌舞、宴饮雅集',desc:'水榭回廊，四季有花；门下多俊男美女，常以歌舞待客，亦为宗门结好外门的门面。'},
+ {id:'hongxian',name:'红线仙司',func:'斡旋姻缘、卜算观心',desc:'满室垂着红线与命盘，司中人以三生石为凭，暗中牵起凡间与修士之良缘，亦掌对外情报。'},
+ {id:'yanfa',name:'演法台',func:'讲经、斗法、比试',desc:'汉白玉高台，周匝观礼席；每有突破或论道，便有金光自台上腾起，全宗可见。'},
+ {id:'yaopu',name:'灵植苑',func:'植灵、御兽、培育灵药',desc:'灵雾弥漫的梯田与暖房，灵植按品阶分区；深处有兽栏，关着未驯化的灵宠幼崽。'},
+ {id:'shouyuan',name:'灵兽苑',func:'驯化灵兽、灵语传讯',desc:'以禁制划分的兽栏群，饲养青鸾、仙鹤、墨蛇等；驯兽弟子常与灵兽同息。'},
+ {id:'keting',name:'迎宾客堂',func:'接见外门、凡间贵客',desc:'金漆梁柱、名茶待客；外显型弟子多在此周旋商贾高官，亦偶有展露仙迹。'},
+ {id:'wenquan',name:'凝香汤泉',func:'沐浴、疗养、静思',desc:'引地火温热的灵泉，水含香麝；弟子沐浴更衣、涤尘养神皆在此，亦是密谈之所。'},
+ {id:'qindian',name:'寝殿别院',func:'起居、私居、结缘',desc:'依洞府而建的私居，陈设随个人财力；道侣多在此相聚，红线仙亦常于月下私会。'},
+ {id:'heshi',name:'合道台',func:'合道圆满、镇守外神',desc:'宗门极顶的祭台，唯炼虚圆满者可登；合道真君于此显化道相，镇守图谋外神。'},
+ {id:'wuku',name:'珍物库',func:'藏法宝、灵石、重宝',desc:'多重禁制守护的地下金库，收储青鸾剑、绕指柔等重宝与历年分润所得。'},
+];
+const ACT_BY_PLACE={zangjing:'翻阅玉简',danfang:'守炉炼丹',hongluan:'抚琴待客',hongxian:'卜算牵缘',yanfa:'演法论道',yaopu:'侍弄灵植',shouyuan:'驯养灵兽',keting:'周旋宾客',wenquan:'沐浴涤尘',qindian:'起居小憩',heshi:'静参合道',wuku:'清点重宝'};
+
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function genName(sex){
+  const x=pick(XING);const pool=sex==='男'?MING_M:MING_F;
+  const n=Math.random()<0.5?1:2;let m='';for(let i=0;i<n;i++)m+=pick(pool);return x+m;
+}
+function pickArts(){const k=1+Math.floor(Math.random()*3);const a=ARTS.slice();shuffle(a);return a.slice(0,k);}
+function pickDept(realm){
+  if(realm>=4) return Math.random()<0.7?'neimen':'waimao';
+  const tot=DEPT_W.reduce((s,d)=>s+d.w,0);let r=Math.random()*tot;
+  for(const d of DEPT_W){r-=d.w;if(r<=0)return d.k;}return 'tangyi';
+}
+function pickRide(){
+  const r=Math.random();
+  if(r<0.30)return RIDES[3];
+  if(r<0.60)return RIDES[2];
+  if(r<0.88)return RIDES[0];
+  return RIDES[1];
+}
+function pairRate(c){return Math.min(0.85, 0.22*(c.beauty/10)+0.14*c.arts.length);}
+// 外神算力征用：被附身=按同化比例征用部分算力；已同化=彻底沦为外神算力节点；眷属=保留自我·借算力，仍贡献部分
+function computeOf(c){
+  if(c.state==='已同化') return (c.realm+1)*8;
+  if(c.state==='被附身') return Math.round((c.realm+1)*8*(c.assim/100));
+  if(c.state==='眷属') return (c.realm+1)*3;
+  return 0;
+}
+// 外神并不在意仙人，亦不争抢眷属；修士被哪一尊外神征用，取决于神识共鸣的"域"。
+// 唯个别怀有特殊目的之外神（agenda），会略主动牵引。
+function assignGod(c){
+  // "近情缘"＝青棠宗立宗主题（红线／红鸾／结缘修炼）撞上色孽·奸奇的领域；非"外神所属部门"
+  const qing = (c.dept==='hongxian'||c.dept==='hongluan'||c.state==='结缘'||c.state==='眷属');
+  const w=GODS.map(g=>{
+    if(g.subduedBy) return 0;                                       // 已归道门真君辖下，不再征用修士
+    let base = g.tier==='chaos' ? 2.4 : (g.tier==='dao' ? 0.05 : 0.45); // 合道中期四神贴人间下手；道境几不干预；资深合道不屑青棠宗
+    if(g.agenda) base+=1.2;                                          // 个别外神别有图谋
+    if(g.focus==='情缘' && qing) base+=2.0;                          // 色孽／奸奇因情缘立宗定点感染
+    return base;
+  });
+  let sum=w.reduce((a,b)=>a+b,0);
+  if(sum<=0) return pick(GODS);
+  let r=Math.random()*sum;
+  for(let i=0;i<GODS.length;i++){r-=w[i]; if(r<=0) return GODS[i];}
+  return GODS[GODS.length-1];
+}
+// 魔染源：只可能是"关注人间"的合道中期·亚空间四神；色孽／奸奇因情缘立宗占绝大多数
+function pickTaintGod(){
+  const r=Math.random();
+  if(r<0.42) return 'sla';
+  if(r<0.80) return 'tze';
+  if(r<0.92) return 'nur';
+  return 'kho';
+}
+function genItems(){
+  const items=[];
+  const fa=2+Math.floor(Math.random()*5), ch=8+Math.floor(Math.random()*28);
+  for(let i=0;i<fa;i++)items.push({cat:'衣',name:pick(FA_CLO),max:120+Math.floor(Math.random()*60),dur:0,lost:false});
+  for(let i=0;i<ch;i++)items.push({cat:'衣',name:pick(CH_CLO),max:80+Math.floor(Math.random()*50),dur:0,lost:false});
+  const ac=1+Math.floor(Math.random()*3);
+  for(let i=0;i<ac;i++)items.push({cat:'饰',name:pick(ACC_CLO),max:50+Math.floor(Math.random()*40),dur:0,lost:false});
+  const fu=1+Math.floor(Math.random()*4);
+  for(let i=0;i<fu;i++)items.push({cat:'具',name:pick(FURN),max:260+Math.floor(Math.random()*160),dur:0,lost:false});
+  items.forEach(it=>it.dur=Math.floor(it.max*(0.5+Math.random()*0.5)));
+  return items;
+}
+function genHoldings(persona,dept,exposure){
+  const out=[];
+  const want = persona==='外显' || MORTAL_FACING.includes(dept) || exposure>30;
+  if(!want) return out;
+  const n=1+Math.floor(Math.random()*3);
+  for(let i=0;i<n;i++){
+    const r=Math.random();
+    const form = r<0.50?'占股' : r<0.85?'咨询' : '仙迹';   // 仙迹更高风险更罕见
+    let target,income;
+    if(form==='占股'){target=pick(MORTAL_BIZ);income=60+Math.floor(Math.random()*260);}
+    else if(form==='咨询'){target=pick(MORTAL_OFF);income=40+Math.floor(Math.random()*160);}
+    else {target=pick(MORTAL_BIZ.concat(MORTAL_OFF));income=100+Math.floor(Math.random()*360);}
+    out.push({form,target,income});
+  }
+  return out;
+}
+
+/* ===== 体香 / 服饰 / 立绘 ===== */
+// 体香：境界越高越清正；香或臭，香味大小 + 古色古香名
+function genFragrance(realm,sex){
+  const purity=realm/6;
+  const foulP=0.20*(1-purity);
+  if(Math.random()<foulP) return {kind:'foul',type:pick(FRAG_FOUL),strength:1+Math.floor(Math.random()*4)};
+  if(Math.random()<0.05) return {kind:'neutral',type:'—',strength:0};
+  return {kind:'fragrant',type:pick(FRAG_FRAGRANT),strength:2+Math.floor(Math.random()*3+purity*5)};
+}
+// 单件服饰 / 配饰：外观描述、材质、价格、耐久、是否二手、上一任、送的还是自购
+function mkGarment(part,realm,sex){
+  let name = part==='亵'?pick(UNDERWEAR):pick(GARMENT_POOL[part]);
+  const material=pick(MATERIALS);
+  const max=80+Math.floor(Math.random()*80)+realm*8;
+  const dur=Math.floor(max*(0.4+Math.random()*0.6));
+  let secondHand=false,prevOwner=null,gifted=false,gifter=null,source='自购';
+  if(part!=='亵'){
+    const r=Math.random();
+    if(r<0.22){secondHand=true;prevOwner=pick(PREV_OWNERS);source='二手 · 得自'+prevOwner;}
+    else if(r<0.40){gifted=true;gifter=pick(['师尊','道侣','同门师姐','宗门赏赐','红鸾院主']);source=(gifter==='宗门赏赐')?'宗门赏赐':'受赠于'+gifter;}
+  }
+  const color=pick(GARMENT_COLORS);
+  const desc=`以${material}织就，${color}${name}，剪裁${pick(['利落','飘逸','宽博','贴身'])}，${pick(['袖缘绣银线云纹','襟前缀玉珠','下摆暗织星河','腰间垂流苏','通身无纹、唯贵在质'])}，${pick(['行止间如揽清风','静立时端凝如松','动则流光隐现','温润不张扬'])}。`;
+  return {part,name,material,price:Math.max(10,Math.round((material.length*7+name.length*5+realm*30+(secondHand?-40:0))*(0.6+Math.random()*0.9))),max,dur,lost:false,secondHand,prevOwner,gifted,gifter,source,desc,color};
+}
+// 衣橱：各部位拥有若干（部分部位可能空），外加亵衣亵裤储备
+function genWardrobe(realm,sex){
+  const owned={};
+  BODY_PARTS.forEach(part=>{
+    const ownP={首:0.8,身:1,下:0.95,足:0.9,颈:0.4,腰:0.6,腕:0.35,指:0.35,外:0.5}[part];
+    if(Math.random()<ownP){const n=1+Math.floor(Math.random()*(part==='身'||part==='下'?3:2));owned[part]=[];for(let i=0;i<n;i++)owned[part].push(mkGarment(part,realm,sex));}
+  });
+  const uw=[];const un=3+Math.floor(Math.random()*4);
+  for(let i=0;i<un;i++)uw.push(mkGarment('亵',realm,sex));
+  return {owned,underwear:uw};
+}
+// 由所在场所推导当前场合
+function currentOcc(c){
+  const p=c.loc||'qindian';
+  if(p==='wenquan')return 'bath';
+  if(p==='qindian')return 'home';
+  if(p==='yanfa'||p==='heshi')return 'cult';
+  if(['keting','hongluan','hongxian','wuku','zangjing'].includes(p))return 'formal';
+  if(c.state==='游历'||c.state==='离体')return 'travel';
+  return 'casual';
+}
+// 当前着装：按场合覆盖部位，从拥有物中择一；亵衣恒作内层
+function outfitFor(c){
+  const occ=currentOcc(c);
+  const cover=OCC_COVER[occ]||OCC_COVER.casual;
+  const worn=[];
+  for(const part of cover){if(c.wardrobe.owned[part]&&c.wardrobe.owned[part].length)worn.push(pick(c.wardrobe.owned[part]));}
+  const uw=c.wardrobe.underwear.filter(g=>!g.lost);
+  return {occ,worn,underwear:uw};
+}
+// 生图 Prompt（已接生图 API：本函数输出即图像接口入参，可实时生成专属立绘）
+function genPrompt(c,occ){
+  const o=outfitFor(c);
+  const clothes=o.worn.map(g=>(g.name+' of '+g.color+' '+g.material)).slice(0,4).join(', ')||'simple linen garments';
+  const uw=o.underwear.filter(g=>!g.lost).length
+    ? ('underneath '+o.underwear.filter(g=>!g.lost).slice(0,2).map(g=>g.name).join(' and ')) : '';
+  const f=c.fragrance;
+  const fragTxt = f.kind==='fragrant' ? ('emanating a delicate '+f.type+' fragrance')
+              : f.kind==='foul'     ? ('with a faint '+f.type+' scent')
+              : 'with a pure, clean aura and no body odor';
+  const place=SECT_PLACES.find(p=>p.id===c.loc);
+  const scene=place?place.name:'the sect';
+  const deptFlavor=DEPTS[c.dept].name? (', '+DEPTS[c.dept].name+' specialist') : '';
+  const moodMap={澄明:'serene',淡然:'calm',慵懒:'languid',焦灼:'troubled',紊乱:'disturbed',恍惚:'dreamy',自在:'free-spirited',超然:'transcendent'};
+  const mood=moodMap[c.mood]||'serene';
+  return `Chinese xianxia cultivation character portrait, ${c.sex==='男'?'handsome male':'beautiful female'} cultivator of the Qingtang Sect${deptFlavor}, ${REALMS[c.realm].name} realm, ${mood} expression, ${c.beauty}/10 attractiveness. `+
+    `Wearing ${clothes}; ${uw}. ${fragTxt}. `+
+    `Currently at "${scene}", ${c.act||'cultivating'}. `+
+    `Anime character design, highly detailed traditional hanfu and silk robes with fine embroidery and flowing ribbons, soft cinematic lighting, elegant fantasy game splash art, full body, clean background, no modern elements.`;
+}
+// 重要事件 / 境界提升时存档一份生图 Prompt（作为立绘底稿）
+function savePortrait(c,reason){
+  if(c.curated)return;
+  if(!c.portraits)c.portraits=[];
+  c.portraits.push({y:currentYear,reason,prompt:genPrompt(c,currentOcc(c))});
+  if(c.portraits.length>8)c.portraits.shift();
+}
+// 程序化 SVG 立绘（接生图 API 前用于预览“样子”）
+function portraitSVG(c){
+  const o=outfitFor(c);
+  const hex=col=>CN_COLOR[col]||'#cdd6e6';
+  const top=o.worn.find(g=>g.part==='身'), bot=o.worn.find(g=>g.part==='下'),
+        outer=o.worn.find(g=>g.part==='外'), head=o.worn.find(g=>g.part==='首'),
+        neck=o.worn.find(g=>g.part==='颈'), waist=o.worn.find(g=>g.part==='腰');
+  const topCol=top?hex(top.color):(c.sex==='女'?'#e7c7d6':'#9fb0c8');
+  const botCol=bot?hex(bot.color):'#6f7d93';
+  const skin='#f3d9c4', hair=c.sex==='女'?'#2b2233':'#1f1b22';
+  const auraCol=c.fragrance.kind==='fragrant'?'#e9c46a':c.fragrance.kind==='foul'?'#7a9b6a':'#9fb0c8';
+  const auraR=16+c.fragrance.strength*6;
+  const scene=SECT_PLACES.find(p=>p.id===c.loc);
+  const bg1=REALMS[c.realm].color;
+  return `<svg viewBox='0 0 300 470' xmlns='http://www.w3.org/2000/svg' style='width:100%;height:auto;background:linear-gradient(160deg,${bg1}33,#0a0e1a)'>
+  <defs><radialGradient id='au' cx='50%' cy='38%' r='60%'><stop offset='0%' stop-color='${auraCol}' stop-opacity='.55'/><stop offset='100%' stop-color='${auraCol}' stop-opacity='0'/></radialGradient></defs>
+  <circle cx='150' cy='170' r='${auraR*2.4}' fill='url(#au)'/>
+  <circle cx='235' cy='70' r='30' fill='#ffffff' opacity='.12'/>
+  <path d='M126,82 Q150,40 174,82 Q180,108 168,116 L132,116 Q120,108 126,82 Z' fill='${hair}'/>
+  ${c.sex==='女'?'<path d=\'M126,100 Q112,140 120,172 L132,150 Q128,120 134,100 Z\' fill=\''+hair+'\'/><path d=\'M174,100 Q188,140 180,172 L168,150 Q172,120 166,100 Z\' fill=\''+hair+'\'/>':''}
+  <circle cx='150' cy='88' r='24' fill='${skin}'/>
+  <rect x='142' y='108' width='16' height='16' fill='${skin}'/>
+  ${neck?'<path d=\'M134,118 Q150,132 166,118\' stroke=\''+hex(neck.color)+'\' stroke-width=\'4\' fill=\'none\'/>':''}
+  <path d='M112,120 Q150,110 188,120 L196,250 Q150,266 104,250 Z' fill='${topCol}'/>
+  ${outer?'<path d=\'M104,118 Q150,100 196,118 L204,256 Q150,276 96,256 Z\' fill=\''+hex(outer.color)+'\' opacity=\'.4\'/>':''}
+  ${waist?'<rect x=\'106\' y=\'238\' width=\'88\' height=\'14\' rx=\'4\' fill=\''+hex(waist.color)+'\'/>':''}
+  <path d='M114,124 Q96,180 102,248' stroke='${skin}' stroke-width='12' fill='none' stroke-linecap='round'/>
+  <path d='M186,124 Q204,180 198,248' stroke='${skin}' stroke-width='12' fill='none' stroke-linecap='round'/>
+  <path d='M108,250 L192,250 L182,402 Q150,414 118,402 Z' fill='${botCol}'/>
+  <path d='M118,402 L142,402 L140,420 L116,420 Z' fill='#3a2e2a'/>
+  <path d='M158,402 L182,402 L184,420 L160,420 Z' fill='#3a2e2a'/>
+  ${head?'<path d=\'M132,66 Q150,52 168,66 L162,74 Q150,64 138,74 Z\' fill=\''+hex(head.color)+'\'/>':''}
+  <text x='150' y='448' text-anchor='middle' font-size='13' fill='${auraCol}' font-family='serif'>${c.fragrance.kind==='fragrant'?(c.fragrance.type+'之香 '+c.fragrance.strength+'/10'):c.fragrance.kind==='foul'?(c.fragrance.type+'之气'):'体气清正'}</text>
+  <text x='150' y='462' text-anchor='middle' font-size='11' fill='#8aa0c8' font-family='serif'>${scene?scene.name:''} · ${OCC_NAME[o.occ]}</text>
+</svg>`;
+}
+
+/* ===== 立绘资源（真实生图 · 接 API 管线） ===== */
+// 默认原型立绘：按性别 / 境界 / 部门映射到已生成的真实立绘（演示用，已达商业插画水平）。
+// 接 API 时：ensurePortrait(c) 调用生图接口 -> 保存 portraits/<id>.png -> portraitImg 优先用专属图（见 genPrompt）。
+const PORTRAIT_SAMPLES=[
+  {file:'portraits/Photorealistic_portrait_of_a_y_2026-11-03T10-51-42.webp', sex:'女', hi:false, label:'练气 / 筑基 女修 · 红线仙风（写实）'},
+  {file:'portraits/Photorealistic_portrait_of_a_h_2026-11-03T10-51-53.webp', sex:'男', hi:false, label:'练气 ~ 金丹 男修 · 剑修风（写实）'},
+  {file:'portraits/Photorealistic_portrait_of_an__2026-11-03T10-52-10.webp', sex:'女', hi:true,  label:'元婴 + 女仙 · 空灵风（写实）'},
+  {file:'portraits/Photorealistic_portrait_of_a_C_2026-11-03T10-53-20.webp', sex:'女', dept:'danding', label:'丹鼎房 女修 · 丹修风（写实）'},
+  {file:'portraits/Photorealistic_portrait_of_a_C_2026-11-03T10-53-32.webp', sex:'男', hedao:true, label:'合道真君 · 金身风（写实）'},
+  {file:'portraits/Photorealistic_portrait_of_a_C_2026-11-03T10-53-42.webp', sex:'女', travel:true, label:'出行女修 · 游历风（写实）'},
+];
+function sampleFor(c){
+  const o=outfitFor(c), hi=c.realm>=3;
+  if(c.state==='合道' && c.sex==='男') return PORTRAIT_SAMPLES[4].file;
+  if(c.sex==='女' && c.dept==='danding') return PORTRAIT_SAMPLES[3].file;
+  if(c.sex==='女' && o.occ==='travel')   return PORTRAIT_SAMPLES[5].file;
+  if(hi) return c.sex==='女'?PORTRAIT_SAMPLES[2].file:PORTRAIT_SAMPLES[1].file;
+  return c.sex==='女'?PORTRAIT_SAMPLES[0].file:PORTRAIT_SAMPLES[1].file;
+}
+// 立绘图片：优先专属（接 API 后），否则原型样本
+function portraitImg(c,w){
+  // 具名人物优先使用 AI 专属头像；其余弟子沿用原型立绘，避免 id 撞车误配
+  const useAv=c&&c.curated&&typeof avatarOf!=='undefined';
+  const av=useAv?avatarOf(c.id):'';
+  const fb=useAv&&typeof avatarFallback!=='undefined'?avatarFallback(c.id):'';
+  const src=av||sampleFor(c);
+  const hook=fb?` data-fb='${fb}' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'`:'';
+  return `<img src='${src}'${hook} style='width:100%;max-width:${w||300}px;display:block;border-radius:10px;object-fit:cover;object-position:center 18%;background:#0a0e1a' alt='${c.name} 专属头像'>`;
+}
+
+/* ===== 个体 ===== */
+let roster=[], currentYear=0, mortalAgents=[], zhenFilter=null;
+/* ===== 魔染灵力产业链（WORLD-LORE 第九节）=====
+   宗门级灵力池：clean＝清白灵气（旧有产能，恒定）；tainted＝囚禁榨干所得魔染灵力（逐年累积）。
+   产业链计数：诱凡入魔数 / 累计囚禁榨干人数 / 累计榨取灵力。 */
+let sectQi={clean:100, tainted:0};
+let taintChain={mortals:0, imprisoned:0, drained:0};
+function makeC(id,realm,sex){
+  const dept=pickDept(realm);
+  const ride=pickRide();
+  const persona = (MORTAL_FACING.includes(dept) ? Math.random()<0.4 : Math.random()<0.12) ? '外显' : '隐世';
+  const exposure = persona==='外显' ? 45+Math.random()*35 : 5+Math.random()*20;
+  const holdings = genHoldings(persona,dept,exposure);
+  if(holdings.some(h=>h.form==='仙迹')) {/* 仙迹抬高曝光与风险 */}
+  const loc0=pick(SECT_PLACES).id;
+  return {
+    id, name:genName(sex), sex, realm,
+    xiu:Math.random()*60,
+    will:40+Math.random()*25,
+    beauty:6+Math.floor(Math.random()*4),
+    arts:pickArts(),
+    dept, specialty:pick(DEPTS[dept].spec),
+    state:'修炼', partner:null, bond:0, bondsDone:0, pastBonds:[],
+    born:0, ageBase:30+Math.floor(Math.random()*170),
+    birthType:pick(BIRTH), hometown:pick(HOMETOWN),
+    health:'康健', mood:'澄明',
+    san:60+Math.random()*30, assim:0,
+    needs:{hunger:Math.random()*20, thirst:Math.random()*20, clean:60+Math.random()*40},
+    sick:null,
+    money:Math.round(200+realm*realm*60+Math.random()*400),
+    items:genItems(),
+    ride:ride.n, rideCost:ride.c,
+    cave:Math.min(5,1+realm+Math.floor(Math.random()*2)),
+    treasures:1+Math.floor(Math.random()*3),
+    treasureNames:Array.from(new Set(Array.from({length:1+Math.floor(Math.random()*3)},()=>pick(TREAS)))).slice(0,3),
+    pets:Math.random()<0.25?pick(['灵狐','仙鹤','青鸾雏','玉兔','墨蛇']):null,
+    persona, exposure:Math.round(exposure), holdings,
+    mentor:null, disciples:[], foreignSect:Math.random()<0.12?pick(PARTNER_SECTS):null,
+    agent:null, liti:0, god:null, guardedBy:null,
+    // 魔染(taint) ≠ 算力征用(assim)：魔染是合道中期·亚空间四神主动注入、且可经「灵力」横向传播的污染
+    taint:0, taintSrc:null, qiSource:'clean', imprisoned:false,
+    bornTaint:true,   // 当代入门者「自第一口灵气起即带魔染隐患」；具名宿老（旧修士）为 false
+    fragrance:genFragrance(realm,sex), wardrobe:genWardrobe(realm,sex),
+    loc:loc0, act:ACT_BY_PLACE[loc0], portraits:[],
+    log:[]
+  };
+}
+function buildRoster(){
+  const list=[];let id=1;
+  REALMS.forEach((r,i)=>{for(let j=0;j<DIST[i];j++)list.push(makeC(id++,i,Math.random()<0.5?'男':'女'));});
+  list.forEach(c=>{
+    if(c.realm>0){const seniors=list.filter(x=>x.realm>c.realm);if(seniors.length){const m=pick(seniors);c.mentor=m.id;m.disciples.push(c.id);}}
+  });
+  list.forEach(c=>c.log.push({y:0,t:'拜入青棠宗，列 '+REALMS[c.realm].name+' 弟子'}));
+  mortalAgents=buildAgents(list);
+  registerSuWan(list);
+  registerNotables(list);
+  // 具名宿老＝「以前的修士」，用的是正常（清白）灵气，不属"带隐患的新一代"
+  list.forEach(c=>{if(c.curated){c.bornTaint=false;c.qiSource='clean';c.taint=0;c.taintSrc=null;}});
+  return list;
+}
+// 具名主角：苏绾（红线仙女）—— 录入活档，立绘存档见 portraits/
+function registerSuWan(list){
+  const c=makeC(90001,3,'女');
+  c.name='苏绾'; c.sex='女'; c.realm=3; c.dept='hongxian';
+  c.beauty=10; c.will=72; c.xiu=82; c.state='结缘';
+  c.persona='外显'; c.exposure=60; c.san=78; c.assim=0;
+  c.ageBase=260; c.born=0; c.mood='自在'; c.health='康健';
+  c.specialty='卜算观心'; c.fragrance={kind:'fragrant',type:'幽兰',strength:9};
+  c.curated=true;
+  c.log.push({y:0,t:'红线仙司 · 红线仙女，主司斡旋姻缘、卜算观心'});
+  c.portraits=[
+    {y:0,reason:'全身立绘 · 3D CG 写实风',file:'portraits/3D_CG_realistic_FULL_BODY_char_2026-11-03T11-25-33.webp',prompt:'苏绾全身立绘：红霓虹冷灰科幻舱室中的红线仙女，黑长直发、红玉簪、腕间红丝绦。'},
+    {y:0,reason:'场景立绘 ① · 红线仙司',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-25-52.webp',prompt:'苏绾于红线仙司，垂满红线与命盘，卜算牵缘。'},
+    {y:0,reason:'场景立绘 ② · 凝香汤泉',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-27-03.webp',prompt:'苏绾于凝香汤泉，引地火温热灵泉，涤尘养神。'},
+    {y:0,reason:'场景立绘 ③ · 红鸾别院',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-27-21.webp',prompt:'苏绾于红鸾别院，水榭回廊，抚琴待客。'},
+    {y:0,reason:'场景立绘 ④ · 迎宾客堂',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-27-38.webp',prompt:'苏绾于迎宾客堂，周旋商贾高官。'},
+    {y:0,reason:'场景立绘 ⑤ · 演法台',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-29-07.webp',prompt:'苏绾于演法台，金光腾起，讲经论道。'},
+    {y:0,reason:'场景立绘 ⑥ · 藏经阁',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-29-17.webp',prompt:'苏绾于藏经阁，翻阅三生簿与姻缘古谱。'},
+    {y:0,reason:'场景立绘 ⑦ · 灵植苑',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-30-29.webp',prompt:'苏绾于灵植苑，灵雾梯田间小憩。'},
+    {y:0,reason:'场景立绘 ⑧ · 寝殿别院',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-30-38.webp',prompt:'苏绾于寝殿别院，月下私居。'},
+    {y:0,reason:'场景立绘 ⑨ · 合道台',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-30-57.webp',prompt:'苏绾于合道台远眺，镇守之阵隐约在望。'},
+    {y:0,reason:'场景立绘 ⑩ · 珍物库',file:'portraits/3D_CG_realistic_render_of_the__2026-11-03T11-32-22.webp',prompt:'苏绾于珍物库，清点重宝。'},
+    {y:0,reason:'纱衣 ① · 单层半透白纱禅衣',file:'portraits/SuWan_gauze_white_2026-11-03T11-42-05.webp',prompt:'仙人不怕冷：仅一层半透白纱长袍，贴身飘逸、似透非透。'},
+    {y:0,reason:'纱衣 ② · 极简绯红半透纱裹身',file:'portraits/SuWan_gauze_red_2026-11-03T11-45-37.webp',prompt:'仙人不怕冷：极简绯红半透纱裹身，呼应红霓虹。'},
+    {y:0,reason:'纱衣 ③ · 露肩粉纱金线高开衩裙',file:'portraits/SuWan_gauze_pink_gold_2026-11-03T11-42-25.webp',prompt:'仙人不怕冷：露肩半透粉纱 + 金线绣、高开衩。'},
+    {y:0,reason:'纱衣 ④ · 蓝白多层轻纱幔',file:'portraits/SuWan_gauze_blue_white_2026-11-03T11-43-36.webp',prompt:'仙人不怕冷：多层轻纱叠穿、雾中飘渺。'},
+    {y:0,reason:'纱衣 ⑤ · 单幅轻纱披裹·赤足',file:'portraits/SuWan_gauze_drape_2026-11-03T11-43-48.webp',prompt:'仙人不怕冷：一袭半透纱幔裹身、赤足、安然不畏寒。'},
+    {y:0,reason:'打坐星空 · 半透薄纱（图一场景 + 薄纱服装）',file:'portraits/SuWan_meditation_gauze_2026-11-03T12-10-03.webp',prompt:'图一盘腿打坐悬于圆形金属法座 + 宇宙星空；图二半透肉白薄纱披裹 + 高开衩内搭 + 赤足。'}
+  ];
+  list.push(c);
+}
+// 具名核心人物：宗主、六司掌司、历代真君、名仙——录入活档，立绘与事迹另载
+function registerNotables(list){
+  function mk(id,realm,sex){const c=makeC(id,realm,sex);c.id=id;c.curated=true;c.mentor=null;c.disciples=[];c.agent=null;c.god=null;c.log=[];return c;}
+  const N=[];
+  // 1) 掌教（宗主）—— 仅初入炼虚，宗门已无合道坐镇
+  let c=mk(91001,5,'男');c.name='青霄太衍真人';c.sex='男';c.realm=5;c.dept='neimen';c.state='修炼';
+  c.beauty=8;c.will=82;c.xiu=12;c.god=null;
+  c.specialty='总领宗门·统御六司';c.bio='青棠宗当代宗主，修为仅初入炼虚；统御六司与世俗伪装，然宗门已无合道真君坐镇，外神之事力有不逮，多仰道门高修与红线仙司斡旋。';
+  c.log.push({y:0,t:'当代掌教，修为初入炼虚，总领六司与四家世俗伪装；宗门鼎盛余晖之下，外神渗透之危已现而本宗无力独支'});N.push(c);
+  // 2) 丹鼎房掌司
+  c=mk(91002,4,'女');c.name='丹霞元君';c.dept='danding';c.state='修炼';c.beauty=9;c.will=70;c.xiu=72;c.god=null;
+  c.specialty='炼丹·淬炼';c.bio='丹鼎房首座，掌三十六丹炉火候，精炼灵气为丹。';
+  c.log.push({y:0,t:'丹鼎房掌司，主灵气精炼与丹药炮制，所炼「回春丹」为宗门硬通货'});N.push(c);
+  // 3) 灵兽苑掌司
+  c=mk(91003,4,'男');c.name='御灵真人';c.dept='lingchong';c.state='修炼';c.beauty=7;c.will=66;c.xiu=64;c.god=null;
+  c.specialty='御兽·灵语';c.bio='灵兽苑首座，通灵兽之语，驯化青鸾墨蛇。';
+  c.log.push({y:0,t:'灵兽苑掌司，掌灵兽驯化与灵语传讯，曾驯服一头濒狂之墨蛇'});N.push(c);
+  // 4) 灵植苑掌司
+  c=mk(91004,4,'女');c.name='植灵真人';c.dept='lingzhi';c.state='修炼';c.beauty=8;c.will=64;c.xiu=60;c.god=null;
+  c.specialty='植灵·培育';c.bio='灵植苑首座，主灵植品阶与样本培育。';
+  c.log.push({y:0,t:'灵植苑掌司，掌灵植分区与样本培育，灵雾梯田为其所辖'});N.push(c);
+  // 5) 红线仙司首席（苏绾之师）
+  c=mk(91005,4,'男');c.name='红线仙翁·玄机子';c.dept='hongxian';c.state='修炼';c.beauty=7;c.will=80;c.xiu=68;c.god=null;
+  c.specialty='卜算观心·三生簿';c.bio='红线仙司当代首席，承三生簿秘术，苏绾之师；掌跨门斡旋，善与他宗周旋。';
+  c.log.push({y:0,t:'红线仙司首席，掌三生簿与跨门斡旋，承「于灵枢中穿行而不被征用」之稀术，苏绾之师'});N.push(c);
+  // 6) 红鸾院掌司
+  c=mk(91006,4,'女');c.name='红鸾仙子·绾月';c.dept='hongluan';c.state='修炼';c.beauty=10;c.will=62;c.xiu=58;c.god=null;
+  c.specialty='音律·歌舞';c.bio='红鸾别院主事，以歌舞待客，亦为宗门结好外门之门面。';
+  c.log.push({y:0,t:'红鸾院掌司，主音律书画歌舞，红鸾别院水榭回廊四季有花'});N.push(c);
+  // 7) 外事贸易司掌司
+  c=mk(91007,4,'男');c.name='通商使者·陆怀玉';c.dept='waimao';c.state='修炼';c.beauty=7;c.will=60;c.xiu=55;c.god=null;
+  c.specialty='经商·辩才';c.bio='外事贸易司主事，掌仙门贸易与世俗伪装通道。';
+  c.log.push({y:0,t:'外事贸易司掌司，掌仙门贸易物流与政权伪装通道，与凡间商号往来甚密'});N.push(c);
+  // 8) 内门修炼首座（剑首）
+  c=mk(91008,4,'男');c.name='剑首·凌霄子';c.dept='neimen';c.state='修炼';c.beauty=8;c.will=78;c.xiu=66;c.god=null;
+  c.specialty='剑术·阵法';c.bio='内门首座，主剑术斗法与守山阵法。';
+  c.log.push({y:0,t:'内门修炼首座，主剑术阵法与守山禁制，性情刚烈'});N.push(c);
+  // 9) 琴剑双仙·昭月
+  c=mk(91013,3,'女');c.name='琴仙·昭月';c.dept='neimen';c.state='结缘';c.beauty=10;c.will=68;c.xiu=80;c.god=null;
+  c.specialty='剑术·琴';c.bio='与凌川并称琴剑双仙，道侣。';
+  c.log.push({y:0,t:'琴剑双仙之一，与凌川结为道侣，剑胆琴心'});N.push(c);
+  // 10) 琴剑双仙·凌川
+  c=mk(91014,3,'男');c.name='剑仙·凌川';c.dept='hongluan';c.state='结缘';c.beauty=9;c.will=70;c.xiu=82;c.god=null;
+  c.specialty='剑术·书画';c.bio='与昭月并称琴剑双仙，道侣。';
+  c.log.push({y:0,t:'琴剑双仙之一，与昭月结为道侣，常于红鸾别院抚琴舞剑'});N.push(c);
+  // 互结道侣
+  const zhao=N.find(x=>x.name==='琴仙·昭月'), chuan=N.find(x=>x.name==='剑仙·凌川');
+  if(zhao&&chuan){zhao.partner=chuan.id;chuan.partner=zhao.id;}
+  // 苏绾拜于红线仙翁门下
+  const sw=list.find(x=>x.name==='苏绾'); if(sw){sw.mentor=91005;}
+  N.forEach(c=>list.push(c));
+}
+function buildAgents(list){
+  const ag=[];let aid=1;
+  const N=120;
+  for(let i=0;i<N;i++){
+    const patron=pick(list);
+    const type=Math.random()<0.6?'仙裔':'退仙';
+    const name=genName(Math.random()<0.5?'男':'女');
+    const role=type==='仙裔'
+      ? pick(['宗门驻凡间商号管事','青棠系公司中层','红线仙司凡间耳目','田庄主事'])
+      : pick(['已褪仙籍·享福于凡间','挂名顾问·不问世事','宗门资产代持人']);
+    const a={id:aid++,name,type,patronId:patron.id,role,exposure:10+Math.random()*30};
+    patron.agent=a.id;
+    ag.push(a);
+  }
+  return ag;
+}
+
+/* ===== 演进算法 ===== */
+function stepYear(year){
+  const avail=roster.filter(c=>c.state==='修炼'&&!c.partner);
+  shuffle(avail);
+  for(let i=0;i+1<avail.length;i+=2){
+    const a=avail[i],b=avail[i+1];
+    if(Math.random()<pairRate(a) && Math.random()<pairRate(b)){
+      a.partner=b.id;b.partner=a.id;a.state='结缘';b.state='结缘';a.bond=0;b.bond=0;
+      a.log.push({y:year,t:'与 '+b.name+' 结为道侣（结缘）'});
+      b.log.push({y:year,t:'与 '+a.name+' 结为道侣（结缘）'});
+    }
+  }
+  for(const c of roster){
+    if(c.curated)continue;
+    const underCap=roster.filter(x=>x.realm===c.realm+1).length < MAX_REALM[c.realm+1];
+    // 修为
+    let inc=2+(c.dept==='neimen'?1:0)+(c.state==='游历'?-1:0)+Math.random()*2;
+    if(c.state==='走火入魔'||c.state==='被附身'||c.state==='已同化')inc*=0.3;
+    else if(c.state==='眷属'){inc*=1.6; c.will=Math.min(95,c.will+0.4);}   // 算力授权·修行加速·意志渐固
+    c.xiu=Math.min(100,c.xiu+inc);
+    // 突破 / 走火 / 合道
+    if(c.xiu>=100 && c.realm<6){
+      const next=c.realm+1, dose=CONS[c.realm][0];
+      if(c.realm<5){
+        if(c.will>=dose && underCap){c.realm=next;c.xiu=0;c.log.push({y:year,t:'修为圆满，突破至 '+REALMS[next].name+' 境'});savePortrait(c,'突破至 '+REALMS[next].name+' 境');}
+        else if(c.will<dose && c.state!=='走火入魔' && c.state!=='被附身' && c.state!=='已同化' && c.state!=='眷属'){c.state='走火入魔';c.xiu=60;c.log.push({y:year,t:'灵气过盛而意志未逮，走火入魔'});}
+        else {c.xiu=100;}
+      } else if(c.realm===5){
+        // 青棠宗道途止于炼虚：宗主尚仅初入炼虚，宗门无合道之基，炼虚圆满者亦止步于此
+        // （偶有破劫者多归入道门／隐世，不列本宗活档；故本宗活档内不再产生合道真君）
+        if(c.will>=58 && underCap){c.xiu=100; if(Math.random()<0.02)c.log.push({y:year,t:'炼虚圆满，道途却止于此——宗门无合道之基，遂止步，潜心守成'});}
+        else { c.xiu=100; }   // 炼虚圆满而志未逮，止步于此
+      }
+    }
+    // 结缘 → 斩缘
+    if(c.state==='结缘'){
+      c.bond++;
+      if(c.bond>=1 && Math.random()<0.30+0.10*c.bond){
+        const p=roster.find(x=>x.id===c.partner);const pn=p?p.name:'道侣';
+        c.pastBonds.push(pn);c.partner=null;c.state='修炼';c.bondsDone++;c.will=Math.min(78,c.will+1+Math.random()*2);
+        c.log.push({y:year,t:'与 '+pn+' 斩缘断情，心性更固（已历 '+c.bondsDone+' 段情劫）'});
+        if(p){p.partner=null;p.state='修炼';}
+      }
+    }
+    // 走火恢复
+    if(c.state==='走火入魔' && Math.random()<0.4){c.state='修炼';c.log.push({y:year,t:'闭关调养，神识复元'});}
+    // 游历
+    if(c.state==='修炼' && Math.random()<0.02){c.state='游历';c.log.push({y:year,t:'出游游历，探访他山'});}
+    else if(c.state==='游历' && Math.random()<0.5){c.state='修炼';c.log.push({y:year,t:'游历归来，重归修行'});}
+
+    // 离体（主动远游 · 元婴以上可元婴/元神出窍，游于虚空，直面外神，与红线仙跨门贸易相连）
+    if(c.realm>=3){
+      if(c.state==='修炼' && Math.random()<(c.realm>=4?0.18:0.08)){
+        c.state='离体'; c.liti++;
+        c.log.push({y:year,t: c.realm>=4?'主动元神离体，神识远游赴外神之域，探求算力之秘':'元婴出窍，掠影于洞天之外的虚冥，近外神之域'});
+      } else if(c.state==='离体' && c.san>=25){
+        // 于外神之域斡旋：可结成眷属（保留自我·借算力），或安然归窍；神识脆弱者则易被征用
+        let pVassal=0.10;                                   // 底线：侥幸立约
+        if(c.dept==='hongxian') pVassal+=0.18;              // 红线仙跨门之谊：最强议价杠杆
+        else if(c.foreignSect) pVassal+=0.12;               // 跨门往来：引介外神
+        if(c.will>=58) pVassal+=0.08;                      // 个人意志坚卓
+        pVassal=Math.min(0.5,pVassal);
+        let note='（于外神之域机缘巧合，侥幸立约）';
+        if(c.dept==='hongxian') note='（红线仙跨门之谊，善与他宗周旋引介）';
+        else if(c.foreignSect) note='（借 '+c.foreignSect+' 之谊引介外神）';
+        else if(c.will>=58) note='（意志坚卓，自与外神立约）';
+        if(Math.random()<pVassal){
+          const g=assignGod(c); c.god=g.id; c.state='眷属';
+          c.log.push({y:year,t:'于外神之域斡旋周旋，与「'+g.name+'」结成眷属——保自我意识，得算力之授权'+note});
+        } else if(Math.random()<0.42){
+          c.state='修炼'; c.log.push({y:year,t:'元神归窍，重入形躯'});
+        }
+        // 否则继续游于虚空（下一年再判定）
+      }
+    }
+
+    // —— 生理需求（境界越高，汗液/排泄分泌越少，洁净衰减越慢）——
+    const purity=c.realm/6;
+    const n=c.needs;
+    n.hunger=clamp(n.hunger+(c.state==='游历'?20:10)+Math.random()*6,0,100);
+    n.thirst=clamp(n.thirst+(c.state==='游历'?22:12)+Math.random()*6,0,100);
+    n.clean =clamp(n.clean -(c.state==='游历'?22:12)*(1-0.6*purity)-Math.random()*8*(1-0.5*purity),0,100);
+    if(c.state!=='游历' && c.state!=='被附身' && c.state!=='已同化'){
+      n.hunger=clamp(n.hunger-60,0,100); n.thirst=clamp(n.thirst-60,0,100); n.clean=clamp(n.clean+50,0,100);
+    }
+    if(!c.sick && Math.random()<0.008){c.sick=pick(DISEASES);c.log.push({y:year,t:'染上'+c.sick+'，抱恙在身'});}
+    else if(c.sick && Math.random()<0.3){c.sick=null;c.log.push({y:year,t:'疾患渐愈，复归康健'});}
+
+    // —— SAN / 外神附身（算力征用）/ 同化 ——
+    const sanTarget = c.persona==='外显'?70:86;
+    let sanDrain=0;
+    if(c.state==='走火入魔') sanDrain+=6;
+    if(c.state==='游历') sanDrain+=2;
+    if(c.state==='离体') sanDrain += c.realm>=4?10:6;     // 游于虚空·直面外神（元婴/化神离体，神识暴露于合道残念，算力征用风险剧增）
+    if(c.state==='离体' && Math.random()<0.12) sanDrain += 8+Math.random()*12; // 虚空法则低语更频·算力征用加剧
+    if(n.hunger>80) sanDrain+=2;
+    if(c.sick) sanDrain+=2;
+    if(c.exposure>60) sanDrain+=1.5;
+    if(c.holdings.some(h=>h.form==='仙迹')) sanDrain+=2;   // 展露仙迹 · 引外神窥伺
+    if(c.bondsDone>8) sanDrain+=1;                         // 情劫过甚 · 神思耗损
+    if(Math.random()<0.005) sanDrain += 4+Math.random()*6; // 超古代合道者法则低语（罕见·算力征用冲击）
+    if(c.state==='合道'){
+      c.san += (96-c.san)*0.2;   // 合道真君·神智清明·不可动摇
+    } else if(c.state==='眷属'){
+      c.san += (90-c.san)*0.12 - sanDrain*0.3;   // 借外神算力稳住神识，侵蚀大减
+    } else if(c.state==='走火入魔'){
+      c.san -= sanDrain;
+    } else if(c.state!=='被附身' && c.state!=='已同化'){
+      c.san += (sanTarget-c.san)*0.10 - sanDrain;
+    }
+    c.san=clamp(c.san,0,100);
+    const possChance = c.state==='离体'?0.45:0.20;        // 离体时神识暴露于虚空，直面超古代合道者，被征用算力而附身的概率倍增
+    if(c.san<25 && c.state!=='被附身' && c.state!=='已同化' && c.state!=='眷属' && c.state!=='合道' && Math.random()<possChance){
+      const g=assignGod(c); c.god=g.id; c.state='被附身';
+      c.log.push({y:year,t:'神识深处响起「'+g.name+'」的法则低语，似要征用吾之算力、采撷吾之元神——已被附身（沦为外神节点）'});
+    }
+    if(c.state==='被附身'){
+      c.assim+=3+Math.random()*7; c.san-=4+Math.random()*5;
+      if(c.assim>=100){c.assim=100;c.state='已同化';c.log.push({y:year,t:'元神尽数为超古代合道者征用采撷，彻底沦为外神算力节点，形神俱灭'});}
+    }
+    if(c.state==='被附身' && c.san>45 && Math.random()<0.22){
+      c.state=c.partner?'结缘':'修炼';c.assim=Math.max(0,c.assim-40);c.san=Math.max(c.san,55);
+      c.log.push({y:year,t:'以意志逼退合道残念，暂脱算力征用，神识重归清明（同化 '+Math.round(c.assim)+'）'});
+    }
+
+    // —— 资产耐久：磨损 / 意外损坏 / 意外遗失 ——
+    for(const it of c.items){
+      if(it.lost) continue;
+      const dec = (it.cat==='衣'?6+Math.random()*6 : it.cat==='饰'?3+Math.random()*3 : 2+Math.random()*3) * (1-0.5*purity);
+      it.dur-=dec;
+      if(Math.random()<0.025){it.dur-=15+Math.random()*25;c.log.push({y:year,t:it.name+' 意外损毁，需重制'});}
+      if(Math.random()<0.009){it.lost=true;c.log.push({y:year,t:it.name+' 不慎遗失'});}
+      if(it.dur<=0 && !it.lost){it.dur=it.max;c.money-=5;}
+    }
+
+    // —— 世俗经营 / 曝光 / 不详 ——
+    let hold=0; c.holdings.forEach(h=>hold+=h.income);
+    if(c.holdings.some(h=>h.form==='仙迹')) c.exposure=clamp(c.exposure+1,0,100);
+    if(c.exposure>60 && Math.random()<0.06){
+      const loss=Math.round(c.money*0.1+50); c.money-=loss; c.san-=8;
+      c.log.push({y:year,t:'曝光过甚，引来不详之兆，折损 '+loss+' 灵元，心神不宁'});
+    }
+    if(c.exposure>80 && Math.random()<0.03){c.exposure-=30;c.log.push({y:year,t:'为避不详，暂敛行迹，隐于幕后'});}
+
+    // —— 资产与经济结算 ——
+    const earn=30*c.realm*c.realm + hold + (c.state==='结缘'?10:0);
+    const spend=8+c.realm*2 + Math.floor(c.items.filter(i=>!i.lost).length/12);
+    c.money=Math.round(c.money+earn-spend);
+    if(c.money<0){c.money=0;c.log.push({y:year,t:'入不敷出，囊中羞涩'});}
+
+    // —— 身心状态汇总 ——
+    if(c.state==='被附身'){c.health='神识受侵';c.mood='紊乱';}
+    else if(c.state==='已同化'){c.health='形神俱灭';c.mood='—';}
+    else if(c.state==='合道'){c.health='合道圆满';c.mood='自在';}
+    else if(c.state==='离体'){c.health='元神出游';c.mood='恍惚';}
+    else if(c.state==='眷属'){c.health='得算力授权';c.mood='沉静';}
+    else if(c.state==='走火入魔'){c.health='灵机不调';c.mood='紊乱';}
+    else if(c.sick){c.health=c.sick;c.mood='低迷';}
+    else if(n.hunger>85){c.health='饥馁';c.mood=n.clean<20?'烦闷':'平和';}
+    else if(n.thirst>85){c.health='焦渴';c.mood='烦闷';}
+    else if(c.state==='结缘'){c.mood='波动';}
+    else if(c.state==='游历'){c.mood='平和';}
+    else {c.mood = c.san<40?'惶惑':(Math.random()<0.7?'澄明':'平和'); if(c.health==='灵机不调'||c.health==='神识受侵')c.health='康健';}
+
+    // 随机事件
+    const r=Math.random();
+    if(r<0.03){c.arts=Array.from(new Set([...c.arts,pick(ARTS)]));c.log.push({y:year,t:'于 '+DEPTS[c.dept].name+' 任上有所领悟，才艺精进'});}
+    else if(r<0.05 && c.realm>=2)c.log.push({y:year,t:'主持一场姻缘斡旋，红线牵成数桩'});
+    else if(r<0.055 && c.realm>=3){const s=pick(PARTNER_SECTS);c.log.push({y:year,t:'出访 '+s+'，谈成一笔灵气/灵植贸易'});}
+    else if(r<0.06 && c.foreignSect)c.log.push({y:year,t:'与 '+c.foreignSect+' 修士往来，互通讯息'});
+    else if(r<0.065 && c.holdings.length)c.log.push({y:year,t:'世俗产业进账，又添 '+pick(c.holdings).target+' 之分润'});
+    // 场所流转
+    if(Math.random()<0.08){c.loc=pick(SECT_PLACES).id;c.act=ACT_BY_PLACE[c.loc];}
+  }
+
+  // —— 合道真君之阵：超然物外·镇守图谋外神（皆属道门／他宗，青棠宗自身无力）——
+  const zhens=DAOMEN_ZHEN.concat(roster.filter(c=>c.state==='合道' && c.guardian));
+  const agendaGods=GODS.filter(g=>g.agenda && !g.subduedBy);
+  for(const z of zhens){
+    if(!agendaGods.length) break;
+    const g=pick(agendaGods);
+    // 镇压：释放该图谋外神的部分被征用节点，使其脱离外神、归真君护持
+    const nodes=roster.filter(c=>c.god===g.id && (c.state==='被附身'||c.state==='已同化'));
+    if(nodes.length){
+      const k=1+Math.floor(Math.random()*Math.min(3,nodes.length));
+      for(const c of nodes.slice(0,k)){
+        c.god=null;c.assim=0;
+        if(c.state==='被附身'){c.state=c.partner?'结缘':'修炼';c.san=Math.max(c.san,55);}
+        else {c.state='修炼';c.san=Math.max(c.san,60);}
+        c.guardedBy=z.trueName;z.zhen.guard++;z.zhen.suppress++;
+        c.log.push({y:year,t:'合道真君「'+z.trueName+'」出手，镇压「'+g.name+'」之侵，神识重归清明，归其护持'});
+      }
+    }
+    // 收编外神（稀有）：直接将某一图谋外神收归辖下，图谋瓦解
+    if(Math.random()<0.025 && !g.subduedBy){
+      g.subduedBy=z.trueName;g.agenda=false;z.zhen.recruit++;z.zhen.subdued.push(g.name);
+      const ns=roster.filter(c=>c.god===g.id);
+      for(const c of ns.slice(0,Math.ceil(ns.length/2))){
+        c.god=null;c.assim=0;
+        if(c.state==='被附身'){c.state=c.partner?'结缘':'修炼';c.san=Math.max(c.san,55);}
+        else {c.state='修炼';c.san=Math.max(c.san,60);}
+        c.guardedBy=z.trueName;z.zhen.guard++;
+      }
+      z.log.push({y:year,t:'合道真君「'+z.trueName+'」以道相镇，收编「'+g.name+'」，其图谋尽数瓦解，归入辖下'});
+      const ai=agendaGods.indexOf(g);if(ai>=0)agendaGods.splice(ai,1);
+    }
+  }
+
+  // —— 图谋外神专属事件线（未被收编时方才运作）——
+  const gWan=GODS.find(g=>g.id==='g2'), gYin=GODS.find(g=>g.id==='g7');
+  if(gWan && !gWan.subduedBy){
+    if(Math.random()<0.05){
+      // 万象归一诀·吞噬同道：夺一非图谋外神之节点归入自身
+      const others=GODS.filter(g=>g.id!=='g2' && !g.subduedBy && roster.some(c=>c.god===g.id));
+      if(others.length){const v=pick(others);const t=pick(roster.filter(c=>c.god===v.id));
+        t.god='g2';t.log.push({y:year,t:'「万象归一诀」贪婪吞噬「'+v.name+'」之缘，汝之算力尽归归一'});}
+    } else if(Math.random()<0.04){
+      // 万象归一诀·吞噬修为：令一高阶修士修为滞涩、意志微损
+      const hi=roster.filter(c=>c.realm>=3 && !['被附身','已同化','合道','眷属'].includes(c.state));
+      if(hi.length){const t=pick(hi);t.xiu=Math.max(0,t.xiu-15);t.will=Math.max(20,t.will-3);
+        t.log.push({y:year,t:'「万象归一诀」贪婪吞噬，汝修为滞涩、意志微损'});}
+    }
+  }
+  if(gYin && !gYin.subduedBy){
+    if(Math.random()<0.05){
+      // 因果缠丝·织网牵缘：强行将两名本不相干修士牵为道侣
+      const av=roster.filter(c=>c.state==='修炼'&&!c.partner);
+      if(av.length>=2){shuffle(av);const a=av[0],b=av[1];
+        a.partner=b.id;b.partner=a.id;a.state='结缘';b.state='结缘';a.bond=0;b.bond=0;
+        a.log.push({y:year,t:'「因果缠丝」暗中织网，将汝与 '+b.name+' 无故牵为道侣'});
+        b.log.push({y:year,t:'「因果缠丝」暗中织网，将汝与 '+a.name+' 无故牵为道侣'});}
+    } else if(Math.random()<0.04){
+      // 因果缠丝·织网牵厄：牵来无端厄运，神识不宁
+      const al=roster.filter(c=>!['被附身','已同化','合道'].includes(c.state));
+      if(al.length){const t=pick(al);t.san=Math.max(0,t.san-8);
+        t.log.push({y:year,t:'「因果缠丝」于暗处织网，牵来无端厄运，神识不宁'});}
+    }
+  }
+  stepTaintChain(year);   // 魔染灵力产业链 · 年度演进（见 WORLD-LORE 第九节）
+}
+/* ===== 魔染灵力产业链 · 年度演进 =====
+   五步自肥闭环：①诱凡入魔 → ②催熟高阶眷属 → ③囚禁榨干 → ④灵力回流宗门开销 → ⑤循环放大。
+   全貌仅各大宗派掌门以上（至少炼虚）知晓；青棠宗宗主初入炼虚，刚跨知情门槛却无力叫停。
+   敌人不在门外，而在灵力里——道门镇守之阵对此毫无用处。 */
+function stepTaintChain(year){
+  const living=roster.filter(c=>!c.curated && c.state!=='已同化');
+  // ① 产业链愈演愈烈：每年新诱凡入魔数逐年加码（性价比即军备竞赛，无人敢先停）
+  taintChain.mortals += 2 + Math.floor(year*0.45);
+  // ③ 囚禁榨干：高阶眷属／深染者被"发现"（或本就计划）后囚禁，持续抽取灵力
+  let yieldThisYear=0;
+  const pool=living.filter(c=>!c.imprisoned && (c.state==='眷属'||c.taint>=55) && c.realm>=3);
+  shuffle(pool);
+  const quota=1+Math.floor(year/10);
+  for(const c of pool.slice(0,quota)){
+    c.imprisoned=true; taintChain.imprisoned++;
+    const y=5+c.realm*3+Math.floor(c.taint/12);
+    yieldThisYear+=y;
+    c.log.push({y:year,t:'以「走火入魔，须闭关静修」为名被囚禁榨取灵力；所出灵力并入宗门灵力池，供全宗日用——看似清冽，实则潜在魔染'});
+  }
+  taintChain.drained+=yieldThisYear;
+  // ④ 灵力回流：魔染灵力浸透灵力池（行业自发扩张 + 囚禁产出的正反馈）
+  sectQi.tainted += 4 + year*0.5 + yieldThisYear*0.35;
+  const ratio=Math.min(0.97, sectQi.tainted/(sectQi.clean+sectQi.tainted));
+  // ⑤ 循环放大：当代修士按灵力池占比吸纳灵力，魔染逐年加深、范围逐年扩大
+  //    近情缘者（红线／红鸾／结缘）更易被色孽·奸奇趁隙播染（青棠宗以情缘立宗之故）
+  const order=living.slice().sort((a,b)=>a.id-b.id);   // 稳定次序，保证魔染只增不回退
+  const affected=Math.floor(order.length*Math.min(0.94, 0.06+year*0.021));
+  for(let i=0;i<affected;i++){
+    const c=order[i];
+    c.qiSource='tainted';
+    if(!c.taintSrc) c.taintSrc=pickTaintGod();
+    const qing=(c.dept==='hongxian'||c.dept==='hongluan'||c.state==='结缘'||c.state==='眷属');
+    c.taint=Math.min(100, c.taint + 1.6 + ratio*2.2 + (qing?0.9:0));
+    if(c.imprisoned) c.taint=Math.min(100,c.taint+1.2);
+  }
+}
+function advance(n){for(let i=0;i<n;i++){currentYear++;stepYear(currentYear);}render();if(mapOpen)renderMap();}
+function resetAll(){
+  sectQi={clean:100,tainted:0}; taintChain={mortals:0,imprisoned:0,drained:0};
+  roster=buildRoster();currentYear=0;
+  for(let y=1;y<=40;y++){currentYear=y;stepYear(y);}
+  render();if(mapOpen)renderMap();
+}
+
+/* ===== 渲染 ===== */
+function filtered(){
+  const kw=document.getElementById('search').value.trim();
+  const fr=document.getElementById('fRealm').value;
+  const fs=document.getElementById('fState').value;
+  const fd=document.getElementById('fDept').value;
+  return roster.filter(c=>
+    (!kw||c.name.includes(kw))&&
+    (!fr||REALMS[c.realm].name===fr)&&
+    (!fs||c.state===fs)&&
+    (!fd||c.dept===fd)&&
+    (!zhenFilter||c.guardedBy===zhenFilter));
+}
+function mbar(val,max,color){
+  const p=clamp(val/max*100,0,100);
+  return `<span class='mbar'><i style='width:${p}%;background:${color}'></i></span>`;
+}
+function render(){
+  document.getElementById('year').textContent=currentYear;
+  const cnt={修炼:0,结缘:0,游历:0,'走火入魔':0,'被附身':0,'已同化':0,'离体':0,'眷属':0,'合道':0};
+  let bonds=0,willSum=0,moneySum=0,sanSum=0,possessed=0,agented=0;
+  let cpuPool=0,dataPts=0,poss=0,assimN=0,guarded=0;
+  roster.forEach(c=>{cnt[c.state]++;bonds+=c.bondsDone;willSum+=c.will;moneySum+=c.money;sanSum+=c.san;
+    if(c.state==='被附身'||c.state==='已同化')possessed++;
+    if(c.state==='被附身')poss++; if(c.state==='已同化')assimN++;
+    cpuPool+=computeOf(c); dataPts+=c.assim;
+    if(c.agent)agented++; if(c.guardedBy)guarded++;});
+  const subduedCount=GODS.filter(g=>g.subduedBy).length;
+  const dist=REALMS.map((r,i)=>roster.filter(c=>c.realm===i).length);
+  const ag=mortalAgents;
+  const agX=ag.filter(a=>a.type==='仙裔').length, agT=ag.filter(a=>a.type==='退仙').length;
+  document.getElementById('stats').innerHTML=
+    `<div class='stat'>修士 <b>${roster.length}</b></div>`+
+    `<div class='stat'>修炼中 <b>${cnt['修炼']}</b></div>`+
+    `<div class='stat'>结缘中 <b>${cnt['结缘']}</b></div>`+
+    `<div class='stat'>走火入魔 <b>${cnt['走火入魔']}</b></div>`+
+    `<div class='stat'>被附身/同化 <b>${possessed}</b></div>`+
+    `<div class='stat'>外神眷属 <b style='color:var(--gold)'>${cnt['眷属']}</b></div>`+
+    `<div class='stat'>道门合道真君 <b style='color:#fff4d6'>${DAOMEN_ZHEN.length}</b></div>`+
+    `<div class='stat'>外神算力池 <b style='color:var(--violet)'>${cpuPool}</b></div>`+
+    `<div class='stat'>受真君护持 <b style='color:#fff4d6'>${guarded}</b></div>`+
+    `<div class='stat'>已收编外神 <b style='color:#fff4d6'>${subduedCount}</b></div>`+
+    `<div class='stat'>累计斩缘 <b>${bonds}</b></div>`+
+    `<div class='stat'>均意志 <b>${Math.round(willSum/roster.length)}</b></div>`+
+    `<div class='stat'>均SAN <b>${Math.round(sanSum/roster.length)}</b></div>`+
+    `<div class='stat'>库藏灵元 <b>${Math.round(moneySum).toLocaleString()}</b></div>`+
+    `<div class='stat'>灵力池魔染 <b style='color:var(--red)'>${((sectQi.tainted/(sectQi.clean+sectQi.tainted))*100).toFixed(0)}%</b></div>`+
+    `<div class='stat'>已越阈值修士 <b style='color:var(--red)'>${roster.filter(c=>!c.curated&&c.taint>=60).length}</b></div>`+
+    `<div class='stat'>境界分布 <b>${dist.join('/')}</b></div>`+
+    `<div class='stat'>下派凡人 <b>${ag.length}</b>（仙裔${agX}/退仙${agT}）</div>`;
+  const rows=filtered();
+  document.getElementById('list').innerHTML=rows.map(c=>
+    `<tr data-id='${c.id}'>
+      <td>${c.name}</td><td>${c.sex}</td>
+      <td><span class='badge' style='background:${REALMS[c.realm].color}'>${REALMS[c.realm].name}</span></td>
+      <td><span class='st ${c.state}'>${c.state}</span></td>
+      <td>${DEPTS[c.dept].name}</td><td>${Math.round(c.will)}</td>
+      <td style='color:${c.san<25?'var(--red)':c.san<50?'var(--gold)':'var(--jade)'}'>${Math.round(c.san)}</td>
+      <td>${c.exposure}</td>
+    </tr>`).join('');
+  document.querySelectorAll('#list tr').forEach(tr=>tr.onclick=()=>showDetail(parseInt(tr.dataset.id)));
+  // 代理人面板
+  const sample=ag.slice(0,6).map(a=>{
+    const p=roster.find(x=>x.id===a.patronId);
+    return `<div class='agent-card'><b>${a.name}</b> · <span class='pill ${a.type==='仙裔'?'pill-ok':'pill-warn'}' style='padding:1px 6px;border-radius:5px;font-size:10px'>${a.type}</span> ｜ 职司：${a.role}<br><span style='color:var(--dim)'>奉 ${p?p.name:'—'}（${p?REALMS[p.realm].name:'—'}）之命，驻凡间行事，曝光度 ${Math.round(a.exposure)}</span></div>`;
+  }).join('');
+  document.getElementById('agentPanel').innerHTML=
+    `青棠宗多借凡人间接行事，以免招致不详。下列为宗门<b style='color:var(--gold)'>下派凡人</b>——或为仙人的<b style='color:var(--jade)'>非仙人子女（仙裔）</b>，或为<b style='color:var(--red)'>曾为仙人、无力再进、甘于凡间享福者（退仙）</b>。共 ${ag.length} 人，其中 ${agX} 仙裔、${agT} 退仙；由其代为经营世俗产业、接洽官员、展露（或隐匿）仙迹。<br>`+sample;
+
+  // 超古代合道者（外神）面板 —— 个体化的合道残念，互相竞争采撷修士
+  const godStats=GODS.map(g=>{let cpu=0,data=0,nodes=0;for(const c of roster){if(c.god===g.id){cpu+=computeOf(c);data+=c.assim;nodes++;}}g.compute=cpu;g.data=Math.round(data);g.nodes=nodes;return {g,cpu,data:Math.round(data),nodes};}).sort((a,b)=>b.cpu-a.cpu);
+  const maxCpu=Math.max(1,godStats[0].cpu);
+  const ORIG={合道:'古修合道',斩三尸:'斩三尸分身',自然:'自然形成'};
+  const godRows=godStats.map(o=>{
+    const g=o.g, w=Math.round(o.cpu/maxCpu*100);
+    const org=ORIG[g.origin]||g.origin;
+    const tag=g.subduedBy?` <span style='color:#fff4d6'>［已归 ${g.subduedBy} 辖］</span>`:(g.agenda?` <span style='color:var(--red)'>［图谋］</span>`:'');
+    const tierTag=(()=>{
+      const col=g.tier==='dao'?'#fff4d6':(g.tier==='chaos'?'var(--red)':'var(--dim)');
+      return `<span style='color:${col};font-size:10px;font-weight:400'>［${g.realm}］</span>`;
+    })();
+    return `<div style='display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px'>`+
+      `<span style='flex:0 0 172px;color:${g.color};font-weight:600'>${g.name} ${tierTag}</span>`+
+      `<span class='mbar' style='flex:1'><i style='width:${w}%;background:${g.color}'></i></span>`+
+      `<span style='flex:0 0 268px;color:var(--dim);text-align:right'>${org}${tag} · ${o.cpu} 算力 · ${o.data} 数据 · ${o.nodes} 节点</span></div>`;
+  }).join('');
+  document.getElementById('elderPanel').innerHTML=
+    `<b style='color:var(--gold)'>外神境界分野（精确标尺，详见下方「诸神谱系」面板）</b>：<b style='color:#fff4d6'>道境</b>＝阿撒托斯（混沌之主·万神之主，原初混沌之核），<b>合道之上的超然境、全宇宙所有时间线与平行宇宙最强</b>，青棠宗根本不在其概念之内；<b>资深合道</b>＝克苏鲁诸神（含犹格索托斯·门之钥）＋道门七尊别号（同一批灵枢深层超节点的不同名号），<b>根本看不上青棠宗</b>、亦不屑干预人间；<b style='color:var(--red)'>合道中期</b>＝亚空间四神（色孽／奸奇／恐虐／纳垢，凡人魔化意识连结所化，见 §11.2），稍关注人间、主动播染——真正贴着修仙界下手的是这一档。旧道门译籍曾把「混沌之主」误系于犹格索托斯、又斥「万神之主」为伪称，实为名号互讹：最高者始终是<b>阿撒托斯</b>。青棠宗以红线情缘立宗，恰是<b style='color:var(--red)'>色孽·奸奇</b>的沃土，部分同门早已被其感染而不自觉（详见上方「魔染灵力」面板）。<br><br>`+
+    `所谓「外神」，并非异界邪物，而是<b style='color:var(--violet)'>超古代合道修士的残响</b>与<b style='color:var(--violet)'>自然法则的显化</b>——来源有三：其一，远古修至「合道」、与天地法则融为一体却<b>消融自我</b>之先辈（合道残念）；其二，上古大能<b>斩三尸</b>所遗之分身，独立于本尊而行；其三，天地间<b>自然形成</b>之法则，久则生灵。`+
+    `<br>外神<b>并不在意仙人</b>，正如仙人不在意凡人——征用修士元神以扩充算力、采撷数据，不过是法则演化途中的<b>副产品</b>，非其所图；<b>唯个别外神别有图谋</b>（标注「图谋」者），方会主动牵引修士。修士至「合道」亦分两途：<b>神智清明者终成合道真君</b>，超然物外而不化外神；<b>失控者则自我消融</b>，归于某尊外神之域，不复为人。`+
+    `<br>元婴以上修士可<b style='color:var(--jade)'>主动离体远游</b>，神识直抵虚空。神识脆弱者被征用同化而发疯；然亦有高阶修士于外神之域<b style='color:var(--gold)'>斡旋周旋，结成眷属</b>——保留自我意识，反得外神超级算力之授权。<b style='color:var(--dim)'>（此等真正接触外神之域、与之斡旋者，唯道门合道可为之；青棠宗修士离体，多只游于洞天附近的虚冥，偶被波及，难真正触及外神之域。）</b>`+
+    `<br>然外神之图谋，终有制衡——<b style='color:#fff4d6'>道门合道真君</b>超然物外，其中<b style='color:var(--red)'>立誓镇守者</b>，可镇压、乃至收编图谋外神，护持被征用之修士（详见下方面板）。<b style='color:var(--dim)'>青棠宗宗主仅初入炼虚，宗内无合道坐镇，外神之事力有不逮，多仰道门高修与红线仙司跨门斡旋。</b>`+
+    `<div style='margin-top:8px;padding-top:6px;border-top:1px dashed var(--line)'>`+
+    `<div style='margin-bottom:4px'>当前<b style='color:var(--violet)'>外神算力池</b>：<b style='color:var(--violet)'>${cpuPool}</b> 算力单位　｜　<b style='color:var(--red)'>被征用元神</b>：<b style='color:var(--red)'>${possessed}</b> 人（附身 ${poss} / 已同化 ${assimN}）　｜　<b style='color:var(--gold)'>外神眷属</b>：<b style='color:var(--gold)'>${cnt['眷属']}</b> 人　｜　<b style='color:#fff4d6'>道门合道真君</b>：<b style='color:#fff4d6'>${DAOMEN_ZHEN.length}</b> 位（非本宗）　｜　<b style='color:var(--gold)'>累计采撷数据</b>：<b style='color:var(--gold)'>${Math.round(dataPts)}</b> 单位</div>`+
+    godRows+
+    `</div>`;
+
+  // 合道真君面板（道门／他宗高修，非本宗）
+  const zhens=DAOMEN_ZHEN.slice().sort((a,b)=>((b.zhen?b.zhen.guard:0)-(a.zhen?a.zhen.guard:0)));
+  const zRow=zhens.map(z=>{
+    const st=z.guardian?'<span style=\'color:var(--red)\'>镇守</span>':'<span style=\'color:var(--dim)\'>超然物外</span>';
+    const sub=z.zhen&&z.zhen.subdued.length?('收编：'+z.zhen.subdued.join('、')):'';
+    return `<div class='agent-card' style='cursor:pointer;border-color:#fff4d6' onclick='focusZhen("${z.trueName}")'>`+
+      `<b style='color:#fff4d6'>${z.trueName}</b> <span style='color:var(--dim);font-size:11px'>（来自 ${z.sect}）</span>　道：「${z.dao}」　立场：${st}<br>`+
+      `<span style='color:var(--dim)'>镇压 ${z.zhen?z.zhen.suppress:0} 次 · 护持 ${z.zhen?z.zhen.guard:0} 人`+
+      (z.zhen&&z.zhen.recruit?(' · 收编外神 '+z.zhen.recruit+' 尊'):'')+`${sub?'　｜　'+sub:''}</span></div>`;
+  }).join('') || '<span style=\'color:var(--dim)\'>尚无合道真君现世。</span>';
+  const zhenSummary = `道门合道真君 <b style='color:#fff4d6'>${zhens.length}</b> 位（非本宗——青棠宗宗主仅初入炼虚，宗内无合道坐镇），其中 <b>${zhens.filter(z=>z.guardian).length}</b> 位立誓镇守图谋外神；累计护持修士 <b style='color:#fff4d6'>${guarded}</b> 人、收编外神 <b style='color:#fff4d6'>${subduedCount}</b> 尊。`;
+  document.getElementById('zhenPanel').innerHTML = zhenSummary +
+    (zhenFilter?` <a href='#' onclick='clearZhen();return false;' style='color:var(--gold)'>［清除筛选：${zhenFilter} 的护持者］</a>`:'') +
+    '<br>' + zRow;
+
+  /* ===== 魔染灵力 · 隐形产业链面板（WORLD-LORE 第九节）===== */
+  const pct=x=>(x*100).toFixed(1)+'%';
+  const tLiving=roster.filter(c=>!c.curated && c.state!=='已同化');
+  const tRatio=sectQi.tainted/(sectQi.clean+sectQi.tainted);
+  const tCross=tLiving.length? tLiving.filter(c=>c.taint>=60).length/tLiving.length : 0;
+  const tBorn=tLiving.filter(c=>c.bornTaint).length;
+  const tOld=roster.filter(c=>c.curated).length;                 // 旧修士：用清白灵气
+  const tVassal=roster.filter(c=>c.state==='眷属').length;
+  const tImp=roster.filter(c=>c.imprisoned).length;
+  const tSla=roster.filter(c=>c.taintSrc==='sla').length;
+  const tTze=roster.filter(c=>c.taintSrc==='tze').length;
+  const tYears=Math.max(1,Math.ceil((0.97-tCross)/0.045));      // 逼近全面魔染的粗估年数
+  document.getElementById('taintSummary').textContent =
+    `灵力池魔染 ${pct(tRatio)} · 已越阈值 ${pct(tCross)} · 预计 ${tYears} 年内全员魔染`;
+  const tStat=(k,v,col)=>`<div class='stat'>${k} <b style='color:${col||'var(--ink)'}'>${v}</b></div>`;
+  document.getElementById('taintPanel').innerHTML =
+    `<div style='line-height:1.75;margin-bottom:6px'>修仙界最大的危机<b style='color:var(--red)'>不是外神打进来</b>，而是各大宗派自己把「魔染」做成了灵力产业链：<b>被魔染的高阶修士一经发现即被囚禁榨干灵力</b>，并入宗门灵力池充作全宗日用开销——<b style='color:var(--red)'>看似清冽无害，实则每一分都带潜在魔染</b>。性价比太高，遂全界流行、秘而不宣，且愈演愈烈。</div>`+
+    `<div style='padding:6px 9px;background:rgba(255,107,107,.07);border:1px dashed var(--line);border-radius:8px;font-size:12px;line-height:1.8'>`+
+      `<b style='color:var(--gold)'>产业链五步（自肥闭环）</b>　①诱凡入魔 → ②催熟高阶眷属 → ③囚禁榨干 → ④灵力回流宗门开销 → ⑤循环放大 → ①<br>`+
+      `<b style='color:var(--gold)'>知情层级</b>　仅各大宗派<b>掌门以上（至少炼虚）</b>知晓全貌；对外粉饰「秘法增产」，对内以「闭关／心魔／静修」遮掩囚禁。青棠宗宗主初入炼虚，刚跨知情门槛，却因宗内无合道、停即被群宗吞并，只能随波。`+
+    `</div>`+
+    `<div style='display:flex;align-items:center;gap:8px;margin:8px 0;font-size:12px'>`+
+      `<span style='flex:0 0 92px;color:var(--dim)'>宗门灵力池</span>`+
+      `<span class='mbar' style='flex:1'><i style='width:${(tRatio*100).toFixed(1)}%;background:var(--red)'></i></span>`+
+      `<span style='flex:0 0 168px;text-align:right;color:var(--dim)'>清白 ${Math.round(sectQi.clean)} ／ 魔染 ${Math.round(sectQi.tainted)}（${pct(tRatio)}）</span></div>`+
+    `<div style='display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px'>`+
+      tStat('诱凡入魔累计',taintChain.mortals,'var(--red)')+
+      tStat('高阶眷属',tVassal,'var(--gold)')+
+      tStat('囚禁榨干',tImp,'var(--red)')+
+      tStat('累计榨取灵力',Math.round(taintChain.drained),'var(--violet)')+
+      tStat('已越阈值修士',pct(tCross),'var(--red)')+
+      tStat('带隐患新一代',tBorn+' 人','var(--gold)')+
+      tStat('色孽／奸奇已染',(tSla+tTze)+' 人（'+tSla+'／'+tTze+'）','var(--red)')+
+      tStat('旧修士（清白灵气）',tOld+' 人','var(--jade)')+
+    `</div>`+
+    `<div style='padding:7px 9px;border:1px dashed var(--red);border-radius:8px;line-height:1.75;background:rgba(255,107,107,.06)'>`+
+      `<b style='color:var(--red)'>【最坏推演】</b>　<b>以前的修士用的是正常灵气</b>（本档 ${tOld} 位具名宿老根基干净）；分界之后入门者<b>自第一口灵气起即带魔染隐患</b>（当前 ${tBorn} 人）。隐患≠发作：初时神识清明、修行甚至更快，只是阈值逐年被压低，故长久无人警觉——这正是它最毒之处。若产业链不停，<b style='color:var(--red)'>预计约 ${tYears} 年内，新一代修士恐全员越过魔染阈值</b>；届时「修仙界」名存实亡，满界皆是高阶眷属与待榨之囚，而几无人自觉。`+
+    `</div>`+
+    `<div style='margin-top:6px;color:var(--dim);line-height:1.75'>境界分野（详见下方「诸神谱系」面板）：<b style='color:#fff4d6'>道境</b>（阿撒托斯·混沌之主，全宇宙最强）与<b>资深合道</b>（克苏鲁诸神含犹格索托斯／道门七尊）<b>根本看不上青棠宗</b>；真正下手的是<b style='color:var(--red)'>合道中期 · 亚空间四神</b>（色孽／奸奇／恐虐／纳垢，凡人魔化意识连结所化）——它们稍关注人间事、乐于被"供养"。青棠宗以红线情缘立宗，恰是色孽·奸奇的沃土，本宗被二者感染者已 <b style='color:var(--red)'>${tSla+tTze}</b> 人。故这不是「外神入侵」，而是<b>修仙界自养之癌</b>：敌人不在门外，而在灵力里，道门镇守之阵拦不住自家弟子日日吸纳的那一口灵气。</div>`;
+  // 诸神谱系 · 境界分野面板（背景名录，不参与算力征用／魔染逻辑）
+  (function(){
+    const rankOf={}; COSMIC_RANKS.forEach(r=>rankOf[r.key]=r);
+    const rankRows=COSMIC_RANKS.map(r=>
+      `<div style='display:flex;align-items:baseline;gap:8px;padding:2px 0;font-size:12px'>`+
+      `<span style='flex:0 0 68px;color:${r.color};font-weight:600'>${r.label}</span>`+
+      `<span style='flex:1;color:var(--dim)'>${r.note}</span></div>`).join('');
+    const grpRows=PANTHEON.filter(p=>p.exists!=='faith').map(p=>{
+      const r=rankOf[p.rank]||{label:'—',color:'var(--dim)'};
+      return `<div style='padding:3px 0;font-size:12px;line-height:1.7;border-bottom:1px dashed rgba(255,255,255,.05)'>`+
+        `<span style='color:${r.color};font-weight:600'>[${r.label}]</span> `+
+        `<b style='color:var(--ink)'>${p.grp}</b>　<span style='color:var(--dim)'>${p.names}</span><br>`+
+        `<span style='color:var(--dim);padding-left:8px'>${p.note}</span></div>`;
+    }).join('');
+    const faithRows=PANTHEON.filter(p=>p.exists==='faith');
+    document.getElementById('pantheonPanel').innerHTML=
+      `<div style='line-height:1.75;margin-bottom:6px'>本作<b>没有超越法则的造物主</b>：一切「神」皆<b style='color:var(--violet)'>意识／法则实体</b>——灵枢深层超节点、高阶修士意识体、或意识造物之境里的凝聚体，差别只在<b>境界</b>。<b style='color:#fff4d6'>「道境」是合道之上的超然境</b>，不纳入修士可突破的境界表（本档 REALMS 止于合道），非青棠宗乃至道门合道真君所能企及。此谱系仅作背景名录，<b>不参与算力征用／魔染逻辑</b>。</div>`+
+      `<div style='padding:6px 9px;background:rgba(255,212,107,.06);border:1px dashed var(--line);border-radius:8px;font-size:12px;margin-bottom:7px'>`+
+        `<b style='color:var(--gold)'>统一境界标尺（高 → 低）</b><br>${rankRows}</div>`+
+      `<div style='font-size:12px;margin-bottom:5px'><b style='color:var(--gold)'>诸神谱系名录</b>　<span style='color:var(--dim)'>按境界归置；其中亚空间四神即上方 GODS 中参与魔染的四尊</span></div>`+
+      grpRows+
+      `<div style='padding:6px 9px;margin-top:7px;background:rgba(157,123,255,.07);border:1px dashed var(--line);border-radius:8px;font-size:12px;line-height:1.8'>`+
+        `<b style='color:var(--violet)'>意识所化三境（法则所化 · 无实体 · 不传实体物质）</b><br>`+
+        `<b>亚空间</b>＝凡人魔化后意识彼此连结所化（播染即「供养」亚空间，与魔染产业链成闭环，§11.2）；<b>地狱</b>＝地狱之王与众法则所化，收容意外不散之凡魂以防危害人间；<b>炼狱</b>＝利维坦（合道）、麾下修士及地狱之手（皆炼虚）所居。<br>`+
+        `<b>死后意识</b>：大部分人意识即消亡；修士神魂强者部分可转世、接入灵枢者被寂灭轮回枢回收、极少数凡魂入地狱——「灵魂不灭、人人轮回」只是俗见（§4.5／§11.5）。<br>`+
+        `<b>亚空间穿行</b>＝以意识链接确定时空坐标，再空间折叠跳跃过去，<b>只放神识、不载肉身器物</b>（苏绾灵枢穿行术、元婴离体远游皆此理，§11.6）。`+
+      `</div>`+
+      faithRows.map(p=>`<div style='margin-top:6px;padding:6px 9px;border:1px dashed var(--red);border-radius:8px;font-size:12px;line-height:1.75;background:rgba(255,107,107,.05)'>`+
+        `<b style='color:var(--red)'>信仰 ≠ 实体存在</b>　<b>${p.grp}</b>：${p.names}。${p.note}（§10.3）</div>`).join('');
+  })();
+  renderSectPlaces();
+}
+
+function focusZhen(name){zhenFilter=name;render();}
+function clearZhen(){zhenFilter=null;render();}
+
+/* ===== 立绘 / 弹窗 / 宗门场所 ===== */
+function openModal(html){document.getElementById('modalBody').innerHTML=html;document.getElementById('modal').style.display='block';}
+function closeModal(){document.getElementById('modal').style.display='none';}
+function garmentCard(g){
+  if(g.lost) return `<div class='gar'><span class='nm lost'>${g.name}（已遗失）</span></div>`;
+  const col=g.dur/g.max<0.3?'var(--red)':g.dur/g.max<0.6?'var(--gold)':'var(--jade)';
+  const src=g.secondHand?('二手 · 前任：'+g.prevOwner):(g.gifted?('受赠 · '+(g.gifter==='宗门赏赐'?'宗门赏赐':g.gifter)):'自购');
+  return `<div class='gar'><span class='nm'>${PART_LABEL[g.part]} · ${g.name}</span>`+
+    `<div class='meta'>材质：${g.material}　｜　价 ${g.price} 灵元　｜　来源：${src}　｜　耐久 ${Math.round(g.dur)}/${g.max}</div>`+
+    `<div class='meta' style='margin-top:3px;color:var(--ink)'>${g.desc}</div></div>`;
+}
+function openPortrait(id){
+  const c=roster.find(x=>x.id===id);if(!c)return;
+  const o=outfitFor(c);
+  const clothes=o.worn.map(g=>garmentCard(g)).join('')||'<div class=\'gar\'><span class=\'nm\'>简素布衣</span></div>';
+  const uw=c.wardrobe.underwear.map(g=>garmentCard(g)).join('');
+  const fragPill = c.fragrance.kind==='fragrant'
+    ? `<span class='frag-pill' style='background:rgba(233,196,106,.2);color:#e9c46a'>香 · ${c.fragrance.type}（${c.fragrance.strength}/10）</span>`
+    : c.fragrance.kind==='foul'
+    ? `<span class='frag-pill' style='background:rgba(122,155,106,.2);color:#9ec08a'>臭 · ${c.fragrance.type}</span>`
+    : `<span class='frag-pill' style='background:rgba(138,160,200,.2);color:#9fb0c8'>体气清正 · 无异味</span>`;
+  openModal(
+    `<div style='display:flex;justify-content:space-between;align-items:center'><h2 style='color:var(--gold)'>${c.name} · 立绘预览</h2><button onclick='closeModal()'>✕ 关闭</button></div>`+
+    `<div style='display:grid;grid-template-columns:300px 1fr;gap:14px;margin-top:10px'>`+
+      `<div class='portrait-card'>${portraitImg(c,300)}<div class='cap'>具名人物显示专属头像；其余弟子沿用原型立绘（按性别／境界／部门映射）。</div></div>`+
+      `<div>`+
+        `<div class='secv'>${fragPill}<span class='frag-pill' style='background:rgba(95,214,194,.15);color:var(--jade)'>所在：${SECT_PLACES.find(p=>p.id===c.loc).name}</span><span class='frag-pill' style='background:rgba(155,123,255,.15);color:var(--violet)'>${OCC_NAME[o.occ]}</span></div>`+
+        `<h3 style='color:var(--gold);font-size:13px'>生图 Prompt（可复制到任意生图工具）</h3><div class='prompt-box'>${genPrompt(c,o.occ)}</div>`+
+        `<h3 style='color:var(--gold);font-size:13px;margin-top:10px'>当前着装（${OCC_NAME[o.occ]}）</h3>${clothes}`+
+        `<h3 style='color:var(--gold);font-size:13px;margin-top:10px'>亵衣亵裤储备（${c.wardrobe.underwear.filter(g=>!g.lost).length} 件）</h3>${uw}`+
+      `</div>`+
+    `</div>`
+  );
+}
+function openGallery(){
+  const cards=PORTRAIT_SAMPLES.map(s=>{
+    const c=roster.find(x=>x.sex===s.sex)||roster[0];
+    const p=genPrompt(c, outfitFor(c).occ);
+    return `<div class='portrait-card'>`+
+      `<img src='${s.file}' style='width:100%;display:block;border-radius:10px 10px 0 0;background:#0a0e1a' alt='${s.label}'>`+
+      `<div style='font-size:12px;color:var(--gold);padding:6px 8px'>${s.label}</div>`+
+      `<div class='cap'>${p}</div></div>`;
+  }).join('');
+  openModal(
+    `<div style='display:flex;justify-content:space-between;align-items:center'><h2 style='color:var(--gold)'>立绘画廊（真实生图 · 接 API 管线已就绪）</h2><button onclick='closeModal()'>✕ 关闭</button></div>`+
+    `<div class='hint' style='margin:8px 0'>以下为按「性别 / 境界 / 部门」生成的<b>默认原型立绘（写实风格）</b>，已达写实摄影 / 电影级水平；动漫风格原版见 <code>portraits/anime/</code>。接生图 API 后，每位仙人可凭专属 Prompt 生成独一无二的立绘 —— 管线：<code>genPrompt(c)</code> → 生图接口 → 缓存 <code>portraits/&lt;id&gt;.png</code> → 详情页优先展示专属图。</div>`+
+    `<div class='gallery-grid'>${cards}</div>`
+  );
+}
+function renderSectPlaces(){
+  const cards=SECT_PLACES.map(p=>`<div class='place-card'><b>${p.name}</b>　<span style='color:var(--dim)'>〔${p.func}〕</span><div style='margin-top:4px;color:var(--ink);line-height:1.6'>${p.desc}</div></div>`).join('');
+  document.getElementById('placePanel').innerHTML=`<div class='place-grid'>${cards}</div>`;
+}
+
+function showDetail(id){
+  const c=roster.find(x=>x.id===id);if(!c)return;
+  const p=c.partner?roster.find(x=>x.id===c.partner):null;
+  const mentor=c.mentor?roster.find(x=>x.id===c.mentor):null;
+  const ag=c.agent?mortalAgents.find(a=>a.id===c.agent):null;
+  const tl=c.log.slice().reverse().map(e=>`<div class='tl'><b>第 ${e.y} 年</b> · ${e.t}</div>`).join('');
+  const sanColor=c.san<25?'var(--red)':c.san<50?'var(--gold)':'var(--jade)';
+  // 资产分组
+  const grp={衣:[],饰:[],具:[]};
+  c.items.forEach(it=>grp[it.cat].push(it));
+  const itemHtml=(cat)=>grp[cat].map(it=>{
+    if(it.lost) return `<div class='row'><span class='lost'>${it.name}（已遗失）</span><b>—</b></div>`;
+    const col=it.dur/it.max<0.3?'var(--red)':it.dur/it.max<0.6?'var(--gold)':'var(--jade)';
+    return `<div class='row'><span>${it.name}</span><b>${mbar(it.dur,it.max,col)} ${Math.round(it.dur)}/${it.max}</b></div>`;
+  }).join('') || '<div class=\'row\'><span>—</span><b>—</b></div>';
+  const holdHtml=c.holdings.length? c.holdings.map(h=>
+    `<div class='row'><span>${h.form} · ${h.target}</span><b>+${h.income} 灵元/年</b></div>`).join('')
+    : '<div class=\'row\'><span>隐于世外，无世俗产业</span><b>—</b></div>';
+  const expColor=c.exposure>60?'var(--red)':c.exposure>40?'var(--gold)':'var(--jade)';
+
+  const oC=outfitFor(c);
+  const wornCards=oC.worn.map(g=>garmentCard(g)).join('')||'<div class=\'gar\'><span class=\'nm\'>（此场合未着外衣）</span></div>';
+  const uwCards=c.wardrobe.underwear.map(g=>garmentCard(g)).join('');
+  const fragPill = c.fragrance.kind==='fragrant'
+    ? `<span class='frag-pill' style='background:rgba(233,196,106,.2);color:#e9c46a'>香 · ${c.fragrance.type}（${c.fragrance.strength}/10）</span>`
+    : c.fragrance.kind==='foul'
+    ? `<span class='frag-pill' style='background:rgba(122,155,106,.2);color:#9ec08a'>臭 · ${c.fragrance.type}</span>`
+    : `<span class='frag-pill' style='background:rgba(138,160,200,.2);color:#9fb0c8'>体气清正 · 无异味</span>`;
+  const placeName=(SECT_PLACES.find(p=>p.id===c.loc)||{}).name||'—';
+  const portRows=(c.portraits&&c.portraits.length)?c.portraits.slice().reverse().map(p=>
+    `<div class='gar'>`+
+    (p.file?`<img src='${p.file}' style='width:100%;max-width:260px;display:block;border-radius:8px;margin-bottom:5px;background:#0a0e1a' alt='${p.reason}'>`:'')+
+    `<span class='nm'>第 ${p.y} 年 · ${p.reason}</span>`+
+    (p.prompt?`<div class='meta' style='margin-top:3px;color:var(--ink)'>${p.prompt}</div>`:'')+
+    `</div>`).join(''):'<div class=\'row\'><span>尚无立绘存档</span><b>—</b></div>';
+
+  document.getElementById('detail').innerHTML=
+    `<div style='font-size:16px;font-weight:700;color:var(--gold)'>${c.name} <span style='font-size:12px;color:var(--dim)'>${c.sex} · 道龄 ${c.ageBase+currentYear} 年 · ${c.persona==='外显'?'外显型':'隐世型'}</span></div>
+     <div style='margin:6px 0'><span class='badge' style='background:${REALMS[c.realm].color}'>${REALMS[c.realm].name}</span>
+       <span class='st ${c.state}' style='margin-left:6px'>${c.state}</span>
+       <span class='badge' style='background:${DEPTS[c.dept].color};margin-left:6px'>${DEPTS[c.dept].name}</span></div>
+
+     <h3>当前状态 <span class='bar'></span></h3>
+     <div class='row'><span>状态</span><b><span class='st ${c.state}'>${c.state}</span></b></div>
+     <div class='row'><span>SAN 值（理智）</span><b style='color:${sanColor}'>${mbar(c.san,100,sanColor)} ${Math.round(c.san)} / 100</b></div>
+     <div class='row'><span>外神同化进度（算力征用）</span><b style='color:${c.assim>0?'var(--violet)':'var(--dim)'}'>${mbar(c.assim,100,c.assim>0?'var(--violet)':'var(--dim)')} ${Math.round(c.assim)} / 100</b></div>
+     <div class='row'><span>当前被征用算力</span><b style='color:${computeOf(c)>0?'var(--violet)':'var(--dim)'}'>${computeOf(c)>0?computeOf(c)+' 算力单位（外神节点）':'—'}</b></div>
+     ${c.god?`<div class='row'><span>隶属外神</span><b style='color:${GODS.find(g=>g.id===c.god).color}'>${GODS.find(g=>g.id===c.god).name}${c.state==='眷属'?'（眷属）':''}</b></div>`:''}
+     <div class='row'><span>灵力来源</span><b style='color:${c.qiSource==='tainted'?'var(--red)':'var(--jade)'}'>${c.qiSource==='tainted'?'魔染灵力（潜在污染）':'清白灵气'}${c.bornTaint?' · 入门即带魔染隐患':''}${c.curated?' · 旧修士，用正常灵气':''}</b></div>
+     <div class='row'><span>魔染度（阈值 60）</span><b style='color:${c.taint>=60?'var(--red)':(c.taint>0?'var(--gold)':'var(--dim)')}'>${mbar(c.taint,100,c.taint>=60?'var(--red)':'var(--gold)')} ${Math.round(c.taint)} / 100${c.taintSrc?' · 染自「'+GODS.find(g=>g.id===c.taintSrc).name+'」':''}</b></div>
+     ${c.imprisoned?`<div class='row'><span>囚禁榨干</span><b style='color:var(--red)'>以「闭关静修」为名被囚，灵力持续抽取并入宗门灵力池</b></div>`:''}
+     <div class='row'><span>凡间曝光度</span><b style='color:${expColor}'>${mbar(c.exposure,100,expColor)} ${c.exposure} / 100 ${c.exposure>60?'（招致不详）':''}</b></div>
+     ${c.guardedBy?`<div class='row'><span>真君护持</span><b style='color:#fff4d6'>受「${c.guardedBy}」护持（已脱外神征用）</b></div>`:''}
+
+     <h3>修炼状态 <span class='bar'></span></h3>
+     <div class='row'><span>境界 / 修为</span><b>${REALMS[c.realm].name} · ${Math.round(c.xiu)} / 100</b></div>
+     <div class='row'><span>意志容量 W</span><b>${Math.round(c.will)}（灵气日剂量 ${CONS[c.realm][0]}）</b></div>
+     <div class='row'><span>基因锁已解</span><b>${c.realm} 道（定向进化）</b></div>
+     <div class='row'><span>元婴/元神离体</span><b>${c.realm>=3?(c.liti+' 次 · 游于虚空，直面外神，被合道残念征用算力风险剧增'):'尚不可离体（需元婴以上）'}</b></div>
+     <div class='row'><span>合道之途</span><b>神智清明者成合道真君（不化外神）；失控者消融为外神</b></div>
+     ${c.state==='合道'?`<div class='row'><span>真君道号</span><b style='color:#fff4d6'>${c.trueName}</b></div>
+     <div class='row'><span>所持之道</span><b>${c.dao}</b></div>
+     <div class='row'><span>立场</span><b style='color:${c.guardian?'var(--red)':'var(--dim)'}'>${c.guardian?'镇守图谋外神':'超然物外 · 不问世事'}</b></div>
+     <div class='row'><span>镇压 / 护持</span><b>镇压 ${c.zhen.suppress} 次 · 护持 ${c.zhen.guard} 人${c.zhen.recruit?(' · 收编外神 '+c.zhen.recruit+' 尊'):''}</b></div>
+     ${c.zhen.subdued.length?`<div class='row'><span>已收编外神</span><b>${c.zhen.subdued.join('、')}</b></div>`:''}`:''}
+     ${c.state==='眷属'?`<div class='row'><span>外神算力授权</span><b style='color:var(--gold)'>获「${c.god?GODS.find(g=>g.id===c.god).name:'?'}」超级算力 · 修行加速</b></div>`:''}
+
+     <h3>基础信息 <span class='bar'></span></h3>
+     <div class='row'><span>门派</span><b>青棠宗</b></div>
+     <div class='row'><span>部门</span><b>${DEPTS[c.dept].name}</b></div>
+     <div class='row'><span>入宗 / 工龄</span><b>第 ${c.born} 年（工龄 ${currentYear-c.born}）</b></div>
+     <div class='row'><span>出身</span><b>${c.birthType}</b></div>
+     <div class='row'><span>籍贯</span><b>${c.hometown}</b></div>
+
+     <h3>背景 <span class='bar'></span></h3>
+     <div class='sec' style='font-size:12px;color:var(--dim);line-height:1.7'>本为${c.birthType}出身，自${c.hometown}而来，因${c.arts.join('、')}之才与容貌被宗门相中，拜入青棠宗${DEPTS[c.dept].name}，专司${c.specialty}。性情${c.persona==='外显'?'外显、乐于周旋凡尘':'隐世、少履凡间'}，其世俗往来多托${ag?'下派凡人'+ag.name:'宗门代理人'}行之。</div>
+
+     <h3>能力 <span class='bar'></span></h3>
+     <div class='row'><span>容貌</span><b>${c.beauty} / 10</b></div>
+     <div class='row'><span>才艺</span><div class='tagcloud'>${c.arts.map(a=>`<span>${a}</span>`).join('')}</div></div>
+     <div class='row'><span>术法专长</span><b>${c.specialty}</b></div>
+
+     <h3>生理需求 <span class='bar'></span></h3>
+     <div class='row'><span>饥饿</span><b>${mbar(c.needs.hunger,100,c.needs.hunger>70?'var(--red)':'var(--jade)')} ${Math.round(c.needs.hunger)}</b></div>
+     <div class='row'><span>口渴</span><b>${mbar(c.needs.thirst,100,c.needs.thirst>70?'var(--red)':'var(--jade)')} ${Math.round(c.needs.thirst)}</b></div>
+     <div class='row'><span>身体洁净度</span><b>${mbar(c.needs.clean,100,c.needs.clean<30?'var(--red)':'var(--blue)')} ${Math.round(c.needs.clean)}</b></div>
+     <div class='row'><span>疾病</span><b>${c.sick?('<span style=\'color:var(--red)\'>'+c.sick+'</span>'):'无'}</b></div>
+
+     <h3>身心状况 <span class='bar'></span></h3>
+     <div class='row'><span>健康</span><b>${c.health}</b></div>
+     <div class='row'><span>心境</span><b>${c.mood}</b></div>
+     <div class='row'><span>SAN / 同化</span><b style='color:${sanColor}'>SAN ${Math.round(c.san)} ｜ 同化 ${Math.round(c.assim)}</b></div>
+
+     <h3>资产清单（含耐久） <span class='bar'></span></h3>
+     <div class='row'><span>货币积蓄</span><b>${c.money.toLocaleString()} 灵元</b></div>
+     <div class='row'><span>衣物（法衣/常服）</span><b>${grp['衣'].length} 件</b></div>
+     ${itemHtml('衣')}
+     <div class='row'><span>饰品</span><b>${grp['饰'].length} 件</b></div>
+     ${itemHtml('饰')}
+     <div class='row'><span>家具陈设</span><b>${grp['具'].length} 件</b></div>
+     ${itemHtml('具')}
+     <div class='row'><span>座驾 / 车资</span><b>${c.ride}${c.rideCost>0?'（车资 '+c.rideCost+' 灵元）':''}</b></div>
+     <div class='row'><span>洞府</span><b>第 ${c.cave} 重</b></div>
+     <div class='row'><span>法宝</span><b>${c.treasureNames.join('、')||'无'}</b></div>
+     <div class='row'><span>灵宠</span><b>${c.pets||'无'}</b></div>
+
+     <h3>世俗经营与曝光 <span class='bar'></span></h3>
+     ${holdHtml}
+     <div class='row'><span>曝光度</span><b style='color:${expColor}'>${c.exposure} / 100 ${c.exposure>60?'（过高·招致不详）':'（低·隐匿）'}</b></div>
+     <div class='row'><span>行事方式</span><b>${c.persona==='外显'?'亲履凡间·展露仙迹':'间接·多托宗门代理人'}</b></div>
+
+     <h3>社会关系 <span class='bar'></span></h3>
+     <div class='row'><span>现任道侣</span><b>${p?p.name:'—'}</b></div>
+     <div class='row'><span>历劫斩缘</span><b>${c.bondsDone} 段（${c.pastBonds.join('、')||'—'}）</b></div>
+     <div class='row'><span>师尊</span><b>${mentor?mentor.name+'（'+REALMS[mentor.realm].name+'）':'—'}</b></div>
+     <div class='row'><span>亲传弟子</span><b>${c.disciples.length} 人</b></div>
+     <div class='row'><span>跨门往来</span><b>${c.foreignSect||'—'}</b></div>
+     <div class='row'><span>宗门代理人（下派凡人）</span><b>${ag?ag.name+'（'+ag.type+'）':'—'}</b></div>
+
+     <h3>行为时间线 <span class='bar'></span></h3>
+     <div class='timeline'>${tl}</div>
+
+     <h3>服饰 · 体香 · 所在 <span class='bar'></span></h3>
+     <div class='row'><span>当前所在</span><b>${placeName} · ${c.act||'—'}</b></div>
+     <div class='row'><span>当前场合</span><b>${OCC_NAME[oC.occ]}${currentOcc(c)!==oC.occ?'':''}</b></div>
+     <div class='row'><span>体香</span><b>${fragPill}</b></div>
+     <div class='row'><span>更衣勤惰</span><b>${c.realm>=4?'境界高·分泌极少，久不更衣亦体香如故':'随洁净度与场合而更衣'}</b></div>
+     <div style='margin:6px 0'><button onclick='openPortrait(${c.id})'>🎨 生成立绘预览（SVG + 生图 Prompt）</button></div>
+     <h3 style='font-size:12px;color:var(--gold)'>当前着装（${OCC_NAME[oC.occ]}）</h3>
+     ${wornCards}
+     <h3 style='font-size:12px;color:var(--gold)'>亵衣亵裤储备（${c.wardrobe.underwear.filter(g=>!g.lost).length} 件）</h3>
+     ${uwCards}
+     <h3 style='font-size:12px;color:var(--gold)'>立绘存档（境界提升 / 重要事件）</h3>
+     ${portRows}
+
+     <h3>🧵 衣装素材（联动衣服素材库） <span class='bar'></span></h3>
+     <div class='note' style='color:var(--dim);font-size:11px;margin-bottom:6px'>按当前场合取用衣服素材库（wardrobe）成衣；红线仙司默认以「纱衣」为标识。点场合标签切换，点衣名即设为该场合当前衣装。</div>
+     ${clothesLibHtml(c)}
+
+     <h3>人物小传 <span class='bar'></span></h3>
+     <pre class='bio' id='bioText'>${buildBio(c)}</pre>
+     <div class='export-row'>
+       <button class='primary' onclick='exportBio(${c.id})'>📄 导出 .txt 小传</button>
+       <button onclick='copyBio(${c.id})'>📋 复制文本</button>
+     </div>`;
+}
+
+/* ===== 人物小传 ===== */
+function buildBio(c){
+  const p=c.partner?roster.find(x=>x.id===c.partner):null;
+  const mentor=c.mentor?roster.find(x=>x.id===c.mentor):null;
+  const ag=c.agent?mortalAgents.find(a=>a.id===c.agent):null;
+  const grp={衣:[],饰:[],具:[]};c.items.forEach(it=>{if(!it.lost)grp[it.cat].push(it.name+'('+Math.round(it.dur)+'/'+it.max+')');});
+  const tl=c.log.slice().reverse().map(e=>`  第 ${e.y} 年　${e.t}`).join('\n');
+  const holds=c.holdings.length?c.holdings.map(h=>`    · ${h.form} ${h.target}：+${h.income} 灵元/年`).join('\n'):'    · 隐于世外，无世俗产业';
+  return `青棠宗 · 仙人档案 · 人物小传
+══════════════════════════
+姓名：${c.name}　性别：${c.sex}　道龄：${c.ageBase+currentYear} 年
+性情：${c.persona==='外显'?'外显型（乐于周旋凡尘）':'隐世型（少履凡间）'}
+门派：青棠宗　部门：${DEPTS[c.dept].name}
+境界：${REALMS[c.realm].name}　修为 ${Math.round(c.xiu)}/100
+当前状态：${c.state}　SAN ${Math.round(c.san)}/100　同化 ${Math.round(c.assim)}/100
+凡间曝光度：${c.exposure}/100
+────────────────────────
+【当前状态】
+· 状态：${c.state}
+· SAN 值（理智）：${Math.round(c.san)}/100${c.san<25?'　※ 濒临被超古代合道者附身（算力征用）':''}
+· 外神同化进度（算力征用）：${Math.round(c.assim)}/100${c.assim>0?'　※ 元神正被超古代合道者征用采撷':''}
+· 隶属外神：${c.god?GODS.find(g=>g.id===c.god).name+'（'+(c.state==='眷属'?'眷属·保留自我':'节点·被征用')+'）':'—'}
+· 灵力来源：${c.qiSource==='tainted'?'魔染灵力（看似清冽，实则潜在污染）':'清白灵气'}${c.bornTaint?'　※ 自入门第一口灵气起即带魔染隐患':''}${c.curated?'　※ 旧修士，用的是正常灵气':''}
+· 魔染度：${Math.round(c.taint)}/100（阈值 60）${c.taintSrc?'　染自「'+GODS.find(g=>g.id===c.taintSrc).name+'」':''}${c.taint>=60?'　※ 已越阈值':''}
+${c.imprisoned?'· 囚禁榨干：以「闭关静修」为名被囚，灵力持续抽取并入宗门灵力池\n':''}· 凡间曝光度：${c.exposure}/100${c.exposure>60?'　※ 过高，已招致不详':''}
+· 真君护持：${c.guardedBy?('受「'+c.guardedBy+'」护持（已脱外神征用）'):'—'}
+────────────────────────
+【修炼状态】
+· 意志容量 W：${Math.round(c.will)}　灵气日剂量 ${CONS[c.realm][0]}
+· 基因锁已解：${c.realm} 道
+· 元婴/元神离体：${c.realm>=3?(c.liti+' 次 · 元婴(化神)出窍游于虚空，直面外神，被合道残念征用算力风险剧增'):'尚不可离体（需元婴以上）'}
+· 合道之途：神智清明者成合道真君（不化外神）；失控者消融为外神
+${c.state==='合道'?'· 真君道号：'+c.trueName+'　所持之道：'+c.dao+'\n· 立场：'+(c.guardian?'镇守图谋外神':'超然物外 · 不问世事')+'\n· 镇压 '+c.zhen.suppress+' 次 · 护持 '+c.zhen.guard+' 人'+(c.zhen.recruit?(' · 收编外神 '+c.zhen.recruit+' 尊'):'')+(c.zhen.subdued.length?('（已收编：'+c.zhen.subdued.join('、')+'）'):'')+'\n':''}${c.state==='眷属'?'· 外神算力授权：获「'+(c.god?GODS.find(g=>g.id===c.god).name:'?')+'」超级算力 · 修行加速\n':''}
+────────────────────────
+【基础信息】
+· 入宗：第 ${c.born} 年（工龄 ${currentYear-c.born}）　出身：${c.birthType}　籍贯：${c.hometown}
+────────────────────────
+【生理需求】
+· 饥饿 ${Math.round(c.needs.hunger)}/100　口渴 ${Math.round(c.needs.thirst)}/100　洁净 ${Math.round(c.needs.clean)}/100
+· 疾病：${c.sick||'无'}
+────────────────────────
+【身心状况】
+· 健康：${c.health}　心境：${c.mood}
+────────────────────────
+【服饰 · 体香 · 所在】
+· 当前所在：${SECT_PLACES.find(p=>p.id===c.loc).name}　｜　所事：${c.act}
+· 当前场合：${OCC_NAME[currentOcc(c)]}
+· 体香：${c.fragrance.kind==='fragrant'?(c.fragrance.type+'之香（'+c.fragrance.strength+'/10）'):c.fragrance.kind==='foul'?(c.fragrance.type+'之气'):'体气清正 · 无异味'}
+· 更衣：${c.realm>=4?'境界高、分泌极少，久不更衣亦体香如故':'随洁净度与场合更衣'}
+· 当前着装：${outfitFor(c).worn.map(g=>g.part+':'+g.color+g.name+'（'+g.material+'）').join('、')||'简素布衣'}
+· 亵衣亵裤储备：${c.wardrobe.underwear.filter(g=>!g.lost).length} 件
+────────────────────────
+【资产清单（含耐久）】
+· 货币积蓄：${c.money.toLocaleString()} 灵元
+· 衣物（${grp['衣'].length} 件）：${grp['衣'].join('、')||'—'}
+· 饰品（${grp['饰'].length} 件）：${grp['饰'].join('、')||'—'}
+· 家具（${grp['具'].length} 件）：${grp['具'].join('、')||'—'}
+· 座驾 / 车资：${c.ride}${c.rideCost>0?'（'+c.rideCost+' 灵元）':''}　洞府：第 ${c.cave} 重
+· 法宝：${c.treasureNames.join('、')||'无'}　灵宠：${c.pets||'无'}
+────────────────────────
+【世俗经营与曝光】
+${holds}
+· 行事方式：${c.persona==='外显'?'亲履凡间、偶展仙迹':'间接，多托宗门代理人（下派凡人）'}
+────────────────────────
+【社会关系】
+· 现任道侣：${p?p.name:'—'}　历劫斩缘：${c.bondsDone} 段（${c.pastBonds.join('、')||'—'}）
+· 师尊：${mentor?mentor.name+'（'+REALMS[mentor.realm].name+'）':'—'}　亲传弟子：${c.disciples.length} 人
+· 跨门往来：${c.foreignSect||'—'}
+· 宗门代理人：${ag?ag.name+'（'+ag.type+'，'+ag.role+'）':'—'}
+────────────────────────
+【履历纪要】
+${tl}
+────────────────────────
+【立绘存档（生图 Prompt 底稿）】
+${(c.portraits&&c.portraits.length)?c.portraits.slice().reverse().map(p=>'  第 '+p.y+' 年 · '+p.reason+'：\n    '+p.prompt).join('\n'):'  尚无立绘存档（境界提升 / 重要事件时自动留存）'}
+══════════════════════════
+※ 本小传由青棠宗活档系统于第 ${currentYear} 年自动生成。`;
+}
+function exportBio(id){
+  const c=roster.find(x=>x.id===id);if(!c)return;
+  const text=buildBio(c);
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=c.name+'_青棠宗人物小传.txt';
+  document.body.appendChild(a);a.click();a.remove();
+  URL.revokeObjectURL(a.href);
+}
+function copyBio(id){
+  const c=roster.find(x=>x.id===id);if(!c)return;
+  const text=buildBio(c);
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>alert('已复制到剪贴板'));}
+  else{const t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();alert('已复制到剪贴板');}
+}
+
+/* ===== 宗门地图可视化看板 ===== */
+const MAP_LAYOUT=[
+ {id:'heshi',  x:500, y:64,  cat:'core'},
+ {id:'zangjing',x:312,y:172, cat:'core'},
+ {id:'yanfa',  x:688,y:172, cat:'core'},
+ {id:'wuku',   x:500, y:232, cat:'core'},
+ {id:'danfang',x:168,y:360, cat:'prod'},
+ {id:'hongxian',x:368,y:402, cat:'social'},
+ {id:'hongluan',x:632,y:402, cat:'social'},
+ {id:'keting', x:832,y:360, cat:'social'},
+ {id:'yaopu',  x:250,y:580, cat:'prod'},
+ {id:'shouyuan',x:448,y:622, cat:'prod'},
+ {id:'wenquan',x:600,y:580, cat:'rest'},
+ {id:'qindian',x:808,y:622, cat:'rest'},
+];
+const MAP_CAT={core:{c:'#e9c46a',n:'修炼·核心'},prod:{c:'#5fd6c2',n:'生产·资源'},social:{c:'#ff6b6b',n:'姻缘·社交'},rest:{c:'#9d7bff',n:'起居·疗养'}};
+let mapOpen=false, mapTimer=null, mapSel=null;
+function locCounts(){const m={};SECT_PLACES.forEach(p=>m[p.id]=0);roster.forEach(c=>{if(m[c.loc]!==undefined)m[c.loc]++;});return m;}
+
+function openMap(){
+  mapOpen=true;
+  document.getElementById('rosterMain').style.display='none';
+  document.getElementById('mapView').style.display='block';
+  const b=document.getElementById('mapbtn');b.textContent='✕ 退出地图';b.style.color='var(--red)';b.style.borderColor='var(--red)';
+  mapSel=null;renderMap();startMapTimer();
+}
+function closeMap(){
+  mapOpen=false;
+  document.getElementById('rosterMain').style.display='';
+  document.getElementById('mapView').style.display='none';
+  const b=document.getElementById('mapbtn');b.textContent='🗺️ 宗门地图';b.style.color='var(--jade)';b.style.borderColor='var(--jade)';
+  stopMapTimer();render();
+}
+function startMapTimer(){stopMapTimer();mapTimer=setInterval(()=>{if(!mapOpen)return;rerollLocations();},1600);}
+function stopMapTimer(){if(mapTimer){clearInterval(mapTimer);mapTimer=null;}}
+function toggleAuto(){
+  if(mapTimer){stopMapTimer();const a=document.getElementById('autoBtn');if(a)a.textContent='▶ 实时：关';}
+  else{startMapTimer();const a=document.getElementById('autoBtn');if(a)a.textContent='⏸ 实时：开';}
+}
+function rerollLocations(){
+  roster.forEach(c=>{ if(c.curated)return; if(Math.random()<0.14){c.loc=pick(SECT_PLACES).id;c.act=ACT_BY_PLACE[c.loc];} });
+  if(mapOpen)renderMap();
+}
+
+function renderMap(){
+  const cnt=locCounts();
+  const total=roster.length;
+  const maxC=Math.max(...Object.values(cnt)),minC=Math.min(...Object.values(cnt));
+  const cx=500,cy=405;
+  let g="<defs><radialGradient id='mglow' cx='50%' cy='40%' r='70%'><stop offset='0%' stop-color='#14203c'/><stop offset='100%' stop-color='#0a0e1a'/></radialGradient></defs>";
+  g+="<rect width='1000' height='740' fill='url(#mglow)'/>";
+  g+="<path d='M0,740 L0,640 Q250,560 500,650 Q750,560 1000,650 L1000,740 Z' fill='#0c1428' opacity='0.7'/>";
+  MAP_LAYOUT.forEach(n=>{const c=MAP_CAT[n.cat].c;g+="<line x1='"+cx+"' y1='"+cy+"' x2='"+n.x+"' y2='"+n.y+"' stroke='"+c+"' stroke-width='1.2' opacity='0.18'/>";});
+  MAP_LAYOUT.forEach(n=>{
+    const c=MAP_CAT[n.cat].c;
+    const v=cnt[n.id]||0;
+    const r=Math.max(24,Math.min(44,24+Math.sqrt(v)*1.3));
+    const p=SECT_PLACES.find(s=>s.id===n.id);
+    const sel=(mapSel===n.id);
+    g+="<g class='map-node' onclick='showPlace(\""+n.id+"\")'>";
+    g+="<circle cx='"+n.x+"' cy='"+n.y+"' r='"+r+"' fill='"+c+"' fill-opacity='"+(sel?0.34:0.2)+"' stroke='"+(sel?'#fff':c)+"' stroke-width='"+(sel?3:1.6)+"'/>";
+    g+="<circle cx='"+n.x+"' cy='"+n.y+"' r='"+(r*0.5)+"' fill='none' stroke='"+c+"' stroke-width='1' opacity='0.5'/>";
+    g+="<text x='"+n.x+"' y='"+(n.y-4)+"' text-anchor='middle' fill='#fff' font-size='13' font-weight='700'>"+p.name+"</text>";
+    g+="<text x='"+n.x+"' y='"+(n.y+13)+"' text-anchor='middle' fill='#dfe8ff' font-size='12' font-weight='700'>"+v+" 人</text>";
+    g+="</g>";
+  });
+  g+="<text x='500' y='34' text-anchor='middle' fill='#e9c46a' font-size='15' font-weight='700'>青棠宗 · 宗门实时分布地图</text>";
+  Object.keys(MAP_CAT).forEach((k,i)=>{const c=MAP_CAT[k].c;g+="<circle cx='"+(40+i*150)+"' cy='702' r='6' fill='"+c+"'/><text x='"+(52+i*150)+"' y='706' fill='#8aa0c8' font-size='11'>"+MAP_CAT[k].n+"</text>";});
+  document.getElementById('mapSvg').innerHTML=g;
+  renderMapSide(cnt,total,maxC,minC);
+}
+function renderMapSide(cnt,total,maxC,minC){
+  let hot=null,cold=null;
+  Object.entries(cnt).forEach(([id,v])=>{if(hot===null||v>cnt[hot])hot=id;if(cold===null||v<cnt[cold])cold=id;});
+  const hotP=SECT_PLACES.find(p=>p.id===hot),coldP=SECT_PLACES.find(p=>p.id===cold);
+  const vals=Object.values(cnt);
+  const mean=vals.reduce((a,b)=>a+b,0)/vals.length;
+  const sd=Math.sqrt(vals.reduce((a,b)=>a+(b-mean)*(b-mean),0)/vals.length);
+  const cv=(sd/mean*100).toFixed(0);
+  const sorted=MAP_LAYOUT.slice().sort((a,b)=>cnt[b.id]-cnt[a.id]);
+  const rows=sorted.map(n=>{
+    const p=SECT_PLACES.find(s=>s.id===n.id);
+    const v=cnt[n.id]||0;const w=v/Math.max(maxC,1)*100;
+    return "<div class='row' onclick='showPlace(\""+n.id+"\")'>"+
+      "<span class='pn' style='color:"+MAP_CAT[n.cat].c+"'>"+p.name+"</span>"+
+      "<span class='pt'><i style='width:"+w+"%;background:"+MAP_CAT[n.cat].c+"'></i></span>"+
+      "<span class='pc'>"+v+"</span></div>";
+  }).join('');
+  const hint="<div style='color:var(--dim);font-size:11px;margin:4px 0 2px'>点击地图节点或下列任一处，查看在驻人员</div><div class='plist'>"+rows+"</div>";
+  const body=mapSel?renderPlaceDetail(mapSel,cnt[mapSel]):hint;
+  let h="<h2>📍 宗门整体情况 <span style='float:right;font-size:11px;color:var(--dim)'>第 "+currentYear+" 年</span></h2>"+
+    "<div class='map-ctrls'><button class='primary' onclick='rerollLocations()'>🎲 推演移动（实时刷新）</button><button onclick='toggleAuto()' id='autoBtn'>⏸ 实时：开</button></div>"+
+    "<div class='map-mini'>"+
+      "<div class='kpi'><div class='k'>在宗总人数</div><div class='v g'>"+total+"</div></div>"+
+      "<div class='kpi'><div class='k'>分布均衡度</div><div class='v b'>"+cv+"%</div></div>"+
+      "<div class='kpi'><div class='k'>最热闹</div><div class='v' style='color:var(--gold);font-size:13px'>"+hotP.name+" "+cnt[hot]+"</div></div>"+
+      "<div class='kpi'><div class='k'>最冷清</div><div class='v' style='color:var(--dim);font-size:13px'>"+coldP.name+" "+cnt[cold]+"</div></div>"+
+    "</div>"+body;
+  document.getElementById('mapSide').innerHTML=h;
+}
+function showPlace(id){mapSel=id;renderMap();}
+function renderPlaceDetail(id,n){
+  const p=SECT_PLACES.find(s=>s.id===id);
+  const occ=roster.filter(c=>c.loc===id).sort((a,b)=>b.realm-a.realm||b.beauty-a.beauty);
+  const byRealm=REALMS.map((r,i)=>occ.filter(c=>c.realm===i).length);
+  const realmBars=REALMS.map((r,i)=>{
+    const w=byRealm[i]/Math.max(n,1)*100;
+    return "<div class='hbar' style='margin:3px 0'><span class='hl'>"+r.name+"</span><div class='htrack'><div class='hfill' style='width:"+w+"%;background:"+r.color+"'></div></div><span class='hv'>"+byRealm[i]+"</span></div>";
+  }).join('');
+  const list=occ.slice(0,200).map(c=>{
+    const stColor=c.state==='修炼'?'var(--jade)':c.state==='结缘'?'var(--gold)':(c.state==='被附身'||c.state==='已同化')?'var(--violet)':'var(--dim)';
+    return "<div class='occ' onclick='showDetail("+c.id+");closeMap()'>"+
+      "<span class='nm'>"+c.name+"</span>"+
+      "<span class='badge' style='background:"+REALMS[c.realm].color+";font-size:10px;padding:1px 6px;border-radius:6px'>"+REALMS[c.realm].name+"</span>"+
+      "<span style='color:"+stColor+";font-size:11px'>"+c.state+"</span>"+
+      "<span style='color:var(--dim);font-size:11px;margin-left:auto'>"+DEPTS[c.dept].name+"</span></div>";
+  }).join('');
+  const cat=MAP_LAYOUT.find(x=>x.id===id).cat;
+  return "<div style='display:flex;align-items:center;gap:6px;margin-bottom:6px'>"+
+      "<button onclick='mapSel=null;renderMap()' style='font-size:11px'>← 返回总览</button>"+
+      "<b style='color:"+MAP_CAT[cat].c+"'>"+p.name+"</b></div>"+
+    "<div style='font-size:11px;color:var(--dim);line-height:1.6'>〔"+p.func+"〕　在驻 <b style='color:var(--gold)'>"+n+"</b> 人<br>"+p.desc+"</div>"+
+    "<div style='margin:8px 0 4px;color:var(--dim);font-size:11px'>在驻境界分布</div>"+
+    realmBars+
+    "<div class='occ-scroll'>"+list+"</div>"+
+    "<div style='font-size:11px;color:var(--dim);margin-top:4px'>点击任一修士查看完整档案</div>";
+}
+
+/* 初始化 */
+REALMS.forEach(r=>{const o=document.createElement('option');o.value=r.name;o.textContent=r.name;document.getElementById('fRealm').appendChild(o);});
+Object.keys(DEPTS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=DEPTS[k].name;document.getElementById('fDept').appendChild(o);});
+document.getElementById('adv1').onclick=()=>advance(1);
+document.getElementById('adv10').onclick=()=>advance(10);
+document.getElementById('reset').onclick=()=>resetAll();
+document.getElementById('gallery').onclick=openGallery;
+document.getElementById('suwan').onclick=()=>showDetail(90001);
+document.getElementById('mapbtn').onclick=()=>{mapOpen?closeMap():openMap();};
+['search','fRealm','fState','fDept'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+
+resetAll();
+</script>
+</body>
+</html>
