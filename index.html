@@ -21,7 +21,7 @@
       <div class="cell"><span class="k" data-a="石">灵石</span><span class="v" id="v-stone">480</span></div>
       <div class="cell"><span class="k" data-a="识">神识</span><span class="v"><span id="v-shen">72</span><small>/100</small></span></div>
       <div class="cell"><span class="k" data-a="茧">囊中茧</span><span class="v" id="v-pod">0</span></div>
-      <button class="seal-maint" id="seal" type="button" title="维护入口">维</button>
+      <button class="seal-maint" id="seal" type="button" title="双击进入">维</button>
     </div>
   </header>
 
@@ -118,20 +118,6 @@
       <span class="mono" style="font-size:10.5px;color:var(--ink-4)" id="clock">--:--</span>
     </div>
   </footer>
-</div>
-
-<!-- 维护口令 -->
-<div class="gate" id="gate" hidden>
-  <form class="gate-box" id="gate-form">
-    <div class="g-t">维</div>
-    <div class="g-s">此门只问一句口令</div>
-    <input id="gate-in" type="password" autocomplete="off" placeholder="口 令">
-    <div class="g-msg" id="gate-msg"></div>
-    <div class="g-row">
-      <button class="btn" type="button" id="gate-cancel">退</button>
-      <button class="btn main" type="submit">入</button>
-    </div>
-  </form>
 </div>
 
 <!-- 孵化决策 -->
@@ -306,19 +292,13 @@
     };
   });
 
-  // 维护口令
-  $('seal').onclick = function(){ $('gate').hidden = false; $('gate-in').value = ''; $('gate-msg').textContent = ''; $('gate-in').focus(); };
-  $('gate-cancel').onclick = function(){ $('gate').hidden = true; };
-  $('gate-form').onsubmit = function(e){
-    e.preventDefault();
-    var v = $('gate-in').value.trim().toLowerCase();
-    if(v === 'qingtang' || v === '青棠'){
-      sessionStorage.setItem('qt.maint', '1');
-      location.href = 'archive.html';
-    } else {
-      $('gate-msg').textContent = '口令不对。';
-    }
-  };
+  // 维：单击无动作，两次点按（400ms 内）进入档案
+  var lastTap = 0;
+  $('seal').addEventListener('click', function(){
+    var now = Date.now();
+    if(now - lastTap <= 400){ location.href = 'archive.html'; return; }
+    lastTap = now;
+  });
 
   function tick(){
     var d = new Date();

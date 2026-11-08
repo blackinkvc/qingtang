@@ -215,33 +215,23 @@ body{padding-bottom:0}
 }
 
 /* ============================================================
-   站内扩展：维护印 / 口令闸 / 孵化决策面板 / 档案索引
+   站内扩展：维护印 / 孵化决策面板 / 档案索引
    ============================================================ */
 
-/* —— 维护印（中等，明摆，不抢主流程） —— */
+/* —— 维护印（中等，明摆，不抢主流程；双击进入） —— */
 .seal-maint{
   display:inline-grid;place-items:center;width:34px;height:34px;flex:none;
   font-family:var(--serif);font-size:17px;line-height:1;color:var(--zhu);
   border:1.4px solid var(--zhu);background:rgba(242,236,223,.6);
   letter-spacing:0;cursor:pointer;user-select:none;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   transition:background .2s var(--ease),color .2s var(--ease);
 }
-.seal-maint:hover{background:var(--zhu);color:var(--paper-hi)}
-
-/* —— 口令闸 —— */
-.gate{position:fixed;inset:0;z-index:120;display:grid;place-items:center;
-  background:rgba(29,27,23,.52);padding:20px}
-.gate[hidden]{display:none}
-.gate-box{width:min(420px,100%);background:var(--paper-hi);border:1px solid var(--rule);
-  padding:26px 26px 22px;text-align:center}
-.gate-box .g-t{font-family:var(--serif);font-size:17px;letter-spacing:.3em;margin-bottom:6px}
-.gate-box .g-s{font-size:11.5px;color:var(--ink-3);letter-spacing:.12em;margin-bottom:16px}
-.gate-box input{width:100%;text-align:center;font-family:var(--mono);letter-spacing:.2em;
-  padding:9px 10px;background:var(--paper);border:1px solid var(--rule);color:var(--ink);outline:none}
-.gate-box input:focus{border-color:var(--zhe)}
-.gate-box .g-msg{min-height:20px;font-size:11.5px;color:var(--zhu);letter-spacing:.1em;margin-top:8px}
-.gate-box .g-row{display:flex;gap:8px;margin-top:6px}
-.gate-box .g-row .btn{flex:1;justify-content:center}
+@media (hover:hover){
+  .seal-maint:hover{background:var(--zhu);color:var(--paper-hi)}
+}
+.seal-maint:focus{outline:none}
+.seal-maint:focus-visible{outline:1px solid var(--zhu);outline-offset:2px}
 
 /* —— 通用卷（密库/同门/畦） —— */
 .qt-sheet{position:fixed;inset:0;z-index:110;display:grid;place-items:center;
