@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青棠宗 · 维 / 档案</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="qt-ink.css">
+<link rel="stylesheet" href="game-ui.css">
+</head>
+<body>
+
+<div class="gate" id="gate" hidden>
+  <form class="gate-box" id="gate-form">
+    <div class="g-t">维</div>
+    <div class="g-s">此门只问一句口令</div>
+    <input id="gate-in" type="password" autocomplete="off" placeholder="口 令">
+    <div class="g-msg" id="gate-msg"></div>
+    <div class="g-row">
+      <a class="btn" href="index.html" style="justify-content:center">回裂缝</a>
+      <button class="btn main" type="submit" style="justify-content:center">入</button>
+    </div>
+  </form>
+</div>
+
+<div class="arch" id="arch" hidden>
+
+  <header class="cx-head">
+    <div>
+      <div style="font-family:var(--serif);font-size:11.5px;letter-spacing:.34em;color:var(--ink-3)">青 棠 宗 · 维</div>
+      <h1 style="font-family:var(--serif);font-size:26px;letter-spacing:.2em;margin:6px 0 0;font-weight:600">档 案 索 引</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <span class="mono" style="font-size:10.5px;color:var(--ink-4);letter-spacing:.1em">唯维护可见 · 玩家站面不列</span>
+      <a href="index.html" style="font-size:12px;letter-spacing:.14em;color:var(--ink-3);border-bottom:1px solid var(--rule)">回裂缝</a>
+    </div>
+  </header>
+
+  <div class="arch-grp">
+    <h2>宗 门 与 人 物</h2>
+    <div class="d">名册、血缘与私档；玩家看到的「同门」只是其中一栏。</div>
+    <div class="arch-list">
+      <a href="roster.html">宗门名册<span>roster</span></a>
+      <a href="relationship-map.html">人物关系图<span>relationship-map</span></a>
+      <a href="mortal.html">人物设定 · 凡俗线<span>mortal</span></a>
+    </div>
+  </div>
+
+  <div class="arch-grp">
+    <h2>山 川 与 营 造</h2>
+    <div class="d">宗门地图两版：实测坐标版与图版。</div>
+    <div class="arch-list">
+      <a href="sect-map-real.html">宗门地图 · 实测<span>sect-map-real</span></a>
+      <a href="sect-map.html">宗门地图 · 图版<span>sect-map</span></a>
+    </div>
+  </div>
+
+  <div class="arch-grp">
+    <h2>运 行 与 轮 回</h2>
+    <div class="d">宗门推演与轮回试验场，均为旧玩法，不入玩家导航。</div>
+    <div class="arch-list">
+      <a href="sect-sim.html">宗门模拟<span>sect-sim</span></a>
+      <a href="sect-life.html">轮回<span>sect-life</span></a>
+    </div>
+  </div>
+
+  <div class="arch-grp">
+    <h2>素 材 与 草 稿</h2>
+    <div class="d">衣饰、立绘与提示词；人物立绘仍走参考图链路，不并入文生图批次。</div>
+    <div class="arch-list">
+      <a href="wardrobe.html">衣饰素材<span>wardrobe</span></a>
+      <a href="portraits.html">立绘总览<span>portraits</span></a>
+      <a href="avatars/prompts.html">头像提示词册<span>avatars/prompts</span></a>
+    </div>
+  </div>
+
+  <div class="arch-grp">
+    <h2>旧 版</h2>
+    <div class="d">改游戏化之前的入口页，留作对照。</div>
+    <div class="arch-list">
+      <a href="old-toc.html">旧目次<span>old-toc</span></a>
+      <a href="cocoon.html">拾茧 · 旧版正文<span>cocoon</span></a>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:14px;border-top:1px solid var(--rule-2);font-size:11.5px;color:var(--ink-4);letter-spacing:.08em">
+    <span>维内页面不设互链，回此处再往别处。</span>
+    <button class="btn" type="button" id="quit" style="font-size:12px">退 出 维</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var KEY = 'qt.maint';
+
+  function openArch(){ $('gate').hidden = true; $('arch').hidden = false; }
+
+  if(sessionStorage.getItem(KEY) === '1'){ openArch(); }
+  else { $('gate').hidden = false; $('gate-in').focus(); }
+
+  $('gate-form').onsubmit = function(e){
+    e.preventDefault();
+    var v = $('gate-in').value.trim().toLowerCase();
+    if(v === 'qingtang' || v === '青棠'){
+      sessionStorage.setItem(KEY, '1');
+      openArch();
+    } else {
+      $('gate-msg').textContent = '口令不对。';
+      $('gate-in').value = '';
+    }
+  };
+
+  $('quit').onclick = function(){
+    sessionStorage.removeItem(KEY);
+    location.href = 'index.html';
+  };
+})();
+</script>
+</body>
+</html>

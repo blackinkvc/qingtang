@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+<meta charset='UTF-8'><link rel='icon' href='favicon.ico'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>青棠宗 · 数据看板</title>
+<link rel='stylesheet' href='qt-ink.css'>
+<script src='avatars.js'></script>
+<style>
+  .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:46px;align-items:start}
+  .side-note{border-top:1px solid var(--rule);padding-top:16px}
+  .side-note .h{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:var(--ink-3);margin-bottom:10px}
+  .side-note p{font-family:var(--kai);font-size:13px;line-height:2.1;color:var(--ink-2);margin:0}
+  .side-note .sig{font-family:var(--kai);font-size:11.5px;color:var(--ink-4);margin-top:12px;letter-spacing:.18em;text-align:right}
+  .quoteline{display:flex;gap:14px;align-items:flex-start;margin-top:24px}
+  .quoteline .bar{width:1px;background:var(--rule);align-self:stretch;flex:none}
+  .grid-charts{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+  .grid-charts.wide{grid-template-columns:340px minmax(0,1fr)}
+  .subhead{font-family:var(--serif);font-size:11.5px;letter-spacing:.2em;color:var(--ink-3);
+    border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:10px}
+  .note{font-size:11.5px;color:var(--ink-3);line-height:1.95;margin-top:12px}
+  .note b{font-weight:400;color:var(--ink-2)}
+  .note .warn{color:var(--zhu)}
+  .note code{font-size:10.5px;color:var(--ink-2)}
+  .note a{color:var(--zhe);border-bottom:1px solid var(--rule)}
+  #clientBiz th{white-space:nowrap}
+  #clientBiz td{font-size:12px}
+  #clientBiz td b{font-weight:400}
+  #clientBiz td .sm{font-size:10.5px;color:var(--ink-4)}
+  #sectNet{width:100%;max-width:340px;height:auto}
+  #clientBiz td:nth-child(4),#clientBiz td:nth-child(5){white-space:nowrap}
+  #sectTable{overflow-x:auto}
+  .two-notes{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:22px}
+  .two-notes .h{font-family:var(--serif);font-size:12px;letter-spacing:.18em;color:var(--ink);margin-bottom:6px}
+  .two-notes p{font-size:11.5px;color:var(--ink-3);line-height:1.95;margin:0}
+  .two-notes p b{font-weight:400;color:var(--zhe)}
+  @media(max-width:900px){
+    .grid2{grid-template-columns:1fr;gap:26px}
+    .grid-charts,.grid-charts.wide{grid-template-columns:1fr;gap:26px}
+    .two-notes{grid-template-columns:1fr;gap:20px}
+  }
+  @media(max-width:600px){
+    .frame{padding:30px 16px 26px}
+    .toc-row{grid-template-columns:30px 1fr auto 12px;gap:9px;padding:11px 2px 10px}
+    .toc-row .d{display:none}
+    .ledger{grid-template-columns:repeat(2,1fr)}
+    .ledger .v{font-size:20px}
+    .clientTbl th,#clientBiz th{font-size:10px;letter-spacing:.06em}
+    #clientBiz td{font-size:10.5px;padding:6px 4px}
+    #clientBiz td .sm{font-size:9px}
+    .faces{grid-template-columns:repeat(4,1fr)}
+    .faces .face{padding:11px 5px 9px}
+    .faces .face img{max-width:52px}
+    .faces .face b{font-size:11px}
+    .faces .face span{font-size:9px}
+    .split>div{font-size:0}
+    #sectTable .tbl{min-width:520px}
+    #sectTable::-webkit-scrollbar{height:3px}
+    #sectTable::-webkit-scrollbar-thumb{background:var(--rule)}
+    .colophon{padding-top:18px;margin-top:30px}
+  }
+</style>
+</head>
+<body class='qt-home'>
+<div class='sheet enter'>
+
+  <div class='rail'>
+    <span>青棠宗 · 宗门纪略　卷一</span>
+    <span>网道崩后七十年　岁次甲辰</span>
+  </div>
+
+  <div class='frame'>
+
+    <div class='masthead'>
+      <div class='brand'>
+        <div class='seal lg'>拾茧</div>
+        <div>
+          <h1>青棠宗 · 拾茧</h1>
+          <p class='sub'>宗门纪略 · 数据看板　<em>／</em>　修士一千 · 凡人十万 · 六司九院</p>
+        </div>
+      </div>
+      <div class='vtitle'><span class='vb'>青棠宗</span><span class='vs'>宗门纪略</span></div>
+    </div>
+
+    <div class='hr'></div>
+
+    <div class='hero' style='margin-top:30px'>
+      <div class='grid2'>
+        <div>
+          <p class='lede'>
+            网道崩了七十年。宗门还在，仙还在，只是往上走的那条路断了一半。茧是旧日的运货匣——有人从缝里捡回来换灵石，有人从缝里再没回来。
+            你在青棠宗做拾茧人。开一枚，交一枚，或藏一枚。
+          </p>
+          <div class='btn-row'>
+            <a class='btn primary' href='cocoon.html'>入　卷</a>
+            <a class='btn' href='cocoon.html#garden'>灵植园</a>
+            <a class='btn ghost' href='#toc'>宗门目次</a>
+          </div>
+        </div>
+
+        <aside class='side-note'>
+          <div class='h'>题　记</div>
+          <p>「茧不可尽开。开至第七枚，须以朱记封之，交回宗门，勿问所藏。」<br>
+             ——《拾茧则例 · 残页》</p>
+          <div class='sig'>录于藏经阁西厢</div>
+        </aside>
+      </div>
+
+      <div class='quoteline'>
+        <div class='bar'></div>
+        <div class='note-block' style='border:0;padding-left:0'>
+          <b>本卷所载：</b>修士一千，凡人十万，六司九院。对外只称三家：棠医连锁、红鸾交友、红线仙。<br>
+          灵气由高层配给，凡人只供原料<span class='warn'>——此为本宗真正的账。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class='sec' id='toc'>
+      <span class='mark'></span><h2>宗门目次</h2><span class='rule'></span><span class='note'>TWELVE ENTRIES</span>
+    </div>
+
+    <nav class='toc'>
+      <a class='toc-row' href='cocoon.html'><span class='no'>一</span><span class='t'>拾茧 · 开箱</span><span class='d'>巡缝 → 鉴识 → 开茧</span><span class='go'>›</span></a>
+      <a class='toc-row' href='cocoon.html#garden'><span class='no'>二</span><span class='t'>灵植园 · 偷菜</span><span class='d'>真实时间 · 可偷可失</span><span class='go'>›</span></a>
+      <a class='toc-row' href='roster.html'><span class='no'>三</span><span class='t'>仙人活档</span><span class='d'>一百二十五人</span><span class='go'>›</span></a>
+      <a class='toc-row' href='relationship-map.html'><span class='no'>四</span><span class='t'>关系网</span><span class='d'>六类脉络</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-map-real.html'><span class='no'>五</span><span class='t'>宗门地图 · 真实地形</span><span class='d'>地形 · 建筑 · 昼夜</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-map.html'><span class='no'>六</span><span class='t'>宗门地图 · 示意</span><span class='d'>建筑落位</span><span class='go'>›</span></a>
+      <a class='toc-row' href='mortal.html'><span class='no'>七</span><span class='t'>凡人群体</span><span class='d'>大公司伪装</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-sim.html'><span class='no'>八</span><span class='t'>经济结构</span><span class='d'>后台模型</span><span class='go'>›</span></a>
+      <a class='toc-row' href='portraits.html'><span class='no'>九</span><span class='t'>立绘画廊</span><span class='d'>三十五分</span><span class='go'>›</span></a>
+      <a class='toc-row' href='wardrobe.html'><span class='no'>十</span><span class='t'>衣服素材库</span><span class='d'>衣装联动</span><span class='go'>›</span></a>
+      <a class='toc-row' href='WORLD-LORE.md'><span class='no'>十一</span><span class='t'>世界设定</span><span class='d'>背景长卷</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-life.html'><span class='no'>十二</span><span class='t'>旧版 · 轮回</span><span class='d'>存档资料</span><span class='go'>›</span></a>
+    </nav>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>宗门账簿</h2><span class='rule'></span><span class='note'>LEDGER · 折算</span>
+    </div>
+
+    <div class='ledger' id='kpis'></div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>修为与人口</h2><span class='rule'></span><span class='note'>千修 · 十万凡人</span>
+    </div>
+
+    <div class='grid-charts'>
+      <div>
+        <div class='subhead'>人口结构 · 自下向上输送</div>
+        <div class='hbars' id='pyramid'></div>
+      </div>
+      <div>
+        <div class='subhead'>境界分布 · 修士千人</div>
+        <div class='hbars' id='realmBars'></div>
+      </div>
+    </div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>资源供需</h2><span class='rule'></span><span class='note'>缺口 ／ 供给</span>
+    </div>
+
+    <div class='hbars' id='resBars'></div>
+    <div class='note-block' style='margin-top:16px'>
+      灵气由高层垄断的生物制药产业配给，凡人仅供原料；灵石与进贡由凡人生活物资供养。<span class='warn'>灵气为关键约束。</span>
+    </div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>商业账</h2><span class='rule'></span><span class='note'>对外营收结构</span>
+    </div>
+
+    <div class='grid-charts'>
+      <div>
+        <div class='subhead'>日营收占比</div>
+        <div class='donut-wrap'>
+          <svg id='bizDonut' width='170' height='170' viewBox='0 0 170 170'></svg>
+          <div id='bizLegend' class='legend'></div>
+        </div>
+        <div class='note' id='bizNote'></div>
+      </div>
+      <div>
+        <div class='subhead'>客户模型 · 规模 × 单价</div>
+        <table class='tbl' id='clientBiz'></table>
+        <div class='note' id='clientNote'></div>
+      </div>
+    </div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>凡人社会</h2><span class='rule'></span><span class='note'>不知仙，只当大公司</span>
+    </div>
+
+    <div id='mortalSplit'></div>
+    <div class='note' id='mortalNote'></div>
+
+    <div class='two-notes'>
+      <div>
+        <div class='h'>门人画像</div>
+        <p>俊男美女 · 才艺齐全（琴棋书画 / 歌舞 / 辩才），乃社交结缘与红线业务的中坚。</p>
+      </div>
+      <div>
+        <div class='h'>修炼三法</div>
+        <p>① 意志耐受灵气　② 解基因锁定向进化　③ 青棠特色「结缘·斩缘」以情劫淬炼意志、抬升灵气耐受上限。</p>
+      </div>
+    </div>
+    <div class='note'>对外以三家巨头示人：<b class='zhe'>棠医连锁</b>（医院）、<b class='zhe'>红鸾交友</b>（App）、<b class='zhe'>红线仙</b>（姻缘）；仙门间外销灵植/灵宠/灵气。</div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>仙门往来</h2><span class='rule'></span><span class='note'>红线仙 · 仙门贸易</span>
+    </div>
+
+    <div class='grid-charts wide'>
+      <svg id='sectNet' width='340' height='260' viewBox='0 0 340 260'></svg>
+      <div id='sectTable'></div>
+    </div>
+    <div class='note'>青棠宗以姻缘斡旋、灵气产品、精炼技术与各仙门互通有无；灰市往来（九幽魔宗）谨慎从事。</div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>六司掌事</h2><span class='rule'></span><span class='note'>一百二十五人 · 专人专绘</span>
+    </div>
+
+    <div class='faces' id='facesBox'></div>
+    <div class='note'>一百二十五位具名人物已全部切换专属头像（<code>avatars/av-&lt;id&gt;.webp</code>，512×512）；关系网、拾茧货单、仙人活档共用同一套映射（<code>avatars.js</code>）。<a href='roster.html'>全档见仙人活档</a>　<a href='avatars/prompts.html'>提示词册</a></div>
+
+    <div class='colophon'>
+      <div class='sign'>
+        青棠宗 · 拾茧<br>
+        撰于藏经阁　校于丹鼎房　印于红线仙司
+      </div>
+      <div class='meta'>
+        qingtang.bible / vol.1<br>
+        125 avatars · 5 pages<br>
+        <span style='opacity:.7'>数据看板</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== 复用后台经济模型（默认参数） ===== */
+const REALMS=[
+ {name:'练气',color:'#8B8477'},{name:'筑基',color:'#5C7D74'},
+ {name:'金丹',color:'#4C6B7D'},{name:'元婴',color:'#A5764F'},
+ {name:'化神',color:'#7A5F76'},{name:'炼虚',color:'#9C3B31'},
+];
+const DIST=[600,250,100,35,13,2];
+const CONS=[[2,1,0.5],[4,2,1],[8,4,2],[16,8,4],[32,16,8],[64,32,16]];
+const PROD=[[0,0.5,0.2],[0,1,0.3],[0,1.5,0.5],[0,2,1],[0,3,1.5],[0,5,2]];
+const RES=['灵气','灵石','进贡'];
+const AURA_OUT=0.5,STONE_PER=3,TRIB_PER=2,DEF_AURA_FRAC=0.08;
+const BIZ=[
+ {key:'hospital',name:'棠医连锁',sub:'大型医院联锁（凡人医疗）',market:'凡人·世俗货币',share:0.40,color:'#5C7D74'},
+ {key:'app',name:'红鸾交友',sub:'恋爱交友平台 App',market:'凡人·世俗货币',share:0.30,color:'#9C3B31'},
+ {key:'match',name:'红线仙·姻缘',sub:'高端姻缘斡旋（含修士客户）',market:'混合',share:0.15,color:'#A5764F'},
+ {key:'trade',name:'仙门贸易',sub:'灵植/灵宠/灵气产品外销',market:'仙门·灵石',share:0.15,color:'#7A5F76'},
+];
+
+function compute(){
+  const cNet=[0,0,0];
+  const rows=REALMS.map((r,i)=>{
+    const n=DIST[i],c=CONS[i],p=PROD[i];
+    const consT=c[0]+c[1]+c[2],prodT=p[0]+p[1]+p[2];
+    const net=[p[0]-c[0],p[1]-c[1],p[2]-c[2]];
+    for(let k=0;k<3;k++)cNet[k]+=net[k]*n;
+    return {name:r.name,color:r.color,n,consT,prodT,selfRate:consT>0?prodT/consT:1,needBelow:consT-prodT};
+  });
+  const af=DEF_AURA_FRAC;
+  const reqRes=[
+    cNet[0]<0?Math.ceil(-cNet[0]/(af*AURA_OUT)):0,
+    cNet[1]<0?Math.ceil(-cNet[1]/STONE_PER):0,
+    cNet[2]<0?Math.ceil(-cNet[2]/TRIB_PER):0,
+  ];
+  const required=Math.max(0,...reqRes);
+  const L=required,auraW=L*af;
+  const sup=[auraW*AURA_OUT,L*STONE_PER,L*TRIB_PER];
+  const W=64;
+  const ledger=[0,1,2].map(k=>{
+    const deficit=-cNet[k],fromLab=sup[k],total=fromLab-deficit;
+    return {res:RES[k],deficit,fromLab,total};
+  });
+  const revTrib=Math.max(0,ledger[2].total);
+  const revStone=Math.max(0,ledger[1].total);
+  const totalRev=revTrib+revStone;
+  const business=BIZ.map(b=>({...b,daily:totalRev*b.share,annual:totalRev*b.share*365}));
+  return {rows,required,L,auraW,ledger,W,business,totalRev,revTrib,revStone,binding:required>0?RES[reqRes.indexOf(required)]:'—'};
+}
+
+/* ===== 渲染 ===== */
+function hbar(id,items){
+  const max=Math.max(...items.map(i=>i.val),1);
+  document.getElementById(id).innerHTML=items.map(it=>{
+    const w=Math.max(1.5,it.val/max*100);
+    return `<div class='hbar'><span class='hl'>${it.label}</span>
+      <span class='htrack'><i class='hfill' style='width:${w}%;background:${it.color}'></i></span>
+      <span class='hv'>${it.sub}</span></div>`;
+  }).join('');
+}
+
+function donut(svgId,legendId,items){
+  const total=items.reduce((a,b)=>a+b.val,0)||1;
+  const r=58,c=2*Math.PI*r;let off=0;
+  const segs=items.map(it=>{
+    const frac=it.val/total,len=frac*c;
+    const s=`<circle cx='85' cy='85' r='${r}' fill='none' stroke='${it.color}' stroke-width='21' stroke-dasharray='${len} ${c-len}' stroke-dashoffset='${-off}' transform='rotate(-90 85 85)' opacity='.9'/>`;
+    off+=len;return s;
+  }).join('');
+  document.getElementById(svgId).innerHTML=segs+
+    `<text x='85' y='80' text-anchor='middle' fill='#6E6656' font-size='10' letter-spacing='2'>日营收</text>`+
+    `<text x='85' y='100' text-anchor='middle' fill='#1D1B17' font-size='15' font-family='monospace'>${(total/10000).toFixed(1)}万</text>`;
+  document.getElementById(legendId).innerHTML=items.map(it=>
+    `<div><span class='dot' style='background:${it.color}'></span>${it.label} ${(it.val/total*100).toFixed(0)}%</div>`).join('');
+}
+
+const m=compute();
+
+/* 账簿 */
+const allPos=m.ledger.every(l=>l.total>=0);
+const kpis=[
+  {k:'修　士',v:m.rows.reduce((a,r)=>a+r.n,0).toLocaleString(),u:'练气至炼虚',c:''},
+  {k:'凡　人',v:m.L.toLocaleString(),u:'不知仙，只当大公司',c:'qing'},
+  {k:'人修比',v:(m.L/1000).toFixed(1)+'<small>: 1</small>',u:'塔基供养塔尖',c:''},
+  {k:'年营收',v:'¥'+(m.totalRev*365/1e8).toFixed(2)+'<small>亿</small>',u:'折算 · 三家合计',c:''},
+  {k:'意志容量',v:m.W.toFixed(0),u:'W · 灵气耐受上限',c:''},
+  {k:'结　余',v:allPos?'可维持':'赤字',u:'灵气为关键约束',c:allPos?'qing':'zhu'},
+];
+document.getElementById('kpis').innerHTML=kpis.map(x=>
+  `<div><div class='k'>${x.k}</div><div class='v ${x.c}'>${x.v}</div><div class='u'>${x.u}</div></div>`).join('');
+
+/* 人口金字塔：修士(顶→底) + 凡人 */
+const pyrRows=[...m.rows.slice().reverse(),{name:'凡人社会',n:m.L,color:'#A5764F'}];
+hbar('pyramid',pyrRows.map(r=>({label:r.name,val:r.n,color:r.color,sub:r.n.toLocaleString()})));
+
+/* 资源供需 */
+const resRows=m.ledger.map(l=>({
+  label:l.res,
+  val:Math.max(l.deficit,l.fromLab),
+  color:l.total>=0?'#5C7D74':'#9C3B31',
+  sub:`缺口 ${Math.round(l.deficit).toLocaleString()} ／ 供 ${Math.round(l.fromLab).toLocaleString()} ＝ ${l.total>=0?'+':''}${Math.round(l.total).toLocaleString()}`
+}));
+hbar('resBars',resRows);
+
+/* 商业账环形 */
+donut('bizDonut','bizLegend',m.business.map(b=>({label:b.name,val:b.daily,color:b.color})));
+document.getElementById('bizNote').innerHTML=
+  `日营收折算 <b>${Math.round(m.totalRev).toLocaleString()}</b> 灵石；其中世俗货币（进贡）${Math.round(m.revTrib).toLocaleString()}、仙门货币（灵石）${Math.round(m.revStone).toLocaleString()}。`;
+
+/* 境界分布 */
+hbar('realmBars',m.rows.map(r=>({label:r.name,val:r.n,color:r.color,sub:r.n+' 人 · 自给 '+(r.selfRate*100).toFixed(0)+'%'})));
+
+/* 凡人构成 */
+const aw=m.auraW, lw=m.L-m.auraW;
+document.getElementById('mortalSplit').innerHTML=
+  `<div class='split'>
+     <div style='width:${aw/m.L*100}%;background:#5C7D74'>灵气原料 ${(aw/m.L*100).toFixed(1)}%</div>
+     <div style='width:${lw/m.L*100}%;background:#A5764F'>生活物品 ${(lw/m.L*100).toFixed(1)}%</div>
+   </div>`;
+document.getElementById('mortalNote').innerHTML=
+  `凡人不知仙，只当青棠宗是来采购原料的大公司。其中约 <b>${Math.round(aw).toLocaleString()}</b> 人（${(aw/m.L*100).toFixed(1)}%）从事灵植/灵宠（灵气原料），其余 ${(lw/m.L*100).toFixed(1)}% 供养仙人日常起居。`;
+
+/* ===== 客户模型（真营收表） ===== */
+const CLIENT_BIZ=[
+ {name:'棠医连锁',type:'大型医院联锁',scale:'1,280 家门店',vol:'日均接诊 12 万人次',unit:'客单价 ¥280',annual:12e4*280*365,color:'#5C7D74',note:'凡人医疗'},
+ {name:'红鸾交友',type:'恋爱交友 App',scale:'注册 6,800 万',vol:'付费率 9% · 月活 2,100 万',unit:'ARPU ¥62 / 年',annual:6800e4*0.09*62,color:'#9C3B31',note:'凡人·订阅'},
+ {name:'红线仙·姻缘',type:'高端姻缘斡旋',scale:'年撮合 1.8 万桩',vol:'含修士 VIP 3,600 桩',unit:'均价 ¥9.6 万 / 桩',annual:18000*96000,color:'#A5764F',note:'混合·含修士'},
+ {name:'仙门贸易',type:'灵植/灵宠/灵气外销',scale:'年外销 28 万 灵石单位',vol:'折算灵气/灵植',unit:'汇率 ¥4,200 / 单位',annual:28e4*4200,color:'#7A5F76',note:'仙门·灵石'},
+];
+const cbTotal=CLIENT_BIZ.reduce((s,b)=>s+b.annual,0);
+document.getElementById('clientBiz').innerHTML=
+ '<thead><tr><th>业务线</th><th>客户规模</th><th>单价 / ARPU</th><th class="num">年营收</th><th class="num">占比</th></tr></thead><tbody>'+
+ CLIENT_BIZ.map(b=>{
+   const pct=(b.annual/cbTotal*100).toFixed(1);
+   return `<tr>
+     <td><b style='color:${b.color}'>${b.name}</b><br><span class='sm'>${b.type}</span></td>
+     <td>${b.scale}<br><span class='sm'>${b.vol}</span></td>
+     <td>${b.unit}</td>
+     <td class='num'>¥${(b.annual/1e8).toFixed(2)} 亿</td>
+     <td class='num'>${pct}%</td>
+   </tr>`;
+ }).join('')+'</tbody>';
+document.getElementById('clientNote').innerHTML=
+ `合计年营收 <b>¥${(cbTotal/1e8).toFixed(1)} 亿</b>。此为以「客户规模 × 单价」推算的真实营收表，与后台『内部资源盈余』（资源闭环视角）口径不同，二者互相印证宗门财力。`;
+
+/* ===== 仙门关系网 ===== */
+const SECTS=[
+ {name:'太虚剑宗',rel:'战略盟友',exp:'灵气灵元 · 姻缘斡旋',imp:'飞剑法器 · 剑修客卿',amt:'灵石 6.2 万 / 年',color:'#4C6B7D'},
+ {name:'百草谷',rel:'贸易伙伴',exp:'精炼技术 · 灵元',imp:'灵植种子 · 珍稀药材',amt:'灵石 4.8 万 / 年',color:'#5C7D74'},
+ {name:'玄机阁',rel:'贸易伙伴',exp:'姻缘斡旋 · 红鸾算法',imp:'机关傀儡 · 算力',amt:'灵石 3.5 万 / 年',color:'#A5764F'},
+ {name:'凌霄盟',rel:'大宗盟友',exp:'灵石互市 · 人才交换',imp:'灵石 · 高阶功法',amt:'灵石 8.0 万 / 年',color:'#7A5F76'},
+ {name:'九幽魔宗',rel:'灰市往来',exp:'灵元（谨慎）',imp:'稀有材料 · 禁制',amt:'灵石 1.2 万 / 年',color:'#9C3B31'},
+];
+(function drawSectNet(){
+  const cx=170,cy=130,R=92;
+  let s=`<circle cx='${cx}' cy='${cy}' r='26' fill='#F2ECDF' stroke='#1D1B17' stroke-width='1'/>`+
+        `<text x='${cx}' y='${cy-1}' text-anchor='middle' fill='#1D1B17' font-size='12' font-family='serif' letter-spacing='1'>青棠宗</text>`+
+        `<text x='${cx}' y='${cy+13}' text-anchor='middle' fill='#8A8272' font-size='9'>本宗</text>`;
+  SECTS.forEach((st,i)=>{
+    const ang=-Math.PI/2 + i/SECTS.length*2*Math.PI;
+    const x=cx+Math.cos(ang)*R, y=cy+Math.sin(ang)*R;
+    s+=`<line x1='${cx}' y1='${cy}' x2='${x}' y2='${y}' stroke='#C3B69D' stroke-width='1'/>`;
+    s+=`<circle cx='${x}' cy='${y}' r='20' fill='#EAE3D3' stroke='${st.color}' stroke-width='1'/>`;
+    s+=`<text x='${x}' y='${y+3}' text-anchor='middle' fill='${st.color}' font-size='10'>${st.name.slice(0,2)}</text>`;
+    s+=`<text x='${x}' y='${y+34}' text-anchor='middle' fill='#8A8272' font-size='9'>${st.rel}</text>`;
+  });
+  document.getElementById('sectNet').innerHTML=s;
+})();
+document.getElementById('sectTable').innerHTML=
+ '<table class="tbl"><thead><tr><th>仙门</th><th>关系</th><th>我方出口</th><th>我方进口</th><th>年往来</th></tr></thead><tbody>'+
+ SECTS.map(st=>`<tr>
+   <td class='nm' style='color:${st.color}'>${st.name}</td>
+   <td>${st.rel}</td>
+   <td style='font-size:11px'>${st.exp}</td>
+   <td style='font-size:11px'>${st.imp}</td>
+   <td style='font-size:11px'>${st.amt}</td>
+ </tr>`).join('')+'</tbody>';
+</script>
+<script>
+(function(){
+  var ids=['91001','90001','91005','91008','91002','91004','91006','91013'];
+  var box=document.getElementById('facesBox');
+  if(!box||typeof avatarOf==='undefined')return;
+  box.innerHTML=ids.map(function(id){
+    var m=(window.AVATAR_META&&window.AVATAR_META[id])||{};
+    return `<a class='face' href='roster.html'><img src='${avatarOf(id)}' data-fb='${avatarFallback(id)}' alt='' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'><b>${m.name||''}</b><span>${m.title||''}</span></a>`;
+  }).join('');
+})();
+</script>
+</body>
+</html>

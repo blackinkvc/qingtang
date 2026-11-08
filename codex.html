@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青棠宗 · 图鉴</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="qt-ink.css">
+<link rel="stylesheet" href="game-ui.css">
+</head>
+<body>
+<div class="codex">
+
+  <header class="cx-head">
+    <div>
+      <div style="font-family:var(--serif);font-size:11.5px;letter-spacing:.34em;color:var(--ink-3)">青 棠 宗 · 拾 茧</div>
+      <h1 style="font-family:var(--serif);font-size:26px;letter-spacing:.2em;margin:6px 0 0;font-weight:600">图 鉴</h1>
+    </div>
+    <div class="prog">
+      <span class="n" id="prog-n">0 / 0</span>
+      <span class="bar"><i id="prog-i" style="width:0%"></i></span>
+      <a href="index.html" style="font-size:12px;letter-spacing:.14em;color:var(--ink-3);border-bottom:1px solid var(--rule)">回裂缝</a>
+    </div>
+  </header>
+
+  <nav class="cx-tabs" id="tabs"></nav>
+  <div class="cards" id="cards"></div>
+
+  <div style="margin-top:26px;font-size:11.5px;color:var(--ink-4);letter-spacing:.1em;line-height:2">
+    未识之物只留轮廓与序次；已收录者标注出处与稀有度。<br>
+    配图编号与条目对应：<code class="mono">c-</code> 场景 · <code class="mono">k-</code> 茧 · <code class="mono">m-</code> 妖魔 · <code class="mono">b-</code> 残卷 · <code class="mono">e-</code> 事件。未出图者留空栏，不碍收录。
+  </div>
+</div>
+
+<footer class="g-bottom">
+  <nav class="navbar">
+    <a href="index.html"><i class="dot"></i>裂缝</a>
+    <a href="codex.html" class="on"><i class="dot"></i>图鉴</a>
+    <a href="index.html#vault"><i class="dot"></i>密库</a>
+    <a href="index.html#peers"><i class="dot"></i>同门</a>
+    <a href="index.html#plots"><i class="dot"></i>育茧畦</a>
+  </nav>
+  <div class="login">
+    <span class="t" id="log">图鉴所录，皆拾茧者亲见。</span>
+    <span class="mono" style="font-size:10.5px;color:var(--ink-4)" id="clock">--:--</span>
+  </div>
+</footer>
+
+<script>
+var DATA = {
+  cocoon: {name:"茧", items:[
+    {t:"青皮茧", r:1, no:"k-01", img:"assets/gen/k-01-qingpi.jpg", m:["中品","偏木","生长期 18 min"], d:"最常见的青皮，茧衣薄，透出隐约的木气。"},
+    {t:"赭纹茧", r:2, no:"k-02", m:["中品","偏土","生长期 26 min"], d:"茧衣有赭色横纹，土气沉稳，宜培不宜急。"},
+    {t:"白霜茧", r:2, no:"k-03", m:["上品","偏水","生长期 32 min"], d:"霜色覆壳，触之生寒，多生于裂缝阴面。"},
+    {t:"朱砂茧", r:3, no:"k-04", m:["上品","偏火","生长期 14 min"], d:"壳内似有火脉游走，熟时微微发烫。"},
+    {t:"藕紫茧", r:4, no:"k-05", m:["异品","倾向不明","生长期 40 min"], d:"紫而不艳，宗门记载中仅三见。"},
+    {t:"", r:0, no:"k-06", m:[], d:""},
+    {t:"", r:0, no:"k-07", m:[], d:""},
+    {t:"", r:0, no:"k-08", m:[], d:""}
+  ]},
+  thing: {name:"茧中物", items:[
+    {t:"残锋", r:2, no:"m-02", m:["真物","出自·青皮茧"], d:"断去半截的短锋，仍可割裂薄茧。"},
+    {t:"空壳", r:1, no:"m-03", m:["空壳","可回收 5 石"], d:"孵后仅余茧衣，卷起如纸。"},
+    {t:"青面小妖", r:3, no:"m-01", img:"assets/gen/m-01-qingmian.jpg", m:["妖魔","镇压 30%–55%"], d:"孵自贼手之茧，见人即扑，需以神识镇之。"},
+    {t:"废纸一叠", r:1, no:"m-04", m:["无意义物","灰料"], d:"湿烂的纸，辨不出一个字。"},
+    {t:"", r:0, no:"m-05", m:[], d:""},
+    {t:"", r:0, no:"m-06", m:[], d:""}
+  ]},
+  person: {name:"人物", items:[
+    {t:"沈砚", r:2, no:"p-01", m:["外门","筑基三层"], d:"好拾茧，手快，窃名一条。"},
+    {t:"柳七娘", r:3, no:"p-02", m:["内门","金丹一层","掌育茧畦"], d:"畦中之茧多半经她手，话少。"},
+    {t:"守缝人", r:4, no:"p-03", m:["身份不明"], d:"常立于裂缝侧，不问不答。"},
+    {t:"", r:0, no:"p-04", m:[], d:""},
+    {t:"", r:0, no:"p-05", m:[], d:""}
+  ]},
+  event: {name:"事件", items:[
+    {t:"初拾", r:1, no:"e-01", img:"assets/gen/c-01-rift.jpg", m:["辛亥年·霜降","裂缝"], d:"第一次拾得不明之茧，囊中微沉。"},
+    {t:"窃名", r:2, no:"e-02", m:["同门畦","未遂"], d:"手未落而人已至，记窃名一条。"},
+    {t:"", r:0, no:"e-03", m:[], d:""},
+    {t:"", r:0, no:"e-04", m:[], d:""}
+  ]},
+  book: {name:"书籍残片", items:[
+    {t:"《茧谱》卷上", r:3, no:"b-01", m:["残卷","存 12 页 / 全 40 页"], d:"记茧之品阶与倾性，缺下半。"},
+    {t:"", r:0, no:"b-02", m:[], d:""},
+    {t:"", r:0, no:"b-03", m:[], d:""}
+  ]}
+};
+
+var order = ["cocoon","thing","person","event","book"];
+var cur = "cocoon";
+var RAR = ["", "凡", "良", "珍", "秘", "绝"];
+
+function renderTabs(){
+  var n = 0;
+  var host = document.getElementById("tabs");
+  host.innerHTML = order.map(function(k){
+    var d = DATA[k], got = d.items.filter(function(x){ return x.t; }).length;
+    n += got;
+    return '<button class="cx-tab' + (k === cur ? ' on' : '') + '" data-k="' + k + '">'
+      + d.name + '<span class="c">' + got + '/' + d.items.length + '</span></button>';
+  }).join("");
+  host.querySelectorAll(".cx-tab").forEach(function(b){
+    b.onclick = function(){ cur = b.dataset.k; renderTabs(); renderCards(); };
+  });
+  var total = order.reduce(function(a,k){ return a + DATA[k].items.length; }, 0);
+  document.getElementById("prog-n").textContent = n + " / " + total;
+  document.getElementById("prog-i").style.width = (n / total * 100).toFixed(1) + "%";
+}
+
+function pic(x){
+  if(x.img){
+    return '<div class="pic"><img src="' + x.img + '" alt="' + x.t + '" loading="lazy"'
+      + ' onerror="var p=this.parentNode;p.className=\'pic ph\';p.textContent=\'' + x.no + ' · 待出\'"></div>';
+  }
+  return '<div class="pic ph">' + x.no + ' · 待出</div>';
+}
+
+function renderCards(){
+  var items = DATA[cur].items;
+  document.getElementById("cards").innerHTML = items.map(function(x, i){
+    var no = x.no || String(i + 1).padStart(2, "0");
+    if(!x.t){
+      return '<article class="cx-card lock">' + pic(x)
+        + '<div class="no">' + no + '</div>'
+        + '<div class="ttl">未 识</div><div class="desc">待解封</div></article>';
+    }
+    return '<article class="cx-card">' + pic(x)
+      + '<span class="seal-lock">已录</span>'
+      + '<div class="no">' + no + '</div>'
+      + '<div class="ttl">' + x.t + '</div>'
+      + '<div class="meta"><span class="rar r' + x.r + '">' + RAR[x.r] + '</span>'
+      + x.m.map(function(m){ return '<span>' + m + '</span>'; }).join("") + '</div>'
+      + '<div class="desc">' + x.d + '</div></article>';
+  }).join("");
+}
+
+renderTabs(); renderCards();
+
+(function tick(){
+  var d = new Date();
+  document.getElementById('clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+})();
+</script>
+</body>
+</html>

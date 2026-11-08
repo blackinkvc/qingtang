@@ -1,426 +1,337 @@
 <!DOCTYPE html>
-<html lang='zh-CN'>
+<html lang="zh-CN">
 <head>
-<meta charset='UTF-8'><link rel='icon' href='favicon.ico'>
-<meta name='viewport' content='width=device-width, initial-scale=1.0'>
-<title>青棠宗 · 数据看板</title>
-<link rel='stylesheet' href='qt-ink.css'>
-<script src='avatars.js'></script>
-<style>
-  .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:46px;align-items:start}
-  .side-note{border-top:1px solid var(--rule);padding-top:16px}
-  .side-note .h{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:var(--ink-3);margin-bottom:10px}
-  .side-note p{font-family:var(--kai);font-size:13px;line-height:2.1;color:var(--ink-2);margin:0}
-  .side-note .sig{font-family:var(--kai);font-size:11.5px;color:var(--ink-4);margin-top:12px;letter-spacing:.18em;text-align:right}
-  .quoteline{display:flex;gap:14px;align-items:flex-start;margin-top:24px}
-  .quoteline .bar{width:1px;background:var(--rule);align-self:stretch;flex:none}
-  .grid-charts{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
-  .grid-charts.wide{grid-template-columns:340px minmax(0,1fr)}
-  .subhead{font-family:var(--serif);font-size:11.5px;letter-spacing:.2em;color:var(--ink-3);
-    border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:10px}
-  .note{font-size:11.5px;color:var(--ink-3);line-height:1.95;margin-top:12px}
-  .note b{font-weight:400;color:var(--ink-2)}
-  .note .warn{color:var(--zhu)}
-  .note code{font-size:10.5px;color:var(--ink-2)}
-  .note a{color:var(--zhe);border-bottom:1px solid var(--rule)}
-  #clientBiz th{white-space:nowrap}
-  #clientBiz td{font-size:12px}
-  #clientBiz td b{font-weight:400}
-  #clientBiz td .sm{font-size:10.5px;color:var(--ink-4)}
-  #sectNet{width:100%;max-width:340px;height:auto}
-  #clientBiz td:nth-child(4),#clientBiz td:nth-child(5){white-space:nowrap}
-  #sectTable{overflow-x:auto}
-  .two-notes{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:22px}
-  .two-notes .h{font-family:var(--serif);font-size:12px;letter-spacing:.18em;color:var(--ink);margin-bottom:6px}
-  .two-notes p{font-size:11.5px;color:var(--ink-3);line-height:1.95;margin:0}
-  .two-notes p b{font-weight:400;color:var(--zhe)}
-  @media(max-width:900px){
-    .grid2{grid-template-columns:1fr;gap:26px}
-    .grid-charts,.grid-charts.wide{grid-template-columns:1fr;gap:26px}
-    .two-notes{grid-template-columns:1fr;gap:20px}
-  }
-  @media(max-width:600px){
-    .frame{padding:30px 16px 26px}
-    .toc-row{grid-template-columns:30px 1fr auto 12px;gap:9px;padding:11px 2px 10px}
-    .toc-row .d{display:none}
-    .ledger{grid-template-columns:repeat(2,1fr)}
-    .ledger .v{font-size:20px}
-    .clientTbl th,#clientBiz th{font-size:10px;letter-spacing:.06em}
-    #clientBiz td{font-size:10.5px;padding:6px 4px}
-    #clientBiz td .sm{font-size:9px}
-    .faces{grid-template-columns:repeat(4,1fr)}
-    .faces .face{padding:11px 5px 9px}
-    .faces .face img{max-width:52px}
-    .faces .face b{font-size:11px}
-    .faces .face span{font-size:9px}
-    .split>div{font-size:0}
-    #sectTable .tbl{min-width:520px}
-    #sectTable::-webkit-scrollbar{height:3px}
-    #sectTable::-webkit-scrollbar-thumb{background:var(--rule)}
-    .colophon{padding-top:18px;margin-top:30px}
-  }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青棠宗 · 拾茧</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="qt-ink.css">
+<link rel="stylesheet" href="game-ui.css">
 </head>
-<body class='qt-home'>
-<div class='sheet enter'>
+<body>
+<div class="game">
 
-  <div class='rail'>
-    <span>青棠宗 · 宗门纪略　卷一</span>
-    <span>网道崩后七十年　岁次甲辰</span>
+  <header class="g-top">
+    <div class="who">
+      <span class="sect">青棠宗</span>
+      <span class="name">拾茧者 · 沈砚</span>
+      <span class="rank">筑基三层 · 外门</span>
+    </div>
+    <div class="res">
+      <div class="cell"><span class="k" data-a="石">灵石</span><span class="v" id="v-stone">480</span></div>
+      <div class="cell"><span class="k" data-a="识">神识</span><span class="v"><span id="v-shen">72</span><small>/100</small></span></div>
+      <div class="cell"><span class="k" data-a="茧">囊中茧</span><span class="v" id="v-pod">0</span></div>
+      <button class="seal-maint" id="seal" type="button" title="维护入口">维</button>
+    </div>
+  </header>
+
+  <div class="g-main">
+
+    <aside class="g-left">
+      <div class="pane-h"><span>身 状</span><span class="mono">己</span></div>
+      <div class="stat">
+        <div class="lab"><span>神识</span><b><span id="s-shen">72</span> / 100</b></div>
+        <div class="meter"><i id="bar-shen" style="width:72%"></i></div>
+      </div>
+      <div class="stat">
+        <div class="lab"><span>体魄</span><b>64 / 100</b></div>
+        <div class="meter"><i style="width:64%;background:var(--qing)"></i></div>
+      </div>
+      <div class="pane-h" style="margin-top:16px"><span>今 日</span></div>
+      <div class="rows">
+        <div class="row"><span class="k">拾茧</span><span class="n" id="r-pick">0</span></div>
+        <div class="row"><span class="k">可偷额度</span><span class="n">2 / 3</span></div>
+        <div class="row"><span class="k">窃名</span><span class="n">1</span></div>
+        <div class="row"><span class="k">熟茧</span><span class="n" id="r-ripe">0</span></div>
+      </div>
+      <div class="pane-h" style="margin-top:16px"><span>育 茧 畦</span><span class="mono"><span id="r-plot">2</span> / 9</span></div>
+      <div class="mini-plots" id="plots">
+        <i class="on"></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="ops-note">不明之茧需种入畦中，方显品阶与倾向。<br>偷来之茧，可能孵出妖魔。</div>
+    </aside>
+
+    <section class="rift" id="rift" aria-label="时空裂缝">
+      <div class="grain"></div>
+      <div class="vignette"></div>
+      <div class="rift-label">时 空 裂 缝</div>
+
+      <button class="pod" id="pod" type="button" aria-label="拾取茧">
+        <svg viewBox="0 0 200 268" width="100%" aria-hidden="true">
+          <line x1="100" y1="0" x2="100" y2="40" stroke="rgba(222,210,184,.6)" stroke-width="1.2"/>
+          <ellipse cx="100" cy="148" rx="50" ry="76" fill="url(#silk)" stroke="#8B8270" stroke-width="1.1"/>
+          <defs>
+            <linearGradient id="silk" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#F1E8D4"/><stop offset=".55" stop-color="#DED2B8"/>
+              <stop offset="1" stop-color="#C4B79B"/>
+            </linearGradient>
+          </defs>
+          <g fill="none" stroke="rgba(120,110,88,.55)" stroke-width=".9">
+            <path d="M56 118 C82 132 118 132 144 118"/>
+            <path d="M52 140 C80 156 122 156 148 140"/>
+            <path d="M52 162 C80 178 122 178 148 162"/>
+            <path d="M56 184 C82 196 118 196 144 184"/>
+            <path d="M74 84 C70 120 74 176 82 212"/>
+            <path d="M100 74 C98 120 98 176 100 222"/>
+            <path d="M126 84 C130 120 126 176 118 212"/>
+          </g>
+          <ellipse cx="86" cy="112" rx="13" ry="26" fill="rgba(255,255,255,.22)" transform="rotate(-16 86 112)"/>
+        </svg>
+        <span class="hint">拾 取</span>
+      </button>
+      <div class="rift-empty" id="rift-empty" hidden>此处寂然<br>裂缝须臾再生一茧</div>
+      <div class="rift-foot" id="rift-foot">缝口生茧 1 / 3 · 距下一枚 01:28</div>
+    </section>
+
+    <aside class="g-right">
+      <div class="pane-h"><span>行 事</span><span class="mono">择一</span></div>
+      <div class="ops">
+        <button class="btn main" id="op-pick" type="button">拾 茧 <em>神识 −2</em></button>
+        <button class="btn" id="op-plant" type="button" disabled title="囊中无茧">种 下 <em>畦 · 3 石</em></button>
+        <button class="btn" id="op-hatch" type="button" disabled title="尚无熟茧">孵 化 <em>先看风险</em></button>
+        <button class="btn" id="op-steal" type="button">偷 <em>40–70%</em></button>
+        <button class="btn" id="op-market" type="button">市 集 <em>30 石起</em></button>
+        <button class="btn" id="op-suppress" type="button" disabled title="无妖魔可镇">镇 压 <em>神识 −30</em></button>
+      </div>
+      <div class="ops-note">孵化非必得真物，亦有空壳、妖物、无意义物。</div>
+
+      <div class="pane-h" style="margin-top:18px"><span>裂 缝</span><span class="mono">三</span></div>
+      <div class="rows">
+        <div class="row"><span class="k">缝口生茧</span><span class="n">1 / 3</span></div>
+        <div class="row"><span class="k">距下一枚</span><span class="n">01:28</span></div>
+        <div class="row"><span class="k">今日异动</span><span class="n">2</span></div>
+      </div>
+      <div class="ops-note hint-block">传闻 · 守缝人说<br>从裂缝里出来的，未必都是活物。<br><span style="color:var(--ink-4)">——《茧谱》卷上残页</span></div>
+    </aside>
   </div>
 
-  <div class='frame'>
+  <footer class="g-bottom">
+    <nav class="navbar">
+      <a href="index.html" class="on"><i class="dot"></i>裂缝</a>
+      <a href="codex.html"><i class="dot"></i>图鉴</a>
+      <a href="#" data-sheet="vault"><i class="dot"></i>密库</a>
+      <a href="#" data-sheet="peers"><i class="dot"></i>同门</a>
+      <a href="#" data-sheet="plots"><i class="dot"></i>育茧畦</a>
+    </nav>
+    <div class="login">
+      <span class="t" id="log">初入裂缝，风止，缝口悬一枚不明之茧。</span>
+      <span class="mono" style="font-size:10.5px;color:var(--ink-4)" id="clock">--:--</span>
+    </div>
+  </footer>
+</div>
 
-    <div class='masthead'>
-      <div class='brand'>
-        <div class='seal lg'>拾茧</div>
-        <div>
-          <h1>青棠宗 · 拾茧</h1>
-          <p class='sub'>宗门纪略 · 数据看板　<em>／</em>　修士一千 · 凡人十万 · 六司九院</p>
+<!-- 维护口令 -->
+<div class="gate" id="gate" hidden>
+  <form class="gate-box" id="gate-form">
+    <div class="g-t">维</div>
+    <div class="g-s">此门只问一句口令</div>
+    <input id="gate-in" type="password" autocomplete="off" placeholder="口 令">
+    <div class="g-msg" id="gate-msg"></div>
+    <div class="g-row">
+      <button class="btn" type="button" id="gate-cancel">退</button>
+      <button class="btn main" type="submit">入</button>
+    </div>
+  </form>
+</div>
+
+<!-- 孵化决策 -->
+<div class="hatch" id="hatch" hidden>
+  <div class="hatch-box">
+    <div class="hatch-head">
+      <div>
+        <div class="h-k">孵 化 · 风 险 评 估</div>
+        <div class="h-t">青皮茧<span class="h-tag">中品 · 偏木</span></div>
+      </div>
+      <div class="risk warn" id="h-risk">险</div>
+    </div>
+    <div class="hatch-body">
+      <div>
+        <div class="hatch-fig">
+          <img src="assets/gen/k-01-qingpi.jpg" alt="青皮茧" onerror="this.parentNode.classList.add('ph');this.remove()">
+          <div class="cap">k-01 · 青皮茧</div>
         </div>
       </div>
-      <div class='vtitle'><span class='vb'>青棠宗</span><span class='vs'>宗门纪略</span></div>
-    </div>
-
-    <div class='hr'></div>
-
-    <div class='hero' style='margin-top:30px'>
-      <div class='grid2'>
-        <div>
-          <p class='lede'>
-            网道崩了七十年。宗门还在，仙还在，只是往上走的那条路断了一半。茧是旧日的运货匣——有人从缝里捡回来换灵石，有人从缝里再没回来。
-            你在青棠宗做拾茧人。开一枚，交一枚，或藏一枚。
-          </p>
-          <div class='btn-row'>
-            <a class='btn primary' href='cocoon.html'>入　卷</a>
-            <a class='btn' href='cocoon.html#garden'>灵植园</a>
-            <a class='btn ghost' href='#toc'>宗门目次</a>
+      <div>
+        <div class="h-sec">
+          <div class="lab">已 知 线 索</div>
+          <ul class="clues">
+            <li>茧衣完整，无破口，丝线尚新</li>
+            <li>透出淡木气，近之微温</li>
+            <li>种下 18 分钟后见异动，纹路转深</li>
+            <li class="lock">未显：茧内是否有活物（需再候 6 分钟）</li>
+          </ul>
+        </div>
+        <div class="h-sec">
+          <div class="lab">妖 魔 概 率</div>
+          <div class="probs">
+            <div class="p"><span>真物</span><span class="bar"><i style="width:48%;background:var(--qing)"></i></span><span class="n">48%</span></div>
+            <div class="p"><span>空壳</span><span class="bar"><i style="width:24%;background:var(--ink-4)"></i></span><span class="n">24%</span></div>
+            <div class="p"><span>妖魔</span><span class="bar"><i style="width:18%;background:var(--zhu)"></i></span><span class="n">12–18%</span></div>
+            <div class="p"><span>无意义物</span><span class="bar"><i style="width:10%;background:var(--rule)"></i></span><span class="n">10%</span></div>
           </div>
         </div>
-
-        <aside class='side-note'>
-          <div class='h'>题　记</div>
-          <p>「茧不可尽开。开至第七枚，须以朱记封之，交回宗门，勿问所藏。」<br>
-             ——《拾茧则例 · 残页》</p>
-          <div class='sig'>录于藏经阁西厢</div>
-        </aside>
-      </div>
-
-      <div class='quoteline'>
-        <div class='bar'></div>
-        <div class='note-block' style='border:0;padding-left:0'>
-          <b>本卷所载：</b>修士一千，凡人十万，六司九院。对外只称三家：棠医连锁、红鸾交友、红线仙。<br>
-          灵气由高层配给，凡人只供原料<span class='warn'>——此为本宗真正的账。</span>
+        <div class="h-sec">
+          <div class="lab">投 入</div>
+          <div class="cost">
+            <span>灵石 <b id="h-cost">24</b></span>
+            <span>神识 <b>10</b></span>
+            <span style="color:var(--ink-4)">中品基准，异品另计</span>
+          </div>
+        </div>
+        <div class="h-sec">
+          <div class="lab">失 败 后 果</div>
+          <div class="conseq">孵出妖魔：神识 <b>−30</b>，该畦格冷却 <b>加倍</b>，茧<b>不毁</b>，可镇后再孵。</div>
         </div>
       </div>
     </div>
-
-    <div class='sec' id='toc'>
-      <span class='mark'></span><h2>宗门目次</h2><span class='rule'></span><span class='note'>TWELVE ENTRIES</span>
+    <div class="hatch-foot">
+      <button class="btn" type="button" id="h-cancel">暂 缓</button>
+      <button class="btn main" type="button" id="h-go">投 入 · 孵 化</button>
     </div>
+  </div>
+</div>
 
-    <nav class='toc'>
-      <a class='toc-row' href='cocoon.html'><span class='no'>一</span><span class='t'>拾茧 · 开箱</span><span class='d'>巡缝 → 鉴识 → 开茧</span><span class='go'>›</span></a>
-      <a class='toc-row' href='cocoon.html#garden'><span class='no'>二</span><span class='t'>灵植园 · 偷菜</span><span class='d'>真实时间 · 可偷可失</span><span class='go'>›</span></a>
-      <a class='toc-row' href='roster.html'><span class='no'>三</span><span class='t'>仙人活档</span><span class='d'>一百二十五人</span><span class='go'>›</span></a>
-      <a class='toc-row' href='relationship-map.html'><span class='no'>四</span><span class='t'>关系网</span><span class='d'>六类脉络</span><span class='go'>›</span></a>
-      <a class='toc-row' href='sect-map-real.html'><span class='no'>五</span><span class='t'>宗门地图 · 真实地形</span><span class='d'>地形 · 建筑 · 昼夜</span><span class='go'>›</span></a>
-      <a class='toc-row' href='sect-map.html'><span class='no'>六</span><span class='t'>宗门地图 · 示意</span><span class='d'>建筑落位</span><span class='go'>›</span></a>
-      <a class='toc-row' href='mortal.html'><span class='no'>七</span><span class='t'>凡人群体</span><span class='d'>大公司伪装</span><span class='go'>›</span></a>
-      <a class='toc-row' href='sect-sim.html'><span class='no'>八</span><span class='t'>经济结构</span><span class='d'>后台模型</span><span class='go'>›</span></a>
-      <a class='toc-row' href='portraits.html'><span class='no'>九</span><span class='t'>立绘画廊</span><span class='d'>三十五分</span><span class='go'>›</span></a>
-      <a class='toc-row' href='wardrobe.html'><span class='no'>十</span><span class='t'>衣服素材库</span><span class='d'>衣装联动</span><span class='go'>›</span></a>
-      <a class='toc-row' href='WORLD-LORE.md'><span class='no'>十一</span><span class='t'>世界设定</span><span class='d'>背景长卷</span><span class='go'>›</span></a>
-      <a class='toc-row' href='sect-life.html'><span class='no'>十二</span><span class='t'>旧版 · 轮回</span><span class='d'>存档资料</span><span class='go'>›</span></a>
-    </nav>
-
-    <div class='sec'>
-      <span class='mark'></span><h2>宗门账簿</h2><span class='rule'></span><span class='note'>LEDGER · 折算</span>
-    </div>
-
-    <div class='ledger' id='kpis'></div>
-
-    <div class='sec'>
-      <span class='mark'></span><h2>修为与人口</h2><span class='rule'></span><span class='note'>千修 · 十万凡人</span>
-    </div>
-
-    <div class='grid-charts'>
-      <div>
-        <div class='subhead'>人口结构 · 自下向上输送</div>
-        <div class='hbars' id='pyramid'></div>
-      </div>
-      <div>
-        <div class='subhead'>境界分布 · 修士千人</div>
-        <div class='hbars' id='realmBars'></div>
-      </div>
-    </div>
-
-    <div class='sec'>
-      <span class='mark'></span><h2>资源供需</h2><span class='rule'></span><span class='note'>缺口 ／ 供给</span>
-    </div>
-
-    <div class='hbars' id='resBars'></div>
-    <div class='note-block' style='margin-top:16px'>
-      灵气由高层垄断的生物制药产业配给，凡人仅供原料；灵石与进贡由凡人生活物资供养。<span class='warn'>灵气为关键约束。</span>
-    </div>
-
-    <div class='sec'>
-      <span class='mark'></span><h2>商业账</h2><span class='rule'></span><span class='note'>对外营收结构</span>
-    </div>
-
-    <div class='grid-charts'>
-      <div>
-        <div class='subhead'>日营收占比</div>
-        <div class='donut-wrap'>
-          <svg id='bizDonut' width='170' height='170' viewBox='0 0 170 170'></svg>
-          <div id='bizLegend' class='legend'></div>
-        </div>
-        <div class='note' id='bizNote'></div>
-      </div>
-      <div>
-        <div class='subhead'>客户模型 · 规模 × 单价</div>
-        <table class='tbl' id='clientBiz'></table>
-        <div class='note' id='clientNote'></div>
-      </div>
-    </div>
-
-    <div class='sec'>
-      <span class='mark'></span><h2>凡人社会</h2><span class='rule'></span><span class='note'>不知仙，只当大公司</span>
-    </div>
-
-    <div id='mortalSplit'></div>
-    <div class='note' id='mortalNote'></div>
-
-    <div class='two-notes'>
-      <div>
-        <div class='h'>门人画像</div>
-        <p>俊男美女 · 才艺齐全（琴棋书画 / 歌舞 / 辩才），乃社交结缘与红线业务的中坚。</p>
-      </div>
-      <div>
-        <div class='h'>修炼三法</div>
-        <p>① 意志耐受灵气　② 解基因锁定向进化　③ 青棠特色「结缘·斩缘」以情劫淬炼意志、抬升灵气耐受上限。</p>
-      </div>
-    </div>
-    <div class='note'>对外以三家巨头示人：<b class='zhe'>棠医连锁</b>（医院）、<b class='zhe'>红鸾交友</b>（App）、<b class='zhe'>红线仙</b>（姻缘）；仙门间外销灵植/灵宠/灵气。</div>
-
-    <div class='sec'>
-      <span class='mark'></span><h2>仙门往来</h2><span class='rule'></span><span class='note'>红线仙 · 仙门贸易</span>
-    </div>
-
-    <div class='grid-charts wide'>
-      <svg id='sectNet' width='340' height='260' viewBox='0 0 340 260'></svg>
-      <div id='sectTable'></div>
-    </div>
-    <div class='note'>青棠宗以姻缘斡旋、灵气产品、精炼技术与各仙门互通有无；灰市往来（九幽魔宗）谨慎从事。</div>
-
-    <div class='sec'>
-      <span class='mark'></span><h2>六司掌事</h2><span class='rule'></span><span class='note'>一百二十五人 · 专人专绘</span>
-    </div>
-
-    <div class='faces' id='facesBox'></div>
-    <div class='note'>一百二十五位具名人物已全部切换专属头像（<code>avatars/av-&lt;id&gt;.webp</code>，512×512）；关系网、拾茧货单、仙人活档共用同一套映射（<code>avatars.js</code>）。<a href='roster.html'>全档见仙人活档</a>　<a href='avatars/prompts.html'>提示词册</a></div>
-
-    <div class='colophon'>
-      <div class='sign'>
-        青棠宗 · 拾茧<br>
-        撰于藏经阁　校于丹鼎房　印于红线仙司
-      </div>
-      <div class='meta'>
-        qingtang.bible / vol.1<br>
-        125 avatars · 5 pages<br>
-        <span style='opacity:.7'>数据看板</span>
-      </div>
-    </div>
-
+<!-- 通用卷 -->
+<div class="qt-sheet" id="sheet" hidden>
+  <div class="qt-sheet-box">
+    <h3 id="sheet-t">卷</h3>
+    <div id="sheet-b"></div>
+    <div class="hatch-foot"><button class="btn" type="button" onclick="document.getElementById('sheet').hidden=true">合</button></div>
   </div>
 </div>
 
 <script>
-/* ===== 复用后台经济模型（默认参数） ===== */
-const REALMS=[
- {name:'练气',color:'#8B8477'},{name:'筑基',color:'#5C7D74'},
- {name:'金丹',color:'#4C6B7D'},{name:'元婴',color:'#A5764F'},
- {name:'化神',color:'#7A5F76'},{name:'炼虚',color:'#9C3B31'},
-];
-const DIST=[600,250,100,35,13,2];
-const CONS=[[2,1,0.5],[4,2,1],[8,4,2],[16,8,4],[32,16,8],[64,32,16]];
-const PROD=[[0,0.5,0.2],[0,1,0.3],[0,1.5,0.5],[0,2,1],[0,3,1.5],[0,5,2]];
-const RES=['灵气','灵石','进贡'];
-const AURA_OUT=0.5,STONE_PER=3,TRIB_PER=2,DEF_AURA_FRAC=0.08;
-const BIZ=[
- {key:'hospital',name:'棠医连锁',sub:'大型医院联锁（凡人医疗）',market:'凡人·世俗货币',share:0.40,color:'#5C7D74'},
- {key:'app',name:'红鸾交友',sub:'恋爱交友平台 App',market:'凡人·世俗货币',share:0.30,color:'#9C3B31'},
- {key:'match',name:'红线仙·姻缘',sub:'高端姻缘斡旋（含修士客户）',market:'混合',share:0.15,color:'#A5764F'},
- {key:'trade',name:'仙门贸易',sub:'灵植/灵宠/灵气产品外销',market:'仙门·灵石',share:0.15,color:'#7A5F76'},
-];
-
-function compute(){
-  const cNet=[0,0,0];
-  const rows=REALMS.map((r,i)=>{
-    const n=DIST[i],c=CONS[i],p=PROD[i];
-    const consT=c[0]+c[1]+c[2],prodT=p[0]+p[1]+p[2];
-    const net=[p[0]-c[0],p[1]-c[1],p[2]-c[2]];
-    for(let k=0;k<3;k++)cNet[k]+=net[k]*n;
-    return {name:r.name,color:r.color,n,consT,prodT,selfRate:consT>0?prodT/consT:1,needBelow:consT-prodT};
-  });
-  const af=DEF_AURA_FRAC;
-  const reqRes=[
-    cNet[0]<0?Math.ceil(-cNet[0]/(af*AURA_OUT)):0,
-    cNet[1]<0?Math.ceil(-cNet[1]/STONE_PER):0,
-    cNet[2]<0?Math.ceil(-cNet[2]/TRIB_PER):0,
-  ];
-  const required=Math.max(0,...reqRes);
-  const L=required,auraW=L*af;
-  const sup=[auraW*AURA_OUT,L*STONE_PER,L*TRIB_PER];
-  const W=64;
-  const ledger=[0,1,2].map(k=>{
-    const deficit=-cNet[k],fromLab=sup[k],total=fromLab-deficit;
-    return {res:RES[k],deficit,fromLab,total};
-  });
-  const revTrib=Math.max(0,ledger[2].total);
-  const revStone=Math.max(0,ledger[1].total);
-  const totalRev=revTrib+revStone;
-  const business=BIZ.map(b=>({...b,daily:totalRev*b.share,annual:totalRev*b.share*365}));
-  return {rows,required,L,auraW,ledger,W,business,totalRev,revTrib,revStone,binding:required>0?RES[reqRes.indexOf(required)]:'—'};
-}
-
-/* ===== 渲染 ===== */
-function hbar(id,items){
-  const max=Math.max(...items.map(i=>i.val),1);
-  document.getElementById(id).innerHTML=items.map(it=>{
-    const w=Math.max(1.5,it.val/max*100);
-    return `<div class='hbar'><span class='hl'>${it.label}</span>
-      <span class='htrack'><i class='hfill' style='width:${w}%;background:${it.color}'></i></span>
-      <span class='hv'>${it.sub}</span></div>`;
-  }).join('');
-}
-
-function donut(svgId,legendId,items){
-  const total=items.reduce((a,b)=>a+b.val,0)||1;
-  const r=58,c=2*Math.PI*r;let off=0;
-  const segs=items.map(it=>{
-    const frac=it.val/total,len=frac*c;
-    const s=`<circle cx='85' cy='85' r='${r}' fill='none' stroke='${it.color}' stroke-width='21' stroke-dasharray='${len} ${c-len}' stroke-dashoffset='${-off}' transform='rotate(-90 85 85)' opacity='.9'/>`;
-    off+=len;return s;
-  }).join('');
-  document.getElementById(svgId).innerHTML=segs+
-    `<text x='85' y='80' text-anchor='middle' fill='#6E6656' font-size='10' letter-spacing='2'>日营收</text>`+
-    `<text x='85' y='100' text-anchor='middle' fill='#1D1B17' font-size='15' font-family='monospace'>${(total/10000).toFixed(1)}万</text>`;
-  document.getElementById(legendId).innerHTML=items.map(it=>
-    `<div><span class='dot' style='background:${it.color}'></span>${it.label} ${(it.val/total*100).toFixed(0)}%</div>`).join('');
-}
-
-const m=compute();
-
-/* 账簿 */
-const allPos=m.ledger.every(l=>l.total>=0);
-const kpis=[
-  {k:'修　士',v:m.rows.reduce((a,r)=>a+r.n,0).toLocaleString(),u:'练气至炼虚',c:''},
-  {k:'凡　人',v:m.L.toLocaleString(),u:'不知仙，只当大公司',c:'qing'},
-  {k:'人修比',v:(m.L/1000).toFixed(1)+'<small>: 1</small>',u:'塔基供养塔尖',c:''},
-  {k:'年营收',v:'¥'+(m.totalRev*365/1e8).toFixed(2)+'<small>亿</small>',u:'折算 · 三家合计',c:''},
-  {k:'意志容量',v:m.W.toFixed(0),u:'W · 灵气耐受上限',c:''},
-  {k:'结　余',v:allPos?'可维持':'赤字',u:'灵气为关键约束',c:allPos?'qing':'zhu'},
-];
-document.getElementById('kpis').innerHTML=kpis.map(x=>
-  `<div><div class='k'>${x.k}</div><div class='v ${x.c}'>${x.v}</div><div class='u'>${x.u}</div></div>`).join('');
-
-/* 人口金字塔：修士(顶→底) + 凡人 */
-const pyrRows=[...m.rows.slice().reverse(),{name:'凡人社会',n:m.L,color:'#A5764F'}];
-hbar('pyramid',pyrRows.map(r=>({label:r.name,val:r.n,color:r.color,sub:r.n.toLocaleString()})));
-
-/* 资源供需 */
-const resRows=m.ledger.map(l=>({
-  label:l.res,
-  val:Math.max(l.deficit,l.fromLab),
-  color:l.total>=0?'#5C7D74':'#9C3B31',
-  sub:`缺口 ${Math.round(l.deficit).toLocaleString()} ／ 供 ${Math.round(l.fromLab).toLocaleString()} ＝ ${l.total>=0?'+':''}${Math.round(l.total).toLocaleString()}`
-}));
-hbar('resBars',resRows);
-
-/* 商业账环形 */
-donut('bizDonut','bizLegend',m.business.map(b=>({label:b.name,val:b.daily,color:b.color})));
-document.getElementById('bizNote').innerHTML=
-  `日营收折算 <b>${Math.round(m.totalRev).toLocaleString()}</b> 灵石；其中世俗货币（进贡）${Math.round(m.revTrib).toLocaleString()}、仙门货币（灵石）${Math.round(m.revStone).toLocaleString()}。`;
-
-/* 境界分布 */
-hbar('realmBars',m.rows.map(r=>({label:r.name,val:r.n,color:r.color,sub:r.n+' 人 · 自给 '+(r.selfRate*100).toFixed(0)+'%'})));
-
-/* 凡人构成 */
-const aw=m.auraW, lw=m.L-m.auraW;
-document.getElementById('mortalSplit').innerHTML=
-  `<div class='split'>
-     <div style='width:${aw/m.L*100}%;background:#5C7D74'>灵气原料 ${(aw/m.L*100).toFixed(1)}%</div>
-     <div style='width:${lw/m.L*100}%;background:#A5764F'>生活物品 ${(lw/m.L*100).toFixed(1)}%</div>
-   </div>`;
-document.getElementById('mortalNote').innerHTML=
-  `凡人不知仙，只当青棠宗是来采购原料的大公司。其中约 <b>${Math.round(aw).toLocaleString()}</b> 人（${(aw/m.L*100).toFixed(1)}%）从事灵植/灵宠（灵气原料），其余 ${(lw/m.L*100).toFixed(1)}% 供养仙人日常起居。`;
-
-/* ===== 客户模型（真营收表） ===== */
-const CLIENT_BIZ=[
- {name:'棠医连锁',type:'大型医院联锁',scale:'1,280 家门店',vol:'日均接诊 12 万人次',unit:'客单价 ¥280',annual:12e4*280*365,color:'#5C7D74',note:'凡人医疗'},
- {name:'红鸾交友',type:'恋爱交友 App',scale:'注册 6,800 万',vol:'付费率 9% · 月活 2,100 万',unit:'ARPU ¥62 / 年',annual:6800e4*0.09*62,color:'#9C3B31',note:'凡人·订阅'},
- {name:'红线仙·姻缘',type:'高端姻缘斡旋',scale:'年撮合 1.8 万桩',vol:'含修士 VIP 3,600 桩',unit:'均价 ¥9.6 万 / 桩',annual:18000*96000,color:'#A5764F',note:'混合·含修士'},
- {name:'仙门贸易',type:'灵植/灵宠/灵气外销',scale:'年外销 28 万 灵石单位',vol:'折算灵气/灵植',unit:'汇率 ¥4,200 / 单位',annual:28e4*4200,color:'#7A5F76',note:'仙门·灵石'},
-];
-const cbTotal=CLIENT_BIZ.reduce((s,b)=>s+b.annual,0);
-document.getElementById('clientBiz').innerHTML=
- '<thead><tr><th>业务线</th><th>客户规模</th><th>单价 / ARPU</th><th class="num">年营收</th><th class="num">占比</th></tr></thead><tbody>'+
- CLIENT_BIZ.map(b=>{
-   const pct=(b.annual/cbTotal*100).toFixed(1);
-   return `<tr>
-     <td><b style='color:${b.color}'>${b.name}</b><br><span class='sm'>${b.type}</span></td>
-     <td>${b.scale}<br><span class='sm'>${b.vol}</span></td>
-     <td>${b.unit}</td>
-     <td class='num'>¥${(b.annual/1e8).toFixed(2)} 亿</td>
-     <td class='num'>${pct}%</td>
-   </tr>`;
- }).join('')+'</tbody>';
-document.getElementById('clientNote').innerHTML=
- `合计年营收 <b>¥${(cbTotal/1e8).toFixed(1)} 亿</b>。此为以「客户规模 × 单价」推算的真实营收表，与后台『内部资源盈余』（资源闭环视角）口径不同，二者互相印证宗门财力。`;
-
-/* ===== 仙门关系网 ===== */
-const SECTS=[
- {name:'太虚剑宗',rel:'战略盟友',exp:'灵气灵元 · 姻缘斡旋',imp:'飞剑法器 · 剑修客卿',amt:'灵石 6.2 万 / 年',color:'#4C6B7D'},
- {name:'百草谷',rel:'贸易伙伴',exp:'精炼技术 · 灵元',imp:'灵植种子 · 珍稀药材',amt:'灵石 4.8 万 / 年',color:'#5C7D74'},
- {name:'玄机阁',rel:'贸易伙伴',exp:'姻缘斡旋 · 红鸾算法',imp:'机关傀儡 · 算力',amt:'灵石 3.5 万 / 年',color:'#A5764F'},
- {name:'凌霄盟',rel:'大宗盟友',exp:'灵石互市 · 人才交换',imp:'灵石 · 高阶功法',amt:'灵石 8.0 万 / 年',color:'#7A5F76'},
- {name:'九幽魔宗',rel:'灰市往来',exp:'灵元（谨慎）',imp:'稀有材料 · 禁制',amt:'灵石 1.2 万 / 年',color:'#9C3B31'},
-];
-(function drawSectNet(){
-  const cx=170,cy=130,R=92;
-  let s=`<circle cx='${cx}' cy='${cy}' r='26' fill='#F2ECDF' stroke='#1D1B17' stroke-width='1'/>`+
-        `<text x='${cx}' y='${cy-1}' text-anchor='middle' fill='#1D1B17' font-size='12' font-family='serif' letter-spacing='1'>青棠宗</text>`+
-        `<text x='${cx}' y='${cy+13}' text-anchor='middle' fill='#8A8272' font-size='9'>本宗</text>`;
-  SECTS.forEach((st,i)=>{
-    const ang=-Math.PI/2 + i/SECTS.length*2*Math.PI;
-    const x=cx+Math.cos(ang)*R, y=cy+Math.sin(ang)*R;
-    s+=`<line x1='${cx}' y1='${cy}' x2='${x}' y2='${y}' stroke='#C3B69D' stroke-width='1'/>`;
-    s+=`<circle cx='${x}' cy='${y}' r='20' fill='#EAE3D3' stroke='${st.color}' stroke-width='1'/>`;
-    s+=`<text x='${x}' y='${y+3}' text-anchor='middle' fill='${st.color}' font-size='10'>${st.name.slice(0,2)}</text>`;
-    s+=`<text x='${x}' y='${y+34}' text-anchor='middle' fill='#8A8272' font-size='9'>${st.rel}</text>`;
-  });
-  document.getElementById('sectNet').innerHTML=s;
-})();
-document.getElementById('sectTable').innerHTML=
- '<table class="tbl"><thead><tr><th>仙门</th><th>关系</th><th>我方出口</th><th>我方进口</th><th>年往来</th></tr></thead><tbody>'+
- SECTS.map(st=>`<tr>
-   <td class='nm' style='color:${st.color}'>${st.name}</td>
-   <td>${st.rel}</td>
-   <td style='font-size:11px'>${st.exp}</td>
-   <td style='font-size:11px'>${st.imp}</td>
-   <td style='font-size:11px'>${st.amt}</td>
- </tr>`).join('')+'</tbody>';
-</script>
-<script>
 (function(){
-  var ids=['91001','90001','91005','91008','91002','91004','91006','91013'];
-  var box=document.getElementById('facesBox');
-  if(!box||typeof avatarOf==='undefined')return;
-  box.innerHTML=ids.map(function(id){
-    var m=(window.AVATAR_META&&window.AVATAR_META[id])||{};
-    return `<a class='face' href='roster.html'><img src='${avatarOf(id)}' data-fb='${avatarFallback(id)}' alt='' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'><b>${m.name||''}</b><span>${m.title||''}</span></a>`;
-  }).join('');
+  var S = {stone:480, shen:72, shenMax:100, bag:0, ripe:0, pick:0, hasPod:true, plots:2};
+  var $ = function(id){ return document.getElementById(id); };
+  function log(t){ $('log').innerHTML = '<b>' + t + '</b>'; }
+
+  function paint(){
+    $('v-stone').textContent = S.stone;
+    $('v-shen').textContent  = S.shen;
+    $('v-pod').textContent   = S.bag;
+    $('s-shen').textContent  = S.shen;
+    $('bar-shen').style.width = Math.max(0, S.shen / S.shenMax * 100) + '%';
+    $('r-pick').textContent = S.pick;
+    $('r-ripe').textContent = S.ripe;
+    $('r-plot').textContent = S.plots;
+    $('op-plant').disabled = !(S.bag > 0 && S.plots < 9);
+    $('op-plant').title = S.bag < 1 ? '囊中无茧' : (S.plots >= 9 ? '畦已满' : '择一空畦种下');
+    $('op-hatch').disabled = S.ripe < 1;
+    $('op-hatch').title = S.ripe < 1 ? '尚无熟茧' : '先看风险评估';
+    $('op-pick').disabled = !S.hasPod;
+    $('h-cost').textContent = S.ripe > 0 ? 24 : 0;
+  }
+
+  function pickUp(){
+    if(!S.hasPod) return;
+    if(S.shen < 2){ log('神识不足，缝口之茧触手即散。'); return; }
+    S.hasPod = false; S.bag++; S.pick++; S.shen -= 2;
+    $('pod').classList.add('gone'); $('rift-empty').hidden = false;
+    $('rift-foot').textContent = '缝口空悬 · 距下一枚 01:30';
+    log('拾得一枚不明之茧。囊中 ' + S.bag + ' 枚。');
+    paint();
+    setTimeout(function(){
+      S.hasPod = true;
+      var p = $('pod'); p.classList.remove('gone'); p.classList.add('appear');
+      $('rift-empty').hidden = true;
+      $('rift-foot').textContent = '缝口生茧 1 / 3 · 距下一枚 01:28';
+      log('裂缝微张，又生一茧。'); paint();
+    }, 9000);
+  }
+
+  $('pod').onclick = pickUp;
+  $('op-pick').onclick = pickUp;
+
+  $('op-plant').onclick = function(){
+    if(S.bag < 1) return;
+    if(S.stone < 3){ log('灵石不足，培土需三石。'); return; }
+    S.bag--; S.stone -= 3; S.plots++;
+    var cell = document.querySelectorAll('#plots i')[S.plots - 1];
+    if(cell) cell.classList.add('on');
+    log('此茧已入畦，片刻后显其品阶。'); paint();
+    setTimeout(function(){
+      S.ripe++; log('畦中茧已熟，可开孵化。'); paint();
+    }, 6000);
+  };
+
+  $('op-hatch').onclick = function(){ if(S.ripe > 0) $('hatch').hidden = false; };
+  $('h-cancel').onclick = function(){ $('hatch').hidden = true; };
+  $('h-go').onclick = function(){
+    $('hatch').hidden = true;
+    if(S.stone < 24){ log('灵石不足，孵化需二十四石。'); return; }
+    if(S.shen < 10){ log('神识不足，难以催茧。'); return; }
+    S.ripe--; S.stone -= 24; S.shen -= 10;
+    var roll = Math.random(), out;
+    if(roll < .48) out = '真物：残锋一柄，已入密库。';
+    else if(roll < .72) out = '空壳一具，可回收五石。';
+    else if(roll < .90){ out = '妖魔破茧！神识 −30，此畦冷却加倍，茧未毁。'; S.shen = Math.max(0, S.shen - 30); $('op-suppress').disabled = false; }
+    else out = '一堆无意义的湿纸，辨不出字。';
+    log('孵化 · ' + out); paint();
+  };
+
+  $('op-steal').onclick = function(){ log('潜入同门畦边……手未落，忽觉身后有人。'); };
+  $('op-market').onclick = function(){ log('市集今日收茧七枚，品阶未明，最贱者三十石。'); };
+  $('op-suppress').onclick = function(){
+    S.shen = Math.max(0, S.shen - 30);
+    log('镇压已成，得妖丹一枚，畦格复常。');
+    $('op-suppress').disabled = true; paint();
+  };
+
+  document.querySelectorAll('[data-sheet]').forEach(function(a){
+    a.onclick = function(e){
+      e.preventDefault();
+      var k = a.dataset.sheet, t = '', b = '';
+      if(k === 'vault'){
+        t = '密 库';
+        b = '<div class="rows"><div class="row"><span class="k">残锋</span><span class="n">×1</span></div>'
+          + '<div class="row"><span class="k">空壳</span><span class="n">×2</span></div>'
+          + '<div class="row"><span class="k">妖丹</span><span class="n">×0</span></div></div>'
+          + '<div class="ops-note">孵出之物皆入此库；未识之物不列。</div>';
+      } else if(k === 'peers'){
+        t = '同 门';
+        b = '<div class="rows"><div class="row"><span class="k">柳七娘 · 内门</span><span class="n">畦 4 / 9</span></div>'
+          + '<div class="row"><span class="k">守缝人 · 身份不明</span><span class="n">不可偷</span></div>'
+          + '<div class="row"><span class="k">外门弟子 · 十一人</span><span class="n">可偷 3 人</span></div></div>';
+      } else {
+        t = '育 茧 畦';
+        b = '<div class="rows"><div class="row"><span class="k">已用</span><span class="n">' + S.plots + ' / 9</span></div>'
+          + '<div class="row"><span class="k">熟茧</span><span class="n">' + S.ripe + '</span></div>'
+          + '<div class="row"><span class="k">冷却格</span><span class="n">1</span></div></div>'
+          + '<div class="ops-note">妖魔逃走之格冷却加倍，须待其散。</div>';
+      }
+      $('sheet-t').textContent = t;
+      $('sheet-b').innerHTML = b;
+      $('sheet').hidden = false;
+    };
+  });
+
+  // 维护口令
+  $('seal').onclick = function(){ $('gate').hidden = false; $('gate-in').value = ''; $('gate-msg').textContent = ''; $('gate-in').focus(); };
+  $('gate-cancel').onclick = function(){ $('gate').hidden = true; };
+  $('gate-form').onsubmit = function(e){
+    e.preventDefault();
+    var v = $('gate-in').value.trim().toLowerCase();
+    if(v === 'qingtang' || v === '青棠'){
+      sessionStorage.setItem('qt.maint', '1');
+      location.href = 'archive.html';
+    } else {
+      $('gate-msg').textContent = '口令不对。';
+    }
+  };
+
+  function tick(){
+    var d = new Date();
+    $('clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+  tick(); paint();
+
+  // 图鉴底栏指向本页的分卷
+  var h = location.hash.replace('#', '');
+  if(h === 'vault' || h === 'peers' || h === 'plots'){
+    var a = document.querySelector('[data-sheet="' + h + '"]');
+    if(a) a.click();
+  }
 })();
 </script>
 </body>
