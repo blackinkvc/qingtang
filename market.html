@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青棠宗 · 贩卖</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="qt-ink.css">
+<link rel="stylesheet" href="game-ui.css">
+</head>
+<body class="sub">
+
+<header class="sub-hd">
+  <div class="sub-t">
+    <div class="k">青 棠 宗 · 拾 茧</div>
+    <h1>贩 卖</h1>
+    <div class="d">两条路：卖予宗门，价定死；卖予同门，价自定，未必卖得掉。</div>
+  </div>
+  <div class="sub-r">
+    <div class="sub-n"><span>囊 中</span><b id="n-bag">0</b><small>枚</small></div>
+    <div class="sub-n"><span>灵石</span><b id="n-stone">0</b><small>石</small></div>
+    <a href="index.html" class="sub-back">回 裂 缝</a>
+  </div>
+</header>
+
+<div class="mk-wrap">
+
+  <section class="mk-left">
+    <div class="pane-h"><span>囊 中 茧</span><span class="mono" id="pool-n">0 枚</span></div>
+    <div class="pool" id="pool"></div>
+    <div class="pool-tip" id="pool-tip">孵房之茧正在候熟，不列在此；要用，先去孵房取出。</div>
+
+    <div class="pane-h" style="margin-top:18px"><span>我 的 挂 单</span><span class="mono" id="ls-n">0 张</span></div>
+    <div class="ls-list" id="listings"></div>
+    <div class="ls-empty" id="ls-empty">还没有挂单。定个价，等同门来取。</div>
+  </section>
+
+  <aside class="mk-right">
+
+    <div class="mk-card" id="card-sect">
+      <div class="mk-h"><span>卖 予 宗 门</span><span class="mono">明 码</span></div>
+      <p class="mk-p">按品阶定价，当场交割。不问来历，也没有失手。</p>
+      <div class="pt" id="pt"></div>
+      <div class="mk-now">
+        <span class="t">本 枚</span>
+        <span class="d" id="sect-d">—</span>
+        <span class="v"><b id="sect-v">—</b><small>石</small></span>
+      </div>
+      <button class="btn main full" id="btn-sect" type="button">卖 予 宗 门</button>
+      <div class="mk-why" id="why-sect"></div>
+    </div>
+
+    <div class="mk-card" id="card-peer">
+      <div class="mk-h"><span>卖 予 同 门</span><span class="mono">挂 单</span></div>
+      <p class="mk-p">自定价，挂出去等人来取。定得越贪，越难卖；等不到可撤回。</p>
+
+      <div class="mk-sug">
+        <span>建议价</span><b id="sug">—</b><small>石</small>
+        <span class="mk-sug-n" id="sug-n">合行情</span>
+      </div>
+
+      <div class="mk-input">
+        <label for="price">你 定 价</label>
+        <span class="box"><input id="price" type="number" min="1" max="9999" step="1" inputmode="numeric"><em>石</em></span>
+      </div>
+      <div class="mk-quick">
+        <button type="button" data-q=".85">压一成</button>
+        <button type="button" data-q="1">建议价</button>
+        <button type="button" data-q="1.3">加三成</button>
+        <button type="button" data-q="1.8">加八成</button>
+      </div>
+
+      <div class="mk-exp">
+        <div class="e"><span>预计成交</span><b id="p-range">—</b></div>
+        <div class="e"><span>预计等待</span><b id="w-range">—</b></div>
+      </div>
+      <div class="mk-bar"><i id="p-bar"></i></div>
+      <div class="mk-hint" id="p-hint">定价越接近行情，成交越快。</div>
+
+      <button class="btn full" id="btn-peer" type="button">挂 单 候 人</button>
+      <div class="mk-why" id="why-peer"></div>
+    </div>
+
+    <div class="mk-note">
+      同门价通常高于宗门价，但可能卖不掉；挂单未成，茧原样退回。<br>
+      急用灵石、或不想担风险，走宗门。
+    </div>
+  </aside>
+</div>
+
+<footer class="g-bottom">
+  <nav class="navbar">
+    <a href="index.html"><i class="dot"></i>裂缝</a>
+    <a href="codex.html"><i class="dot"></i>图鉴</a>
+    <a href="hatchery.html"><i class="dot"></i>孵房</a>
+    <a href="market.html" class="on"><i class="dot"></i>贩卖</a>
+    <a href="index.html#plots"><i class="dot"></i>育茧畦</a>
+    <a href="index.html#vault"><i class="dot"></i>库藏</a>
+  </nav>
+  <div class="login">
+    <span class="t" id="log">市上今日价稳，同门多在等低。</span>
+    <span class="mono" style="font-size:10.5px;color:var(--ink-4);flex:none" id="clock">--:--</span>
+  </div>
+</footer>
+
+<!-- 卖出确认 -->
+<div class="hatch" id="cf" hidden>
+  <div class="hatch-box cf-box">
+    <div class="hatch-head">
+      <div>
+        <div class="h-k">卖 出 · 确 认</div>
+        <div class="h-t" id="cf-t">—</div>
+      </div>
+      <div class="risk" id="cf-tag">—</div>
+    </div>
+    <div class="cf-body" id="cf-b"></div>
+    <div class="hatch-foot">
+      <button class="btn" type="button" id="cf-x">再 想 想</button>
+      <button class="btn main" type="button" id="cf-go">确 认 卖 出</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="store.js"></script>
+<script>
+(function(){
+  var S = QT.load();
+  var $ = function(id){ return document.getElementById(id); };
+  var selId = S.bag.length ? S.bag[0].id : null;
+  var pending = null;   /* 待确认的卖法 */
+
+  function log(t){ $('log').textContent = t; }
+  function toast(t){
+    var el = $('toast');
+    el.textContent = t; el.hidden = false;
+    el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+    clearTimeout(el._t);
+    el._t = setTimeout(function(){ el.hidden = true; }, 2400);
+  }
+  function bagItem(id){
+    for (var i = 0; i < S.bag.length; i++) if (S.bag[i].id === id) return S.bag[i];
+    return null;
+  }
+  function sel(){ return bagItem(selId); }
+  function ensureSel(){
+    if (!sel()) selId = S.bag.length ? S.bag[0].id : null;
+  }
+  function fmtP(lo, hi){ return Math.round(lo * 100) + '%–' + Math.round(hi * 100) + '%'; }
+
+  /* —— 囊中茧 —— */
+  function renderPool(){
+    ensureSel();
+    var p = $('pool');
+    if (!S.bag.length){
+      p.innerHTML = '<div class="pool-none">囊中无茧。去裂缝拾一枚，或到孵房把候熟的茧取出。</div>';
+    } else {
+      p.innerHTML = S.bag.map(function(c){
+        var K = QT.KINDS[c.kind];
+        return '<button class="pool-it' + (c.id === selId ? ' on' : '') + '" data-id="' + c.id + '" type="button">'
+          + '<span class="pi-fig">' + QT.svg(c, {sfx: 'p'}) + '</span>'
+          + '<span class="pi-b"><b>' + K.n + '</b><span class="pi-m">'
+          + '<span class="tag r' + c.r + '">' + QT.RAR[c.r] + ' 品</span>'
+          + '<span class="pi-src">' + (c.src === 'stolen' ? '窃来' : c.src === 'plot' ? '畦出' : '缝口') + '</span>'
+          + '</span></span>'
+          + '<span class="pi-p"><b>' + QT.PRICE[c.r] + '</b><small>宗门</small>'
+          + '<em>' + QT.SUGGEST[c.r] + '</em><small>同门</small></span>'
+          + '</button>';
+      }).join('');
+    }
+    $('pool-n').textContent = S.bag.length + ' 枚';
+    $('n-bag').textContent = S.bag.length;
+    $('n-stone').textContent = S.stone;
+    $('pool-tip').hidden = S.bag.length > 0;
+  }
+
+  /* —— 宗门价目表 —— */
+  function renderPrice(){
+    var c = sel();
+    $('pt').innerHTML = '<div class="pt-h"><span>品 阶</span><span>宗门价</span><span>同门建议</span></div>'
+      + [1, 2, 3, 4, 5].map(function(r){
+          return '<div class="pt-r' + (c && c.r === r ? ' on' : '') + '">'
+            + '<span class="tag r' + r + '">' + QT.RAR[r] + '</span>'
+            + '<span class="n">' + QT.PRICE[r] + ' 石</span>'
+            + '<span class="n d">' + QT.SUGGEST[r] + ' 石</span></div>';
+        }).join('');
+  }
+
+  function renderSect(){
+    var c = sel();
+    if (!c){
+      $('sect-d').textContent = '未选茧';
+      $('sect-v').textContent = '—';
+      $('btn-sect').disabled = true;
+      $('why-sect').textContent = '先在左侧选一枚茧';
+      return;
+    }
+    $('sect-d').textContent = QT.RAR[c.r] + ' 品 · ' + QT.KINDS[c.kind].n;
+    $('sect-v').textContent = QT.PRICE[c.r];
+    $('btn-sect').disabled = false;
+    $('why-sect').textContent = '';
+  }
+
+  /* —— 同门估价 —— */
+  function priceVal(){
+    var v = parseInt($('price').value, 10);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function renderPeer(){
+    var c = sel();
+    if (!c){
+      $('sug').textContent = '—'; $('p-range').textContent = '—'; $('w-range').textContent = '—';
+      $('p-bar').style.width = '0%'; $('btn-peer').disabled = true;
+      $('why-peer').textContent = '先在左侧选一枚茧';
+      return;
+    }
+    var sug = QT.SUGGEST[c.r];
+    $('sug').textContent = sug;
+    var v = priceVal();
+    if (!v){
+      $('p-range').textContent = '—'; $('w-range').textContent = '—';
+      $('p-bar').style.width = '0%'; $('btn-peer').disabled = true;
+      $('why-peer').textContent = '先定一个价';
+      $('p-hint').textContent = '定价越接近行情，成交越快。';
+      return;
+    }
+    var q = QT.quote(c, v);
+    $('p-range').textContent = fmtP(q.lo, q.hi);
+    $('w-range').textContent = q.wLo + '–' + q.wHi + ' 秒';
+    $('p-bar').style.width = Math.round(q.p * 100) + '%';
+    var dev = (v - sug) / sug;
+    $('btn-peer').disabled = v < 1 || v > 9999;
+    $('why-peer').textContent = v > 9999 ? '价高得离谱，无人会看' : '';
+    $('p-hint').textContent = dev > .6 ? '比行情高出一大截，多半无人应。'
+      : dev > .2 ? '略高于行情，候得久些。'
+      : dev < -.15 ? '低于行情，出手快，但亏。'
+      : '贴近行情，估计不日可出。';
+    $('sug-n').textContent = dev > .2 ? '偏高' : dev < -.15 ? '偏低' : '合行情';
+  }
+
+  /* —— 挂单 —— */
+  function renderListings(){
+    var open = S.listings.filter(function(l){ return l.status === 'open'; });
+    $('ls-n').textContent = S.listings.length + ' 张';
+    $('ls-empty').hidden = S.listings.length > 0;
+    $('listings').innerHTML = S.listings.map(function(l){
+      var K = QT.KINDS[l.c.kind];
+      var st = l.status === 'open'
+        ? '<span class="ls-b open">候 人 中</span>'
+        : l.status === 'done' ? '<span class="ls-b ok">已 成 交</span>'
+        : '<span class="ls-b bad">无 人 应</span>';
+      var rt = l.status === 'open'
+        ? '<button class="btn xs ghost" data-undo="' + l.id + '">撤 回</button>'
+        : l.status === 'fail'
+          ? '<button class="btn xs" data-undo="' + l.id + '">收 回 茧</button>'
+          : '<span class="ls-got mono">+' + l.price + ' 石</span>';
+      return '<div class="ls" data-l="' + l.id + '">'
+        + '<span class="ls-fig">' + QT.svg(l.c, {sfx: 'l'}) + '</span>'
+        + '<span class="ls-b2"><b>' + K.n + ' · ' + QT.RAR[l.c.r] + '品</b>'
+        + '<span>挂 <em class="mono">' + l.price + '</em> 石 · 预计 ' + fmtP(l.lo, l.hi) + '</span></span>'
+        + '<span class="ls-r">' + st + '<span class="ls-t mono">' + (l.status === 'open' ? '—' : '') + '</span>' + rt + '</span>'
+        + '</div>';
+    }).reverse().join('');
+    if (open.length === 0) $('ls-empty').hidden = S.listings.length > 0;
+    /* 更新候人倒计时 */
+    S.listings.forEach(function(l){ tickListing(l); });
+  }
+
+  function tickListing(l){
+    var el = document.querySelector('[data-l="' + l.id + '"]');
+    if (!el) return;
+    var t = el.querySelector('.ls-t');
+    if (!t) return;
+    if (l.status === 'open'){
+      t.textContent = '余 ' + Math.max(0, Math.ceil((l.resolveAt - Date.now()) / 1000)) + 's';
+    } else {
+      t.textContent = '';
+    }
+  }
+
+  function settle(l){
+    var ok = window.__qtforce === 'ok' ? true
+           : window.__qtforce === 'fail' ? false
+           : Math.random() < l.p;
+    var K = QT.KINDS[l.c.kind];
+    if (ok){
+      l.status = 'done';
+      S.stone += l.price;
+      log('同门取走「' + K.n + '」，得 ' + l.price + ' 石。');
+      toast('成交 · +' + l.price + ' 灵石');
+    } else {
+      l.status = 'fail';
+      log('「' + K.n + '」挂了半晌，无人问价。可收回。');
+      toast('无人应价 · 茧可收回');
+    }
+    QT.save(); renderAll();
+  }
+
+  function renderAll(){
+    renderPool(); renderPrice(); renderSect();
+    if (sel() && !$('price').value) $('price').value = QT.SUGGEST[sel().r];
+    renderPeer(); renderListings();
+    $('n-bag').textContent = S.bag.length;
+    $('n-stone').textContent = S.stone;
+  }
+
+  /* —— 事件 —— */
+  $('pool').addEventListener('click', function(e){
+    var b = e.target.closest('.pool-it'); if (!b) return;
+    selId = b.dataset.id;
+    $('price').value = QT.SUGGEST[sel().r];
+    renderAll();
+  });
+
+  $('price').addEventListener('input', function(){ renderPeer(); });
+  document.querySelectorAll('.mk-quick button').forEach(function(b){
+    b.onclick = function(){
+      if (!sel()) return;
+      var sug = QT.SUGGEST[sel().r];
+      var q = parseFloat(b.dataset.q);
+      $('price').value = Math.max(1, Math.round(sug * q));
+      renderPeer();
+    };
+  });
+
+  /* 宗门：确认后即时成交 */
+  $('btn-sect').onclick = function(){
+    var c = sel(); if (!c) return;
+    pending = { kind: 'sect', c: c, price: QT.PRICE[c.r] };
+    var K = QT.KINDS[c.kind];
+    $('cf-t').textContent = K.n + ' · ' + QT.RAR[c.r] + '品';
+    $('cf-tag').className = 'risk safe';
+    $('cf-tag').textContent = '必 成';
+    $('cf-b').innerHTML = '<div class="cf-line big"><span>此茧卖出可得</span><b>' + QT.PRICE[c.r] + ' 灵石</b></div>'
+      + '<div class="cmp">'
+      + '<div class="cmp-c on"><span class="t">宗 门</span><b class="mono">' + QT.PRICE[c.r] + ' 石</b>'
+      + '<span class="d">即时到账 · 无一失手</span></div>'
+      + '<div class="cmp-c"><span class="t">同 门 建 议</span><b class="mono">' + QT.SUGGEST[c.r] + ' 石</b>'
+      + '<span class="d">须挂单，未必卖得掉</span></div>'
+      + '</div>'
+      + '<div class="cf-warn">卖出即交割，茧不再回囊，无法撤回。</div>';
+    $('cf-go').textContent = '确 认 卖 予 宗 门';
+    $('cf').hidden = false;
+  };
+
+  /* 同门：确认后挂单 */
+  $('btn-peer').onclick = function(){
+    var c = sel(); if (!c) return;
+    var v = priceVal(); if (v < 1) return;
+    var q = QT.quote(c, v);
+    pending = { kind: 'peer', c: c, price: v, q: q };
+    var K = QT.KINDS[c.kind];
+    $('cf-t').textContent = K.n + ' · ' + QT.RAR[c.r] + '品';
+    $('cf-tag').className = 'risk warn';
+    $('cf-tag').textContent = '未 定';
+    $('cf-b').innerHTML = '<div class="cf-line big"><span>你定的价</span><b>' + v + ' 灵石</b></div>'
+      + '<div class="cmp">'
+      + '<div class="cmp-c"><span class="t">宗 门</span><b class="mono">' + QT.PRICE[c.r] + ' 石</b>'
+      + '<span class="d">落袋即定</span></div>'
+      + '<div class="cmp-c on"><span class="t">同 门 · 你 的 挂 价</span><b class="mono">' + v + ' 石</b>'
+      + '<span class="d">预计成交 ' + fmtP(q.lo, q.hi) + ' · 等 ' + q.wLo + '–' + q.wHi + ' 秒</span></div>'
+      + '</div>'
+      + '<div class="cf-warn">' + (v > QT.PRICE[c.r] * 1.6
+          ? '比宗门价高出不少，多半要等，也可能等不到。'
+          : '挂单期间茧锁在单里；不成可撤回原样退回。') + '</div>';
+    $('cf-go').textContent = '确 认 挂 单';
+    $('cf').hidden = false;
+  };
+
+  $('cf-x').onclick = function(){ $('cf').hidden = true; pending = null; };
+  $('cf').onclick = function(e){ if (e.target === this){ this.hidden = true; pending = null; } };
+
+  $('cf-go').onclick = function(){
+    if (!pending) return;
+    var p = pending, c = p.c, K = QT.KINDS[c.kind];
+    pending = null; $('cf').hidden = true;
+
+    /* 从囊中移除 */
+    for (var i = 0; i < S.bag.length; i++) if (S.bag[i].id === c.id) { S.bag.splice(i, 1); break; }
+
+    if (p.kind === 'sect'){
+      S.stone += p.price;
+      QT.save();
+      log('「' + K.n + '」已售予宗门，得 ' + p.price + ' 石。');
+      toast('宗门已收 · +' + p.price + ' 灵石');
+      selId = S.bag.length ? S.bag[0].id : null;
+      $('price').value = sel() ? QT.SUGGEST[sel().r] : '';
+      renderAll();
+      return;
+    }
+
+    var q = p.q;
+    S.listings.push({
+      id: 'L' + Date.now() + Math.floor(Math.random() * 99),
+      c: c, price: p.price, p: q.p, lo: q.lo, hi: q.hi,
+      at: Date.now(),
+      resolveAt: Date.now() + Math.round(q.wLo + Math.random() * 3) * 1000,
+      status: 'open'
+    });
+    QT.save();
+    log('「' + K.n + '」挂 ' + p.price + ' 石，候同门来取。');
+    toast('已挂单 · ' + p.price + ' 石');
+    selId = S.bag.length ? S.bag[0].id : null;
+    $('price').value = sel() ? QT.SUGGEST[sel().r] : '';
+    renderAll();
+  };
+
+  $('listings').addEventListener('click', function(e){
+    var b = e.target.closest('[data-undo]'); if (!b) return;
+    var id = b.dataset.undo;
+    for (var i = 0; i < S.listings.length; i++){
+      var l = S.listings[i];
+      if (l.id !== id) continue;
+      S.listings.splice(i, 1);
+      S.bag.push(l.c);
+      QT.save();
+      log('撤单，「' + QT.KINDS[l.c.kind].n + '」已退回囊中。');
+      toast('已撤回 · 茧回囊中');
+      if (!selId) selId = l.c.id;
+      renderAll();
+      return;
+    }
+  });
+
+  /* 挂单到点结算 */
+  setInterval(function(){
+    var changed = false;
+    S.listings.forEach(function(l){
+      if (l.status === 'open' && Date.now() >= l.resolveAt){ settle(l); changed = true; }
+      else if (l.status === 'open') tickListing(l);
+    });
+    if (!changed) return;
+  }, 600);
+
+  function clock(){
+    var d = new Date();
+    $('clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+
+  /* 进场：把过期的挂单先结掉 */
+  S.listings.forEach(function(l){
+    if (l.status === 'open' && Date.now() >= l.resolveAt){
+      l.status = Math.random() < l.p ? 'done' : 'fail';
+      if (l.status === 'done') S.stone += l.price;
+    }
+  });
+  QT.save();
+
+  if (sel()) $('price').value = QT.SUGGEST[sel().r];
+  clock(); renderAll();
+  setInterval(clock, 20000);
+})();
+</script>
+</body>
+</html>

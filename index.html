@@ -142,9 +142,10 @@
     <nav class="navbar">
       <a href="index.html" class="on"><i class="dot"></i>裂缝</a>
       <a href="codex.html"><i class="dot"></i>图鉴</a>
-      <a href="#" data-sheet="vault"><i class="dot"></i>密库</a>
-      <a href="#" data-sheet="peers"><i class="dot"></i>同门</a>
+      <a href="hatchery.html"><i class="dot"></i>孵房</a>
+      <a href="market.html"><i class="dot"></i>贩卖</a>
       <a href="#" data-sheet="plots"><i class="dot"></i>育茧畦</a>
+      <a href="#" data-sheet="vault"><i class="dot"></i>库藏</a>
     </nav>
     <div class="login">
       <span class="t" id="log">初入裂缝，风止，缝口悬一枚不明之茧。</span>
@@ -179,25 +180,24 @@
     <div class="hatch-head">
       <div>
         <div class="h-k">孵 化 · 风 险 评 估</div>
-        <div class="h-t">青皮茧<span class="h-tag">中品 · 偏木</span></div>
+        <div class="h-t" id="h-t">—</div>
       </div>
       <div class="risk warn" id="h-risk">险</div>
     </div>
     <div class="hatch-body">
       <div>
-        <div class="hatch-fig">
-          <img src="assets/gen/k-01-qingpi.jpg" alt="青皮茧" onerror="this.parentNode.classList.add('ph');this.remove()">
-          <div class="cap">k-01 · 青皮茧</div>
+        <div class="hatch-fig" id="h-fig">
+          <div class="cap" id="h-cap">—</div>
         </div>
       </div>
       <div>
         <div class="h-sec">
           <div class="lab">已 知 线 索</div>
-          <ul class="clues">
-            <li>茧衣完整，无破口，丝线尚新</li>
-            <li>透出淡木气，近之微温</li>
-            <li>种下 18 分钟后见异动，纹路转深</li>
-            <li class="lock">未显：茧内是否有活物（需再候 6 分钟）</li>
+          <ul class="clues" id="h-clues">
+            <li>裂口透光，内物轮廓可辨</li>
+            <li>壳上细裂已连成一线，轻触有回弹</li>
+            <li>离壳一寸，可闻细响</li>
+            <li class="lock">未显：内物是活物还是死物，开后方知</li>
           </ul>
         </div>
         <div class="h-sec">
@@ -239,13 +239,21 @@
   </div>
 </div>
 
+<script src="store.js"></script>
 <script>
 (function(){
   var REGEN_MS = 12000;
   var RAR = ["", "凡", "良", "珍", "秘", "绝"];
-  var S = {stone:480, shen:72, shenMax:100, ti:64, tiMax:100,
-           bag:[], ripe:0, pick:0, plots:2, hasPod:true, state:'ready'};
+  var S = QT.load();
+  S.hasPod = true; S.state = 'ready';   /* 缝口状态不跨页保存 */
+  QT.save();
   var regenT = null, regenAt = 0, formT = null, readyT = null;
+
+  function ripeN(){ var t = Date.now(); return S.plots.filter(function(p){ return p.ripeAt <= t; }).length; }
+  function nearCocoon(){
+    for (var i = 0; i < S.house.length; i++) if (QT.stageOf(S.house[i]).i === 3) return S.house[i];
+    return null;
+  }
 
   var $ = function(id){ return document.getElementById(id); };
   function log(t){ $('log').textContent = t; }
@@ -263,16 +271,19 @@
     $('m-shen').textContent  = S.shen;
     $('m-ti').textContent    = S.ti;
     $('m-bag').textContent   = S.bag.length;
-    $('m-plots').textContent = S.plots + '/9';
+    $('m-plots').textContent = S.plots.length + '/9';
 
     $('bag-n').textContent = S.bag.length + ' 枚';
     $('bag-dots').innerHTML = S.bag.length
-      ? S.bag.map(function(r){ return '<i class="bd r' + r + '" title="' + RAR[r] + '品"></i>'; }).join('')
+      ? S.bag.map(function(c){
+          return '<i class="bd" style="color:var(--r' + c.r + ')" title="'
+            + QT.KINDS[c.kind].n + ' · ' + RAR[c.r] + '品"></i>';
+        }).join('')
       : '<span class="none">空</span>';
 
-    $('plots-line').textContent = S.plots + '/9 已种 · ' + S.ripe + ' 可孵';
+    $('plots-line').textContent = S.plots.length + '/9 已种 · ' + ripeN() + ' 可孵';
     $('r-pick').textContent = S.pick;
-    $('r-ripe').textContent = S.ripe;
+    $('r-ripe').textContent = ripeN();
     $('r-pod').textContent  = S.hasPod ? '1 / 3' : '0 / 3';
     if(S.hasPod) $('r-next').textContent = '01:28';
 
@@ -281,12 +292,12 @@
       ? (S.state === 'forming' ? '茧正在化形' : '缝口空了，正自再生')
       : (S.shen < 2 ? '神识不足（需 2）' : ''));
 
-    $('op-plant').disabled = !(S.bag.length > 0 && S.plots < 9 && S.stone >= 3);
+    $('op-plant').disabled = !(S.bag.length > 0 && S.plots.length < 9 && S.stone >= 3);
     why('plant', S.bag.length < 1 ? '囊中无茧'
-      : (S.plots >= 9 ? '畦已满（9/9）' : (S.stone < 3 ? '灵石不足（需 3）' : '')));
+      : (S.plots.length >= 9 ? '畦已满（9/9）' : (S.stone < 3 ? '灵石不足（需 3）' : '')));
 
-    $('op-hatch').disabled = !(S.ripe > 0 && S.stone >= 24 && S.shen >= 10);
-    why('hatch', S.ripe < 1 ? '尚无熟茧'
+    $('op-hatch').disabled = !(nearCocoon() && S.stone >= 24 && S.shen >= 10);
+    why('hatch', !nearCocoon() ? '孵房无将破之茧'
       : (S.stone < 24 ? '灵石不足（需 24）' : (S.shen < 10 ? '神识不足（需 10）' : '')));
 
     $('op-steal').disabled = S.ti < 8;
@@ -367,8 +378,9 @@
   function pickUp(){
     if(S.state !== 'ready' || !S.hasPod) return;
     if(S.shen < 2){ log('神识不足，缝口之茧触手即散。'); return; }
-    S.bag.push(1 + Math.floor(Math.random() * 3));
+    S.bag.push(QT.mk(Math.floor(Math.random() * 5), 1 + Math.floor(Math.random() * 3), 'rift'));
     S.pick++; S.shen -= 2;
+    QT.save();
     startRegen();
   }
 
@@ -376,36 +388,61 @@
   $('op-pick').onclick = pickUp;
 
   $('op-plant').onclick = function(){
-    if(!(S.bag.length > 0 && S.plots < 9 && S.stone >= 3)) return;
-    S.bag.pop(); S.stone -= 3; S.plots++;
+    if(!(S.bag.length > 0 && S.plots.length < 9 && S.stone >= 3)) return;
+    var c = S.bag.pop();
+    S.plots.push({ c: c, at: Date.now(), ripeAt: Date.now() + 6000 });
+    S.stone -= 3;
+    QT.save();
     log('此茧已入畦，片刻后显其品阶。');
     paint();
     setTimeout(function(){
-      S.ripe++;
-      log('畦中茧已熟，可开孵化。');
+      log('畦中茧已熟，可移入孵房候熟。');
       paint();
     }, 6000);
   };
 
-  $('op-hatch').onclick = function(){ if(!$('op-hatch').disabled) $('hatch').hidden = false; };
+  $('op-hatch').onclick = function(){
+    if($('op-hatch').disabled) return;
+    var h = nearCocoon();
+    if(!h) return;
+    var c = h.c, K = QT.KINDS[c.kind], rk = QT.riskOf(c);
+    $('h-t').innerHTML = K.n + '<span class="h-tag">' + RAR[c.r] + '品 · 偏' + K.y + '</span>';
+    $('h-risk').className = 'risk ' + rk.cls;
+    $('h-risk').textContent = rk.t;
+    $('h-fig').innerHTML = QT.svg(c, {sfx: 'x'})
+      + '<div class="cap">' + c.id + ' · ' + K.n + '</div>';
+    $('hatch').hidden = false;
+  };
   $('h-cancel').onclick = function(){ $('hatch').hidden = true; };
   $('h-go').onclick = function(){
     $('hatch').hidden = true;
-    if(S.ripe < 1) return;
+    var h = nearCocoon();
+    if(!h) return;
     if(S.stone < 24){ log('灵石不足，孵化需二十四石。'); return; }
     if(S.shen < 10){ log('神识不足，难以催茧。'); return; }
 
-    S.ripe--; S.stone -= 24; S.shen -= 10;
+    S.stone -= 24; S.shen -= 10;
     var roll = Math.random(), out;
-    if(roll < .48) out = '真物：残锋一柄，已入密库。';
-    else if(roll < .72) out = '空壳一具，可回收五石。';
-    else if(roll < .90){
-      out = '妖魔破茧！神识 −30，此畦冷却加倍，茧未毁。';
+    var c = h.c, K = QT.KINDS[c.kind];
+    if(roll < .48){
+      out = '真物：残锋一柄，已入库藏。';
+      S.vault.edge++;
+      S.house.splice(S.house.indexOf(h), 1);
+    } else if(roll < .72){
+      out = '空壳一具，可回收五石。';
+      S.vault.shell++; S.stone += 5;
+      S.house.splice(S.house.indexOf(h), 1);
+    } else if(roll < .90){
+      out = '妖魔破茧！神识 −30，茧未毁，可镇后再孵。';
       S.shen = Math.max(0, S.shen - 30);
+      S.vault.dan++;
       $('alert').hidden = false;
+    } else {
+      out = '一堆无意义的湿纸，辨不出字。';
+      S.house.splice(S.house.indexOf(h), 1);
     }
-    else out = '一堆无意义的湿纸，辨不出字。';
-    log('孵化 · ' + out);
+    QT.save();
+    log('孵化「' + K.n + '」 · ' + out);
     paint();
   };
 
@@ -413,11 +450,12 @@
     if(S.ti < 8) return;
     S.ti -= 8;
     if(Math.random() < .55){
-      S.bag.push(1 + Math.floor(Math.random() * 3));
+      S.bag.push(QT.mk(Math.floor(Math.random() * 5), 1 + Math.floor(Math.random() * 3), 'stolen'));
       log('潜入同门畦边，得茧一枚，无人知觉。');
     } else {
       log('手未落而人已至，记窃名一条。');
     }
+    QT.save();
     paint();
   };
 
@@ -435,32 +473,61 @@
     this.textContent = open ? '略' : '详';
   };
 
+  function plotsSheet(){
+    var t = Date.now(), rows = '', puts = '';
+    if(!S.plots.length){
+      rows = '<div class="row"><span class="k">畦中无茧</span><span class="n">0 / 9</span></div>';
+    }
+    S.plots.forEach(function(p, i){
+      var ripe = p.ripeAt <= t, K = QT.KINDS[p.c.kind];
+      rows += '<div class="row"><span class="k">' + K.n + ' · ' + RAR[p.c.r] + '品</span>'
+        + '<span class="n">' + (ripe ? '已熟' : QT.fmt(p.ripeAt - t) + ' 后熟') + '</span></div>';
+      if(ripe){
+        puts += '<button class="btn sm full" data-house="' + i + '">移入孵房 · ' + K.n + '</button>';
+      }
+    });
+    return '<div class="rows">' + rows + '</div>'
+      + (puts ? '<div class="sheet-act">' + puts + '</div>' : '')
+      + '<div class="ops-note">畦看「会变成什么」，孵房看「熟到第几段」。'
+      + '成了形的茧移入孵房，才看得见四态。</div>';
+  }
+
   document.querySelectorAll('[data-sheet]').forEach(function(a){
     a.onclick = function(e){
       e.preventDefault();
       var k = a.dataset.sheet, t = '', b = '';
       if(k === 'vault'){
-        t = '密 库';
-        b = '<div class="rows"><div class="row"><span class="k">残锋</span><span class="n">×1</span></div>'
-          + '<div class="row"><span class="k">空壳</span><span class="n">×2</span></div>'
-          + '<div class="row"><span class="k">妖丹</span><span class="n">×0</span></div></div>'
-          + '<div class="ops-note">孵出之物皆入此库；未识之物不列。</div>';
-      } else if(k === 'peers'){
-        t = '同 门';
-        b = '<div class="rows"><div class="row"><span class="k">柳七娘 · 内门</span><span class="n">畦 4 / 9</span></div>'
+        t = '库 藏';
+        b = '<div class="rows"><div class="row"><span class="k">残锋</span><span class="n">×' + S.vault.edge + '</span></div>'
+          + '<div class="row"><span class="k">空壳</span><span class="n">×' + S.vault.shell + '</span></div>'
+          + '<div class="row"><span class="k">妖丹</span><span class="n">×' + S.vault.dan + '</span></div></div>'
+          + '<div class="ops-note">孵出之物皆入此库；未识之物不列。</div>'
+          + '<div class="pane-h" style="margin-top:16px"><span>同 门</span><span class="mono">可偷 3 人</span></div>'
+          + '<div class="rows"><div class="row"><span class="k">柳七娘 · 内门</span><span class="n">畦 4 / 9</span></div>'
           + '<div class="row"><span class="k">守缝人 · 身份不明</span><span class="n">不可偷</span></div>'
           + '<div class="row"><span class="k">外门弟子 · 十一人</span><span class="n">可偷 3 人</span></div></div>';
       } else {
         t = '育 茧 畦';
-        b = '<div class="rows"><div class="row"><span class="k">已用</span><span class="n">' + S.plots + ' / 9</span></div>'
-          + '<div class="row"><span class="k">熟茧</span><span class="n">' + S.ripe + '</span></div>'
-          + '<div class="row"><span class="k">冷却格</span><span class="n">' + ($('alert').hidden ? 0 : 1) + '</span></div></div>'
-          + '<div class="ops-note">妖魔逃走之格冷却加倍，须待其散。</div>';
+        b = plotsSheet();
       }
       $('sheet-t').textContent = t;
       $('sheet-b').innerHTML = b;
       $('sheet').hidden = false;
     };
+  });
+
+  $('sheet-b').addEventListener('click', function(e){
+    var b = e.target.closest('[data-house]');
+    if(!b) return;
+    var i = +b.dataset.house, p = S.plots[i];
+    if(!p) return;
+    if(p.ripeAt > Date.now()) return;
+    S.plots.splice(i, 1);
+    S.house.push({ c: p.c, at: Date.now(), dur: 20 * 60000 });
+    QT.save();
+    $('sheet').hidden = true;
+    log('「' + QT.KINDS[p.c.kind].n + '」已入孵房，候其成熟。');
+    paint();
   });
 
   // 维：单击无动作，两次点按（400ms 内）进入档案
@@ -479,7 +546,8 @@
 
   // 图鉴底栏指向本页的分卷
   var h = location.hash.replace('#', '');
-  if(h === 'vault' || h === 'peers' || h === 'plots'){
+  if(h === 'peers') h = 'vault';
+  if(h === 'vault' || h === 'plots'){
     var a = document.querySelector('[data-sheet="' + h + '"]');
     if(a) a.click();
   }

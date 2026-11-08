@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青棠宗 · 孵房</title>
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="qt-ink.css">
+<link rel="stylesheet" href="game-ui.css">
+</head>
+<body class="sub">
+
+<header class="sub-hd">
+  <div class="sub-t">
+    <div class="k">青 棠 宗 · 拾 茧</div>
+    <h1>孵 房</h1>
+    <div class="d">已成之茧，在此候其熟。每一枚都还是拾来时的样子。</div>
+  </div>
+  <div class="sub-r">
+    <div class="sub-n"><span>在 孵</span><b id="n-house">0</b><small>枚</small></div>
+    <div class="sub-n"><span>欲 破</span><b id="n-near">0</b><small>枚</small></div>
+    <a href="index.html" class="sub-back">回 裂 缝</a>
+  </div>
+</header>
+
+<div class="hx-wrap">
+  <section class="hx-main">
+    <div class="hx-bar">
+      <span class="hx-sum" id="hx-sum">—</span>
+      <span class="hx-note">按入房先后陈列 · 每刻一算</span>
+    </div>
+    <div class="hx-grid" id="hx-grid"></div>
+
+    <div class="hx-empty" id="hx-empty" hidden>
+      <div class="he-mark">空</div>
+      <h2>孵房空着</h2>
+      <p>此处只放已经成形的茧，不放来路不明的。想让它满起来，有三条路：</p>
+      <div class="he-ways">
+        <div class="he-w"><span class="n">一</span><b>缝口拾茧</b><span class="d">裂缝每隔一阵生一枚，拾来可直接入孵房。</span></div>
+        <div class="he-w"><span class="n">二</span><b>畦中移入</b><span class="d">育茧畦里已显品阶的熟茧，可移到此处候熟。</span></div>
+        <div class="he-w"><span class="n">三</span><b>同门处偷来</b><span class="d">手快得茧，入房后风险高一分。</span></div>
+      </div>
+      <div class="he-ops">
+        <a class="btn main" href="index.html">去 裂 缝 拾 茧</a>
+        <a class="btn" href="index.html#plots">看 育 茧 畦</a>
+      </div>
+    </div>
+  </section>
+
+  <aside class="hx-side">
+    <div class="pane-h"><span>分 工</span><span class="mono">畦 / 房</span></div>
+    <div class="hx-split">
+      <div class="hs-row"><b>育茧畦</b><span>种下未知之茧，等它显品阶。看的是「会变成什么」。</span></div>
+      <div class="hs-row"><b>孵房</b><span>已成形之茧在此候熟，四段可见。看的是「什么时候能开」。</span></div>
+    </div>
+    <p class="hx-splitnote">两处不合并：畦管「未知 → 成形」，房管「成形 → 欲破」，状态不可互替。孵房之茧不占畦格。</p>
+
+    <div class="pane-h" style="margin-top:18px"><span>四 态</span><span class="mono">候</span></div>
+    <div class="hx-legend">
+      <div class="hl m0"><i></i><b>初敛</b><span>0–25% · 尚在收气</span></div>
+      <div class="hl m1"><i></i><b>温热</b><span>25–50% · 内里生温</span></div>
+      <div class="hl m2"><i></i><b>将动</b><span>50–75% · 细裂轻颤</span></div>
+      <div class="hl m3"><i></i><b>欲破</b><span>75–100% · 裂口透光</span></div>
+    </div>
+
+    <div class="pane-h" style="margin-top:18px"><span>规 约</span><span class="mono">记</span></div>
+    <p class="hx-rule">茧一旦成形便不可再退回畦中，唯「初敛」之茧尚可移入畦再养。<br>
+      候至「欲破」不会自破，须回裂缝自行开茧。<br>
+      窃来之茧，风险比同阶高两档。</p>
+  </aside>
+</div>
+
+<footer class="g-bottom">
+  <nav class="navbar">
+    <a href="index.html"><i class="dot"></i>裂缝</a>
+    <a href="codex.html"><i class="dot"></i>图鉴</a>
+    <a href="hatchery.html" class="on"><i class="dot"></i>孵房</a>
+    <a href="market.html"><i class="dot"></i>贩卖</a>
+    <a href="index.html#plots"><i class="dot"></i>育茧畦</a>
+    <a href="index.html#vault"><i class="dot"></i>库藏</a>
+  </nav>
+  <div class="login">
+    <span class="t" id="log">孵房无风，茧在架上微微发暖。</span>
+    <span class="mono" style="font-size:10.5px;color:var(--ink-4);flex:none" id="clock">--:--</span>
+  </div>
+</footer>
+
+<div class="qt-sheet" id="sheet" hidden>
+  <div class="qt-sheet-box">
+    <h3 id="sheet-t">线 索</h3>
+    <div id="sheet-b"></div>
+    <div class="hatch-foot"><button class="btn" type="button" id="sheet-x">合</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="store.js"></script>
+<script>
+(function(){
+  var S = QT.load();
+  QT.save();
+  var $ = function(id){ return document.getElementById(id); };
+  var grid = $('hx-grid'), empty = $('hx-empty');
+  var refs = {};   /* id -> {el, m, pct, ...} */
+
+  function log(t){ $('log').textContent = t; }
+
+  function toast(t){
+    var el = $('toast');
+    el.textContent = t; el.hidden = false;
+    el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+    clearTimeout(el._t);
+    el._t = setTimeout(function(){ el.hidden = true; }, 2400);
+  }
+
+  function srcName(s){ return s === 'stolen' ? '同门处窃来' : s === 'plot' ? '畦中移入' : '缝口拾得'; }
+
+  function card(h, idx){
+    var c = h.c, K = QT.KINDS[c.kind], st = QT.stageOf(h), rk = QT.riskOf(c);
+    var el = document.createElement('article');
+    el.className = 'hx-card m' + st.i + ' r' + c.r;
+    el.dataset.id = c.id;
+    el.innerHTML =
+      '<div class="hx-fig">'
+      + '<div class="glow"></div><div class="coc">' + QT.svg(c, {sfx: 'h'}) + '</div>'
+      + '<svg class="crack" viewBox="0 0 120 168" aria-hidden="true"><path d="M78 68 L70 82 L76 86 L64 102"/></svg>'
+      + '<span class="hx-rank tag r' + c.r + '">' + QT.RAR[c.r] + ' 品</span>'
+      + '<span class="hx-no mono">' + (idx + 1) + '</span>'
+      + '</div>'
+      + '<div class="hx-info">'
+      + '<div class="hx-top"><span class="hx-name">' + K.n + '</span><span class="hx-src">' + srcName(c.src) + '</span></div>'
+      + '<div class="hx-stg"><span class="st">' + st.k + '</span><span class="pct mono">' + Math.round(st.p * 100) + '%</span></div>'
+      + '<div class="hx-meter"><i></i></div>'
+      + '<div class="hx-time"><span>余 <b class="left mono">' + QT.fmt(st.left) + '</b></span>'
+      + '<span class="risk-t ' + rk.cls + '">风险 ' + rk.t + '</span></div>'
+      + '<p class="hx-say">' + st.d + '</p>'
+      + '<div class="hx-ops">'
+      + '<button class="btn xs" data-act="out">取 出</button>'
+      + '<button class="btn xs" data-act="plot">移 入 畦</button>'
+      + '<button class="btn xs ghost" data-act="clue">线 索</button>'
+      + '</div>'
+      + '<div class="hx-why"></div>'
+      + '</div>';
+    return el;
+  }
+
+  function render(){
+    var list = S.house.slice().sort(function(a, b){ return a.at - b.at; });
+    grid.innerHTML = ''; refs = {};
+    list.forEach(function(h, i){
+      var el = card(h, i);
+      grid.appendChild(el);
+      refs[h.c.id] = { h: h, el: el, pct: el.querySelector('.pct'),
+                       bar: el.querySelector('.hx-meter > i'),
+                       left: el.querySelector('.left'),
+                       st: el.querySelector('.st'), say: el.querySelector('.hx-say'),
+                       btnPlot: el.querySelector('[data-act="plot"]'),
+                       why: el.querySelector('.hx-why') };
+    });
+    empty.hidden = list.length > 0;
+    grid.hidden = list.length === 0;
+    $('n-house').textContent = list.length;
+    $('n-near').textContent = list.filter(function(h){ return QT.stageOf(h).i === 3; }).length;
+    var cnt = [0, 0, 0, 0];
+    list.forEach(function(h){ cnt[QT.stageOf(h).i]++; });
+    $('hx-sum').textContent = list.length
+      ? '初敛 ' + cnt[0] + ' · 温热 ' + cnt[1] + ' · 将动 ' + cnt[2] + ' · 欲破 ' + cnt[3]
+      : '房 中 无 茧';
+    tick(true);
+  }
+
+  /* 每秒只更数值与状态，不重建 DOM */
+  function tick(silent){
+    Object.keys(refs).forEach(function(id){
+      var r = refs[id], h = r.h;
+      if (S.house.indexOf(h) < 0) return;
+      var st = QT.stageOf(h);
+      if (!r.lastI && r.lastI !== 0) r.lastI = -1;
+      if (r.lastI !== st.i){
+        r.lastI = st.i;
+        r.el.className = r.el.className.replace(/\bm[0-3]\b/, 'm' + st.i);
+        r.st.textContent = st.k;
+        r.say.textContent = st.d;
+      }
+      r.pct.textContent = Math.round(st.p * 100) + '%';
+      r.bar.style.width = (st.p * 100).toFixed(1) + '%';
+      r.left.textContent = QT.fmt(st.left);
+
+      var canPlot = st.i === 0 && S.plots.length < 9;
+      r.btnPlot.disabled = !canPlot;
+      r.why.textContent = st.i === 0
+        ? (S.plots.length >= 9 ? '畦已满（9/9），移不进去' : '')
+        : '已成形，入畦不出';
+    });
+    if (silent) {}
+  }
+
+  function act(e){
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var el = b.closest('.hx-card'); if (!el) return;
+    var id = el.dataset.id, i = -1;
+    S.house.forEach(function(h, k){ if (h.c.id === id) i = k; });
+    if (i < 0) return;
+    var h = S.house[i], st = QT.stageOf(h), c = h.c, K = QT.KINDS[c.kind];
+
+    if (b.dataset.act === 'out'){
+      S.house.splice(i, 1);
+      S.bag.push(c); QT.save(); render();
+      log('已取出「' + K.n + '」，回到囊中。');
+      toast('取出 · ' + K.n + ' 已回囊中');
+      return;
+    }
+
+    if (b.dataset.act === 'plot'){
+      if (st.i !== 0 || S.plots.length >= 9) return;
+      S.house.splice(i, 1);
+      S.plots.push({ c: c, at: Date.now(), ripeAt: Date.now() + 6000 });
+      QT.save(); render();
+      log('「' + K.n + '」已移入畦中，再养一阵。');
+      toast('移入畦 · 占一格');
+      return;
+    }
+
+    /* 线索 */
+    var rk = QT.riskOf(c);
+    var rows = [
+      ['品 类', K.n + ' · 偏' + K.y],
+      ['品 阶', QT.RAR[c.r] + ' 品'],
+      ['来 历', srcName(c.src)],
+      ['入 房', QT.fmt(Date.now() - h.at) + ' 前'],
+      ['成 熟', st.k + ' · ' + Math.round(st.p * 100) + '%'],
+      ['风 险', rk.t + ' · ' + rk.d]
+    ];
+    var clues = [
+      '茧衣' + (st.i >= 1 ? '已松，提之略软' : '完整，无破口，丝线尚新'),
+      st.i >= 1 ? '隔衣可觉其温，近之更有气' : '触之微凉，静如死物',
+      st.i >= 2 ? '贴耳可闻细响，间有一颤' : '<span class="lock">未显：壳内声响（再候）</span>',
+      st.i >= 3 ? '裂口透光，内物轮廓可辨' : '<span class="lock">未显：茧内活物（需再候）</span>'
+    ];
+    $('sheet-t').textContent = K.n + ' · 线 索';
+    $('sheet-b').innerHTML =
+      '<div class="hx-fig-s"><div class="coc">' + QT.svg(c, {sfx: 's'}) + '</div></div>'
+      + '<div class="rows">' + rows.map(function(x){
+          return '<div class="row"><span class="k">' + x[0] + '</span><span class="n">' + x[1] + '</span></div>';
+        }).join('') + '</div>'
+      + '<div class="ops-note" style="border:0;padding:0;margin-top:12px">'
+      + '<div class="lab" style="font-family:var(--serif);font-size:11.5px;letter-spacing:.24em;color:var(--ink-3);margin-bottom:6px">已 知 线 索</div>'
+      + '<ul class="clues">' + clues.map(function(t){ return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+    $('sheet').hidden = false;
+  }
+
+  grid.addEventListener('click', act);
+  $('sheet-x').onclick = function(){ $('sheet').hidden = true; };
+  $('sheet').onclick = function(e){ if (e.target === this) this.hidden = true; };
+
+  function clock(){
+    var d = new Date();
+    $('clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  }
+  clock(); render();
+  setInterval(function(){ tick(); }, 1000);
+  setInterval(clock, 20000);
+})();
+</script>
+</body>
+</html>
