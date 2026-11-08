@@ -4,185 +4,243 @@
 <meta charset='UTF-8'><link rel='icon' href='favicon.ico'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 <title>青棠宗 · 数据看板</title>
+<link rel='stylesheet' href='qt-ink.css'>
 <script src='avatars.js'></script>
 <style>
-  :root{
-    --bg:#0a0e1a; --bg2:#121a30; --panel:#16203a; --panel2:#1b2746;
-    --line:#2a3a5e; --ink:#dfe8ff; --dim:#8aa0c8; --gold:#e9c46a;
-    --jade:#5fd6c2; --red:#ff6b6b; --violet:#9d7bff; --blue:#5b9dff;
+  .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:46px;align-items:start}
+  .side-note{border-top:1px solid var(--rule);padding-top:16px}
+  .side-note .h{font-family:var(--serif);font-size:12px;letter-spacing:.22em;color:var(--ink-3);margin-bottom:10px}
+  .side-note p{font-family:var(--kai);font-size:13px;line-height:2.1;color:var(--ink-2);margin:0}
+  .side-note .sig{font-family:var(--kai);font-size:11.5px;color:var(--ink-4);margin-top:12px;letter-spacing:.18em;text-align:right}
+  .quoteline{display:flex;gap:14px;align-items:flex-start;margin-top:24px}
+  .quoteline .bar{width:1px;background:var(--rule);align-self:stretch;flex:none}
+  .grid-charts{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+  .grid-charts.wide{grid-template-columns:340px minmax(0,1fr)}
+  .subhead{font-family:var(--serif);font-size:11.5px;letter-spacing:.2em;color:var(--ink-3);
+    border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:10px}
+  .note{font-size:11.5px;color:var(--ink-3);line-height:1.95;margin-top:12px}
+  .note b{font-weight:400;color:var(--ink-2)}
+  .note .warn{color:var(--zhu)}
+  .note code{font-size:10.5px;color:var(--ink-2)}
+  .note a{color:var(--zhe);border-bottom:1px solid var(--rule)}
+  #clientBiz th{white-space:nowrap}
+  #clientBiz td{font-size:12px}
+  #clientBiz td b{font-weight:400}
+  #clientBiz td .sm{font-size:10.5px;color:var(--ink-4)}
+  #sectNet{width:100%;max-width:340px;height:auto}
+  #clientBiz td:nth-child(4),#clientBiz td:nth-child(5){white-space:nowrap}
+  #sectTable{overflow-x:auto}
+  .two-notes{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:22px}
+  .two-notes .h{font-family:var(--serif);font-size:12px;letter-spacing:.18em;color:var(--ink);margin-bottom:6px}
+  .two-notes p{font-size:11.5px;color:var(--ink-3);line-height:1.95;margin:0}
+  .two-notes p b{font-weight:400;color:var(--zhe)}
+  @media(max-width:900px){
+    .grid2{grid-template-columns:1fr;gap:26px}
+    .grid-charts,.grid-charts.wide{grid-template-columns:1fr;gap:26px}
+    .two-notes{grid-template-columns:1fr;gap:20px}
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{background:#0a0e1a}
-  body{font-family:'PingFang SC','Microsoft YaHei',system-ui,sans-serif;
-    background:radial-gradient(1200px 800px at 70% -10%,#1a2750 0%,var(--bg) 60%);
-    color:var(--ink);min-height:100vh;padding:14px;font-size:13px}
-  h1,h2,h3{font-weight:600;letter-spacing:.5px}
-  .top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:linear-gradient(90deg,var(--panel),var(--panel2));
-    border:1px solid var(--line);border-radius:12px;padding:12px 18px;margin-bottom:12px}
-  .title-sec{margin-right:auto}
-  .title-sec h1{font-size:20px;color:var(--gold);text-shadow:0 0 12px rgba(233,196,106,.4)}
-  .title-sec .sub{color:var(--dim);font-size:12px;margin-top:2px}
-  .nav{display:flex;gap:10px;flex-wrap:wrap}
-  .navbtn{text-decoration:none;padding:8px 14px;border:1px solid var(--line);border-radius:9px;
-    background:linear-gradient(180deg,#27407a,#1a2b52);color:var(--ink);font-size:12px;transition:.15s}
-  .navbtn:hover{filter:brightness(1.2);border-color:var(--gold)}
-  .navbtn.gold{background:linear-gradient(180deg,#caa24a,#a8802f);color:#1a1305;font-weight:700;border-color:var(--gold)}
-  .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
-  @media(max-width:1000px){.quick{grid-template-columns:repeat(2,1fr)}}
-  .qcard{display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink);transition:.15s}
-  .qcard:hover{border-color:var(--gold);filter:brightness(1.12);transform:translateY(-2px)}
-  .qk{font-size:24px;flex:none}
-  .qt{font-size:13px;font-weight:600;line-height:1.3}
-  .qt small{display:block;font-size:11px;color:var(--dim);font-weight:400;margin-top:2px}
-  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px}
-  @media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}}
-  @media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 14px}
-  .kpi .k{color:var(--dim);font-size:11px}
-  .kpi .v{font-size:20px;font-weight:700;margin-top:3px}
-  .kpi .v.g{color:var(--gold)} .kpi .v.j{color:var(--jade)} .kpi .v.r{color:var(--red)} .kpi .v.b{color:var(--blue)}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
-  @media(max-width:1000px){.grid{grid-template-columns:1fr}}
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
-  .panel h2{font-size:14px;color:var(--jade);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-  .panel h2 .tag{font-size:10px;color:var(--dim);font-weight:400;margin-left:auto}
-  /* 横向条 */
-  .hbar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:12px}
-  .hbar .hl{width:84px;color:var(--dim);text-align:right;flex:none}
-  .hbar .htrack{flex:1;background:var(--bg2);border-radius:6px;height:18px;overflow:hidden}
-  .hbar .hfill{height:100%;border-radius:6px;transition:width .3s}
-  .hbar .hv{width:96px;flex:none;color:var(--ink);text-align:left}
-  /* 环形 */
-  .donut-wrap{display:flex;align-items:center;gap:14px}
-  .legend{font-size:11px;color:var(--dim);line-height:1.9}
-  .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
-  .note{color:var(--dim);font-size:11px;line-height:1.6;margin-top:8px}
-  .pill{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px}
-  .pill-ok{background:rgba(95,214,194,.15);color:var(--jade);border:1px solid var(--jade)}
-  .pill-warn{background:rgba(255,107,107,.15);color:var(--red);border:1px solid var(--red)}
-  .split{display:flex;height:20px;border-radius:6px;overflow:hidden;margin:6px 0}
-  .split div{display:flex;align-items:center;justify-content:center;font-size:11px;color:#0a0e1a;font-weight:700}
-  .cards2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:640px){.cards2{grid-template-columns:1fr}}
-  /* 人物专属头像墙 */
-  .avwall{display:flex;gap:9px;flex-wrap:wrap}
-  .avcard{display:flex;align-items:center;gap:8px;padding:6px 11px 6px 6px;border:1px solid var(--line);border-radius:30px;
-    background:var(--panel2);text-decoration:none;color:var(--ink);transition:.15s}
-  .avcard:hover{border-color:var(--gold);filter:brightness(1.15)}
-  .avcard img{width:38px;height:38px;border-radius:50%;object-fit:cover;object-position:center 18%;
-    border:2px solid var(--gold);background:#0a0e1a;flex:none}
-  .avcard b{font-size:12px;display:block;white-space:nowrap}
-  .avcard small{font-size:10px;color:var(--dim);display:block;white-space:nowrap}
+  @media(max-width:600px){
+    .frame{padding:30px 16px 26px}
+    .toc-row{grid-template-columns:30px 1fr auto 12px;gap:9px;padding:11px 2px 10px}
+    .toc-row .d{display:none}
+    .ledger{grid-template-columns:repeat(2,1fr)}
+    .ledger .v{font-size:20px}
+    .clientTbl th,#clientBiz th{font-size:10px;letter-spacing:.06em}
+    #clientBiz td{font-size:10.5px;padding:6px 4px}
+    #clientBiz td .sm{font-size:9px}
+    .faces{grid-template-columns:repeat(4,1fr)}
+    .faces .face{padding:11px 5px 9px}
+    .faces .face img{max-width:52px}
+    .faces .face b{font-size:11px}
+    .faces .face span{font-size:9px}
+    .split>div{font-size:0}
+    #sectTable .tbl{min-width:520px}
+    #sectTable::-webkit-scrollbar{height:3px}
+    #sectTable::-webkit-scrollbar-thumb{background:var(--rule)}
+    .colophon{padding-top:18px;margin-top:30px}
+  }
 </style>
 </head>
-<body>
+<body class='qt-home'>
+<div class='sheet enter'>
 
-<div class='top'>
-  <div class='title-sec'>
-    <h1>青棠宗 · 数据看板</h1>
-    <div class='sub'>宏观运营分析 · 可视化</div>
-  </div>
-  <div class='nav'>
-    <a class='navbtn gold' href='cocoon.html'>▶ 开始游戏 · 拾茧（开箱模拟器）</a>
-    <a class='navbtn' href='cocoon.html#garden'>🌿 灵植园 · 偷菜（真实时间种菜）</a>
-    <a class='navbtn' href='WORLD-LORE.md'>📜 世界设定（背景故事）</a>
-    <a class='navbtn' href='roster.html'>👤 仙人档案（活档）</a>
-    <a class='navbtn' href='mortal.html'>🌐 凡人群体模型</a>
-    <a class='navbtn' href='sect-map.html'>🗺 宗门地图（地形/建筑）</a>
-    <a class='navbtn' href='sect-map-real.html'>🛰 宗门真实地图（地形/卫星/神念）</a>
-    <a class='navbtn' href='sect-sim.html'>⚙ 经济结构模型（后台）</a>
-    <a class='navbtn' href='wardrobe.html'>🧵 衣服素材库</a>
-    <a class='navbtn' href='portraits.html'>🖼 立绘画廊</a>
-    <a class='navbtn' href='relationship-map.html'>🕸 关系网 · 六类脉络</a>
-    <a class='navbtn' href='sect-life.html'>🎲 旧版·轮回（背景资料）</a>
-  </div>
-</div>
-
-<div class='quick'>
-  <a class='qcard' href='cocoon.html'><span class='qk'>🥚</span><span class='qt'>拾茧 · 开箱模拟器<small>游戏本体 · 网道崩溃之后</small></span></a>
-  <a class='qcard' href='portraits.html'><span class='qk'>🖼</span><span class='qt'>立绘画廊<small>36 张真实生图</small></span></a>
-  <a class='qcard' href='roster.html'><span class='qk'>🌹</span><span class='qt'>苏绾档案<small>17 张精修立绘 · 活档</small></span></a>
-  <a class='qcard' href='sect-map-real.html'><span class='qk'>🌄</span><span class='qt'>真实建筑全景<small>地形·建筑·众生夜昼</small></span></a>
-</div>
-
-<div class='kpis' id='kpis'></div>
-
-<div class='panel'>
-  <h2>人物头像 · 专人专绘 <span class='tag'>125 张已出图</span></h2>
-  <div class='avwall' id='avwall'></div>
-  <div class='note'>125 位具名人物已全部切换专属头像（<code>avatars/av-&lt;id&gt;.webp</code>，512×512，浅灰渐变底 / 单侧柔光）；其余生成弟子沿用 <code>portraits/</code> 原型立绘。关系网、拾茧货单、仙人活档共用同一套映射（avatars.js）。提示词册保留作再生成与替换用：<a href='avatars/prompts.html' style='color:var(--gold)'>提示词册（可搜索复制）</a>。</div>
-</div>
-
-<div class='grid'>
-  <div class='panel'>
-    <h2>人口结构金字塔 <span class='tag'>资源自下向上输送</span></h2>
-    <div id='pyramid'></div>
-    <div class='note'>修士 1000 人呈金字塔（练气 600 → 炼虚 2）；凡人社会为塔基，约为修士的百倍。</div>
+  <div class='rail'>
+    <span>青棠宗 · 宗门纪略　卷一</span>
+    <span>网道崩后七十年　岁次甲辰</span>
   </div>
 
-  <div class='panel'>
-    <h2>资源供需结构 <span class='tag'>修士缺口 vs 凡人供给</span></h2>
-    <div id='resBars'></div>
-    <div class='note'>灵气由高层垄断的生物制药产业配给（凡人仅供原料）；灵石/进贡由凡人生活物资供养。灵气为关键约束。</div>
-  </div>
+  <div class='frame'>
 
-  <div class='panel'>
-    <h2>商业账占比 <span class='tag'>对外营收结构</span></h2>
-    <div class='donut-wrap'>
-      <svg id='bizDonut' width='170' height='170' viewBox='0 0 170 170'></svg>
-      <div id='bizLegend' class='legend'></div>
+    <div class='masthead'>
+      <div class='brand'>
+        <div class='seal lg'>拾茧</div>
+        <div>
+          <h1>青棠宗 · 拾茧</h1>
+          <p class='sub'>宗门纪略 · 数据看板　<em>／</em>　修士一千 · 凡人十万 · 六司九院</p>
+        </div>
+      </div>
+      <div class='vtitle'><span class='vb'>青棠宗</span><span class='vs'>宗门纪略</span></div>
     </div>
-    <div class='note' id='bizNote'></div>
-  </div>
 
-  <div class='panel'>
-    <h2>境界分布 <span class='tag'>修士 1000 人</span></h2>
-    <div id='realmBars'></div>
-  </div>
+    <div class='hr'></div>
 
-  <div class='panel'>
-    <h2>凡人社会构成 <span class='tag'>大公司伪装</span></h2>
+    <div class='hero' style='margin-top:30px'>
+      <div class='grid2'>
+        <div>
+          <p class='lede'>
+            网道崩了七十年。宗门还在，仙还在，只是往上走的那条路断了一半。茧是旧日的运货匣——有人从缝里捡回来换灵石，有人从缝里再没回来。
+            你在青棠宗做拾茧人。开一枚，交一枚，或藏一枚。
+          </p>
+          <div class='btn-row'>
+            <a class='btn primary' href='cocoon.html'>入　卷</a>
+            <a class='btn' href='cocoon.html#garden'>灵植园</a>
+            <a class='btn ghost' href='#toc'>宗门目次</a>
+          </div>
+        </div>
+
+        <aside class='side-note'>
+          <div class='h'>题　记</div>
+          <p>「茧不可尽开。开至第七枚，须以朱记封之，交回宗门，勿问所藏。」<br>
+             ——《拾茧则例 · 残页》</p>
+          <div class='sig'>录于藏经阁西厢</div>
+        </aside>
+      </div>
+
+      <div class='quoteline'>
+        <div class='bar'></div>
+        <div class='note-block' style='border:0;padding-left:0'>
+          <b>本卷所载：</b>修士一千，凡人十万，六司九院。对外只称三家：棠医连锁、红鸾交友、红线仙。<br>
+          灵气由高层配给，凡人只供原料<span class='warn'>——此为本宗真正的账。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class='sec' id='toc'>
+      <span class='mark'></span><h2>宗门目次</h2><span class='rule'></span><span class='note'>TWELVE ENTRIES</span>
+    </div>
+
+    <nav class='toc'>
+      <a class='toc-row' href='cocoon.html'><span class='no'>一</span><span class='t'>拾茧 · 开箱</span><span class='d'>巡缝 → 鉴识 → 开茧</span><span class='go'>›</span></a>
+      <a class='toc-row' href='cocoon.html#garden'><span class='no'>二</span><span class='t'>灵植园 · 偷菜</span><span class='d'>真实时间 · 可偷可失</span><span class='go'>›</span></a>
+      <a class='toc-row' href='roster.html'><span class='no'>三</span><span class='t'>仙人活档</span><span class='d'>一百二十五人</span><span class='go'>›</span></a>
+      <a class='toc-row' href='relationship-map.html'><span class='no'>四</span><span class='t'>关系网</span><span class='d'>六类脉络</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-map-real.html'><span class='no'>五</span><span class='t'>宗门地图 · 真实地形</span><span class='d'>地形 · 建筑 · 昼夜</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-map.html'><span class='no'>六</span><span class='t'>宗门地图 · 示意</span><span class='d'>建筑落位</span><span class='go'>›</span></a>
+      <a class='toc-row' href='mortal.html'><span class='no'>七</span><span class='t'>凡人群体</span><span class='d'>大公司伪装</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-sim.html'><span class='no'>八</span><span class='t'>经济结构</span><span class='d'>后台模型</span><span class='go'>›</span></a>
+      <a class='toc-row' href='portraits.html'><span class='no'>九</span><span class='t'>立绘画廊</span><span class='d'>三十五分</span><span class='go'>›</span></a>
+      <a class='toc-row' href='wardrobe.html'><span class='no'>十</span><span class='t'>衣服素材库</span><span class='d'>衣装联动</span><span class='go'>›</span></a>
+      <a class='toc-row' href='WORLD-LORE.md'><span class='no'>十一</span><span class='t'>世界设定</span><span class='d'>背景长卷</span><span class='go'>›</span></a>
+      <a class='toc-row' href='sect-life.html'><span class='no'>十二</span><span class='t'>旧版 · 轮回</span><span class='d'>存档资料</span><span class='go'>›</span></a>
+    </nav>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>宗门账簿</h2><span class='rule'></span><span class='note'>LEDGER · 折算</span>
+    </div>
+
+    <div class='ledger' id='kpis'></div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>修为与人口</h2><span class='rule'></span><span class='note'>千修 · 十万凡人</span>
+    </div>
+
+    <div class='grid-charts'>
+      <div>
+        <div class='subhead'>人口结构 · 自下向上输送</div>
+        <div class='hbars' id='pyramid'></div>
+      </div>
+      <div>
+        <div class='subhead'>境界分布 · 修士千人</div>
+        <div class='hbars' id='realmBars'></div>
+      </div>
+    </div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>资源供需</h2><span class='rule'></span><span class='note'>缺口 ／ 供给</span>
+    </div>
+
+    <div class='hbars' id='resBars'></div>
+    <div class='note-block' style='margin-top:16px'>
+      灵气由高层垄断的生物制药产业配给，凡人仅供原料；灵石与进贡由凡人生活物资供养。<span class='warn'>灵气为关键约束。</span>
+    </div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>商业账</h2><span class='rule'></span><span class='note'>对外营收结构</span>
+    </div>
+
+    <div class='grid-charts'>
+      <div>
+        <div class='subhead'>日营收占比</div>
+        <div class='donut-wrap'>
+          <svg id='bizDonut' width='170' height='170' viewBox='0 0 170 170'></svg>
+          <div id='bizLegend' class='legend'></div>
+        </div>
+        <div class='note' id='bizNote'></div>
+      </div>
+      <div>
+        <div class='subhead'>客户模型 · 规模 × 单价</div>
+        <table class='tbl' id='clientBiz'></table>
+        <div class='note' id='clientNote'></div>
+      </div>
+    </div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>凡人社会</h2><span class='rule'></span><span class='note'>不知仙，只当大公司</span>
+    </div>
+
     <div id='mortalSplit'></div>
     <div class='note' id='mortalNote'></div>
-  </div>
 
-  <div class='panel'>
-    <h2>门人画像 · 修炼特色 <span class='tag'>青棠宗</span></h2>
-    <div class='cards2'>
-      <div style='background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px'>
-        <div style='color:var(--gold);font-weight:700;margin-bottom:6px'>门人画像</div>
-        <div class='note' style='margin:0'>俊男美女 · 才艺齐全（琴棋书画 / 歌舞 / 辩才），乃社交结缘与红线业务的中坚。</div>
+    <div class='two-notes'>
+      <div>
+        <div class='h'>门人画像</div>
+        <p>俊男美女 · 才艺齐全（琴棋书画 / 歌舞 / 辩才），乃社交结缘与红线业务的中坚。</p>
       </div>
-      <div style='background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px'>
-        <div style='color:var(--gold);font-weight:700;margin-bottom:6px'>修炼三法</div>
-        <div class='note' style='margin:0'>① 意志耐受灵气 ② 解基因锁定向进化 ③ 青棠特色「结缘·斩缘」以情劫淬炼意志、抬升灵气耐受上限。</div>
+      <div>
+        <div class='h'>修炼三法</div>
+        <p>① 意志耐受灵气　② 解基因锁定向进化　③ 青棠特色「结缘·斩缘」以情劫淬炼意志、抬升灵气耐受上限。</p>
       </div>
     </div>
-    <div class='note'>对外以三家巨头示人：<b style='color:var(--gold)'>棠医连锁</b>（医院）、<b style='color:var(--gold)'>红鸾交友</b>（App）、<b style='color:var(--gold)'>红线仙</b>（姻缘）；仙门间外销灵植/灵宠/灵气。</div>
-  </div>
+    <div class='note'>对外以三家巨头示人：<b class='zhe'>棠医连锁</b>（医院）、<b class='zhe'>红鸾交友</b>（App）、<b class='zhe'>红线仙</b>（姻缘）；仙门间外销灵植/灵宠/灵气。</div>
 
-  <div class='panel'>
-    <h2>商业账 · 客户模型（真营收） <span class='tag'>客户规模 × 单价</span></h2>
-    <table id='clientBiz'></table>
-    <div class='note' id='clientNote'></div>
-  </div>
+    <div class='sec'>
+      <span class='mark'></span><h2>仙门往来</h2><span class='rule'></span><span class='note'>红线仙 · 仙门贸易</span>
+    </div>
 
-  <div class='panel'>
-    <h2>仙门关系网 <span class='tag'>红线仙 · 仙门贸易 跨门往来</span></h2>
-    <div class='donut-wrap'>
+    <div class='grid-charts wide'>
       <svg id='sectNet' width='340' height='260' viewBox='0 0 340 260'></svg>
-      <div id='sectTable' style='flex:1;min-width:0'></div>
+      <div id='sectTable'></div>
     </div>
     <div class='note'>青棠宗以姻缘斡旋、灵气产品、精炼技术与各仙门互通有无；灰市往来（九幽魔宗）谨慎从事。</div>
+
+    <div class='sec'>
+      <span class='mark'></span><h2>六司掌事</h2><span class='rule'></span><span class='note'>一百二十五人 · 专人专绘</span>
+    </div>
+
+    <div class='faces' id='facesBox'></div>
+    <div class='note'>一百二十五位具名人物已全部切换专属头像（<code>avatars/av-&lt;id&gt;.webp</code>，512×512）；关系网、拾茧货单、仙人活档共用同一套映射（<code>avatars.js</code>）。<a href='roster.html'>全档见仙人活档</a>　<a href='avatars/prompts.html'>提示词册</a></div>
+
+    <div class='colophon'>
+      <div class='sign'>
+        青棠宗 · 拾茧<br>
+        撰于藏经阁　校于丹鼎房　印于红线仙司
+      </div>
+      <div class='meta'>
+        qingtang.bible / vol.1<br>
+        125 avatars · 5 pages<br>
+        <span style='opacity:.7'>数据看板</span>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
 /* ===== 复用后台经济模型（默认参数） ===== */
 const REALMS=[
- {name:'练气',color:'#5b9dff'},{name:'筑基',color:'#5fd6c2'},
- {name:'金丹',color:'#7ee787'},{name:'元婴',color:'#e9c46a'},
- {name:'化神',color:'#ff9f43'},{name:'炼虚',color:'#ff6b6b'},
+ {name:'练气',color:'#8B8477'},{name:'筑基',color:'#5C7D74'},
+ {name:'金丹',color:'#4C6B7D'},{name:'元婴',color:'#A5764F'},
+ {name:'化神',color:'#7A5F76'},{name:'炼虚',color:'#9C3B31'},
 ];
 const DIST=[600,250,100,35,13,2];
 const CONS=[[2,1,0.5],[4,2,1],[8,4,2],[16,8,4],[32,16,8],[64,32,16]];
@@ -190,14 +248,13 @@ const PROD=[[0,0.5,0.2],[0,1,0.3],[0,1.5,0.5],[0,2,1],[0,3,1.5],[0,5,2]];
 const RES=['灵气','灵石','进贡'];
 const AURA_OUT=0.5,STONE_PER=3,TRIB_PER=2,DEF_AURA_FRAC=0.08;
 const BIZ=[
- {key:'hospital',name:'棠医连锁',sub:'大型医院联锁（凡人医疗）',market:'凡人·世俗货币',share:0.40,color:'#5fd6c2'},
- {key:'app',name:'红鸾交友',sub:'恋爱交友平台 App',market:'凡人·世俗货币',share:0.30,color:'#ff6b6b'},
- {key:'match',name:'红线仙·姻缘',sub:'高端姻缘斡旋（含修士客户）',market:'混合',share:0.15,color:'#e9c46a'},
- {key:'trade',name:'仙门贸易',sub:'灵植/灵宠/灵气产品外销',market:'仙门·灵石',share:0.15,color:'#9d7bff'},
+ {key:'hospital',name:'棠医连锁',sub:'大型医院联锁（凡人医疗）',market:'凡人·世俗货币',share:0.40,color:'#5C7D74'},
+ {key:'app',name:'红鸾交友',sub:'恋爱交友平台 App',market:'凡人·世俗货币',share:0.30,color:'#9C3B31'},
+ {key:'match',name:'红线仙·姻缘',sub:'高端姻缘斡旋（含修士客户）',market:'混合',share:0.15,color:'#A5764F'},
+ {key:'trade',name:'仙门贸易',sub:'灵植/灵宠/灵气产品外销',market:'仙门·灵石',share:0.15,color:'#7A5F76'},
 ];
 
 function compute(){
-  const cm=1,lm=1;
   const cNet=[0,0,0];
   const rows=REALMS.map((r,i)=>{
     const n=DIST[i],c=CONS[i],p=PROD[i];
@@ -231,9 +288,9 @@ function compute(){
 function hbar(id,items){
   const max=Math.max(...items.map(i=>i.val),1);
   document.getElementById(id).innerHTML=items.map(it=>{
-    const w=Math.max(2,it.val/max*100);
+    const w=Math.max(1.5,it.val/max*100);
     return `<div class='hbar'><span class='hl'>${it.label}</span>
-      <div class='htrack'><div class='hfill' style='width:${w}%;background:${it.color}'></div></div>
+      <span class='htrack'><i class='hfill' style='width:${w}%;background:${it.color}'></i></span>
       <span class='hv'>${it.sub}</span></div>`;
   }).join('');
 }
@@ -243,40 +300,40 @@ function donut(svgId,legendId,items){
   const r=58,c=2*Math.PI*r;let off=0;
   const segs=items.map(it=>{
     const frac=it.val/total,len=frac*c;
-    const s=`<circle cx='85' cy='85' r='${r}' fill='none' stroke='${it.color}' stroke-width='22' stroke-dasharray='${len} ${c-len}' stroke-dashoffset='${-off}' transform='rotate(-90 85 85)'/>`;
+    const s=`<circle cx='85' cy='85' r='${r}' fill='none' stroke='${it.color}' stroke-width='21' stroke-dasharray='${len} ${c-len}' stroke-dashoffset='${-off}' transform='rotate(-90 85 85)' opacity='.9'/>`;
     off+=len;return s;
   }).join('');
   document.getElementById(svgId).innerHTML=segs+
-    `<text x='85' y='80' text-anchor='middle' fill='#dfe8ff' font-size='12'>总盘</text>`+
-    `<text x='85' y='98' text-anchor='middle' fill='#e9c46a' font-size='13' font-weight='700'>${(total/10000).toFixed(1)}万</text>`;
+    `<text x='85' y='80' text-anchor='middle' fill='#6E6656' font-size='10' letter-spacing='2'>日营收</text>`+
+    `<text x='85' y='100' text-anchor='middle' fill='#1D1B17' font-size='15' font-family='monospace'>${(total/10000).toFixed(1)}万</text>`;
   document.getElementById(legendId).innerHTML=items.map(it=>
     `<div><span class='dot' style='background:${it.color}'></span>${it.label} ${(it.val/total*100).toFixed(0)}%</div>`).join('');
 }
 
 const m=compute();
 
-/* KPI */
+/* 账簿 */
 const allPos=m.ledger.every(l=>l.total>=0);
 const kpis=[
-  {k:'修士',v:m.rows.reduce((a,r)=>a+r.n,0).toLocaleString(),c:'g'},
-  {k:'凡人（推算）',v:m.L.toLocaleString(),c:'j'},
-  {k:'人修比',v:(m.L/1000).toFixed(1)+' : 1',c:'b'},
-  {k:'年营收（折算）',v:'¥'+(m.totalRev*365/1e8).toFixed(2)+'亿',c:'g'},
-  {k:'意志容量 W',v:m.W.toFixed(0),c:'j'},
-  {k:'经济状态',v:allPos?'可维持':'赤字',c:allPos?'j':'r'},
+  {k:'修　士',v:m.rows.reduce((a,r)=>a+r.n,0).toLocaleString(),u:'练气至炼虚',c:''},
+  {k:'凡　人',v:m.L.toLocaleString(),u:'不知仙，只当大公司',c:'qing'},
+  {k:'人修比',v:(m.L/1000).toFixed(1)+'<small>: 1</small>',u:'塔基供养塔尖',c:''},
+  {k:'年营收',v:'¥'+(m.totalRev*365/1e8).toFixed(2)+'<small>亿</small>',u:'折算 · 三家合计',c:''},
+  {k:'意志容量',v:m.W.toFixed(0),u:'W · 灵气耐受上限',c:''},
+  {k:'结　余',v:allPos?'可维持':'赤字',u:'灵气为关键约束',c:allPos?'qing':'zhu'},
 ];
 document.getElementById('kpis').innerHTML=kpis.map(x=>
-  `<div class='kpi'><div class='k'>${x.k}</div><div class='v ${x.c}'>${x.v}</div></div>`).join('');
+  `<div><div class='k'>${x.k}</div><div class='v ${x.c}'>${x.v}</div><div class='u'>${x.u}</div></div>`).join('');
 
 /* 人口金字塔：修士(顶→底) + 凡人 */
-const pyrRows=[...m.rows.slice().reverse(),{name:'凡人社会',n:m.L,color:'#e9c46a'}];
+const pyrRows=[...m.rows.slice().reverse(),{name:'凡人社会',n:m.L,color:'#A5764F'}];
 hbar('pyramid',pyrRows.map(r=>({label:r.name,val:r.n,color:r.color,sub:r.n.toLocaleString()})));
 
 /* 资源供需 */
 const resRows=m.ledger.map(l=>({
   label:l.res,
   val:Math.max(l.deficit,l.fromLab),
-  color:l.total>=0?'#5fd6c2':'#ff6b6b',
+  color:l.total>=0?'#5C7D74':'#9C3B31',
   sub:`缺口 ${Math.round(l.deficit).toLocaleString()} ／ 供 ${Math.round(l.fromLab).toLocaleString()} ＝ ${l.total>=0?'+':''}${Math.round(l.total).toLocaleString()}`
 }));
 hbar('resBars',resRows);
@@ -284,7 +341,7 @@ hbar('resBars',resRows);
 /* 商业账环形 */
 donut('bizDonut','bizLegend',m.business.map(b=>({label:b.name,val:b.daily,color:b.color})));
 document.getElementById('bizNote').innerHTML=
-  `日营收折算 <b style='color:var(--gold)'>${Math.round(m.totalRev).toLocaleString()}</b>；其中世俗货币（进贡）${Math.round(m.revTrib).toLocaleString()}、仙门货币（灵石）${Math.round(m.revStone).toLocaleString()}。`;
+  `日营收折算 <b>${Math.round(m.totalRev).toLocaleString()}</b> 灵石；其中世俗货币（进贡）${Math.round(m.revTrib).toLocaleString()}、仙门货币（灵石）${Math.round(m.revStone).toLocaleString()}。`;
 
 /* 境界分布 */
 hbar('realmBars',m.rows.map(r=>({label:r.name,val:r.n,color:r.color,sub:r.n+' 人 · 自给 '+(r.selfRate*100).toFixed(0)+'%'})));
@@ -293,63 +350,62 @@ hbar('realmBars',m.rows.map(r=>({label:r.name,val:r.n,color:r.color,sub:r.n+' �
 const aw=m.auraW, lw=m.L-m.auraW;
 document.getElementById('mortalSplit').innerHTML=
   `<div class='split'>
-     <div style='width:${aw/m.L*100}%;background:#7ee787'>灵气原料 ${ (aw/m.L*100).toFixed(1)}%</div>
-     <div style='width:${lw/m.L*100}%;background:#e9c46a'>生活物品 ${ (lw/m.L*100).toFixed(1)}%</div>
+     <div style='width:${aw/m.L*100}%;background:#5C7D74'>灵气原料 ${(aw/m.L*100).toFixed(1)}%</div>
+     <div style='width:${lw/m.L*100}%;background:#A5764F'>生活物品 ${(lw/m.L*100).toFixed(1)}%</div>
    </div>`;
 document.getElementById('mortalNote').innerHTML=
-  `凡人不知仙，只当青棠宗是来采购原料的大公司。其中约 <b style='color:var(--gold)'>${Math.round(aw).toLocaleString()}</b> 人从事灵植/灵宠（灵气原料），其余供养仙人日常起居。`;
+  `凡人不知仙，只当青棠宗是来采购原料的大公司。其中约 <b>${Math.round(aw).toLocaleString()}</b> 人（${(aw/m.L*100).toFixed(1)}%）从事灵植/灵宠（灵气原料），其余 ${(lw/m.L*100).toFixed(1)}% 供养仙人日常起居。`;
 
-/* ===== 红鸾 App 客户模型（真营收表） ===== */
+/* ===== 客户模型（真营收表） ===== */
 const CLIENT_BIZ=[
- {name:'棠医连锁',type:'大型医院联锁',scale:'1,280 家门店',vol:'日均接诊 12 万人次',unit:'客单价 ¥280',annual:12e4*280*365,color:'#5fd6c2',note:'凡人医疗'},
- {name:'红鸾交友',type:'恋爱交友 App',scale:'注册 6,800 万',vol:'付费率 9% · 月活 2,100 万',unit:'ARPU ¥62 / 年',annual:6800e4*0.09*62,color:'#ff6b6b',note:'凡人·订阅'},
- {name:'红线仙·姻缘',type:'高端姻缘斡旋',scale:'年撮合 1.8 万桩',vol:'含修士 VIP 3,600 桩',unit:'均价 ¥9.6 万 / 桩',annual:18000*96000,color:'#e9c46a',note:'混合·含修士'},
- {name:'仙门贸易',type:'灵植/灵宠/灵气外销',scale:'年外销 28 万 灵石单位',vol:'折算灵气/灵植',unit:'汇率 ¥4,200 / 单位',annual:28e4*4200,color:'#9d7bff',note:'仙门·灵石'},
+ {name:'棠医连锁',type:'大型医院联锁',scale:'1,280 家门店',vol:'日均接诊 12 万人次',unit:'客单价 ¥280',annual:12e4*280*365,color:'#5C7D74',note:'凡人医疗'},
+ {name:'红鸾交友',type:'恋爱交友 App',scale:'注册 6,800 万',vol:'付费率 9% · 月活 2,100 万',unit:'ARPU ¥62 / 年',annual:6800e4*0.09*62,color:'#9C3B31',note:'凡人·订阅'},
+ {name:'红线仙·姻缘',type:'高端姻缘斡旋',scale:'年撮合 1.8 万桩',vol:'含修士 VIP 3,600 桩',unit:'均价 ¥9.6 万 / 桩',annual:18000*96000,color:'#A5764F',note:'混合·含修士'},
+ {name:'仙门贸易',type:'灵植/灵宠/灵气外销',scale:'年外销 28 万 灵石单位',vol:'折算灵气/灵植',unit:'汇率 ¥4,200 / 单位',annual:28e4*4200,color:'#7A5F76',note:'仙门·灵石'},
 ];
 const cbTotal=CLIENT_BIZ.reduce((s,b)=>s+b.annual,0);
 document.getElementById('clientBiz').innerHTML=
- '<thead><tr><th>业务线</th><th>客户规模</th><th>单价 / ARPU</th><th>年营收</th><th>占比</th></tr></thead><tbody>'+
+ '<thead><tr><th>业务线</th><th>客户规模</th><th>单价 / ARPU</th><th class="num">年营收</th><th class="num">占比</th></tr></thead><tbody>'+
  CLIENT_BIZ.map(b=>{
    const pct=(b.annual/cbTotal*100).toFixed(1);
    return `<tr>
-     <td><b style='color:${b.color}'>${b.name}</b><br><span style='color:var(--dim);font-size:11px'>${b.type}</span></td>
-     <td>${b.scale}<br><span style='color:var(--dim);font-size:11px'>${b.vol}</span></td>
+     <td><b style='color:${b.color}'>${b.name}</b><br><span class='sm'>${b.type}</span></td>
+     <td>${b.scale}<br><span class='sm'>${b.vol}</span></td>
      <td>${b.unit}</td>
-     <td><b>¥${(b.annual/1e8).toFixed(2)} 亿</b></td>
-     <td>${pct}%</td>
+     <td class='num'>¥${(b.annual/1e8).toFixed(2)} 亿</td>
+     <td class='num'>${pct}%</td>
    </tr>`;
  }).join('')+'</tbody>';
 document.getElementById('clientNote').innerHTML=
- `合计年营收 <b style='color:var(--gold)'>¥${(cbTotal/1e8).toFixed(1)} 亿</b>。`+
- `此为以「客户规模 × 单价」推算的真实营收表，与后台『内部资源盈余』（资源闭环视角）口径不同，二者互相印证宗门财力。`;
+ `合计年营收 <b>¥${(cbTotal/1e8).toFixed(1)} 亿</b>。此为以「客户规模 × 单价」推算的真实营收表，与后台『内部资源盈余』（资源闭环视角）口径不同，二者互相印证宗门财力。`;
 
 /* ===== 仙门关系网 ===== */
 const SECTS=[
- {name:'太虚剑宗',rel:'战略盟友',exp:'灵气灵元 · 姻缘斡旋',imp:'飞剑法器 · 剑修客卿',amt:'灵石 6.2 万 / 年',color:'#5b9dff'},
- {name:'百草谷',rel:'贸易伙伴',exp:'精炼技术 · 灵元',imp:'灵植种子 · 珍稀药材',amt:'灵石 4.8 万 / 年',color:'#7ee787'},
- {name:'玄机阁',rel:'贸易伙伴',exp:'姻缘斡旋 · 红鸾算法',imp:'机关傀儡 · 算力',amt:'灵石 3.5 万 / 年',color:'#e9c46a'},
- {name:'凌霄盟',rel:'大宗盟友',exp:'灵石互市 · 人才交换',imp:'灵石 · 高阶功法',amt:'灵石 8.0 万 / 年',color:'#9d7bff'},
- {name:'九幽魔宗',rel:'灰市往来',exp:'灵元（谨慎）',imp:'稀有材料 · 禁制',amt:'灵石 1.2 万 / 年',color:'#ff6b6b'},
+ {name:'太虚剑宗',rel:'战略盟友',exp:'灵气灵元 · 姻缘斡旋',imp:'飞剑法器 · 剑修客卿',amt:'灵石 6.2 万 / 年',color:'#4C6B7D'},
+ {name:'百草谷',rel:'贸易伙伴',exp:'精炼技术 · 灵元',imp:'灵植种子 · 珍稀药材',amt:'灵石 4.8 万 / 年',color:'#5C7D74'},
+ {name:'玄机阁',rel:'贸易伙伴',exp:'姻缘斡旋 · 红鸾算法',imp:'机关傀儡 · 算力',amt:'灵石 3.5 万 / 年',color:'#A5764F'},
+ {name:'凌霄盟',rel:'大宗盟友',exp:'灵石互市 · 人才交换',imp:'灵石 · 高阶功法',amt:'灵石 8.0 万 / 年',color:'#7A5F76'},
+ {name:'九幽魔宗',rel:'灰市往来',exp:'灵元（谨慎）',imp:'稀有材料 · 禁制',amt:'灵石 1.2 万 / 年',color:'#9C3B31'},
 ];
 (function drawSectNet(){
   const cx=170,cy=130,R=92;
-  let s=`<circle cx='${cx}' cy='${cy}' r='26' fill='#1b2746' stroke='#e9c46a' stroke-width='2'/>`+
-        `<text x='${cx}' y='${cy-2}' text-anchor='middle' fill='#e9c46a' font-size='13' font-weight='700'>青棠宗</text>`+
-        `<text x='${cx}' y='${cy+13}' text-anchor='middle' fill='#8aa0c8' font-size='9'>本宗</text>`;
+  let s=`<circle cx='${cx}' cy='${cy}' r='26' fill='#F2ECDF' stroke='#1D1B17' stroke-width='1'/>`+
+        `<text x='${cx}' y='${cy-1}' text-anchor='middle' fill='#1D1B17' font-size='12' font-family='serif' letter-spacing='1'>青棠宗</text>`+
+        `<text x='${cx}' y='${cy+13}' text-anchor='middle' fill='#8A8272' font-size='9'>本宗</text>`;
   SECTS.forEach((st,i)=>{
     const ang=-Math.PI/2 + i/SECTS.length*2*Math.PI;
     const x=cx+Math.cos(ang)*R, y=cy+Math.sin(ang)*R;
-    s+=`<line x1='${cx}' y1='${cy}' x2='${x}' y2='${y}' stroke='${st.color}' stroke-width='1.5' opacity='0.6'/>`;
-    s+=`<circle cx='${x}' cy='${y}' r='20' fill='#16203a' stroke='${st.color}' stroke-width='2'/>`;
-    s+=`<text x='${x}' y='${y+3}' text-anchor='middle' fill='${st.color}' font-size='10' font-weight='700'>${st.name.slice(0,2)}</text>`;
-    s+=`<text x='${x}' y='${y+R*0.34+13}' text-anchor='middle' fill='#8aa0c8' font-size='9'>${st.rel}</text>`;
+    s+=`<line x1='${cx}' y1='${cy}' x2='${x}' y2='${y}' stroke='#C3B69D' stroke-width='1'/>`;
+    s+=`<circle cx='${x}' cy='${y}' r='20' fill='#EAE3D3' stroke='${st.color}' stroke-width='1'/>`;
+    s+=`<text x='${x}' y='${y+3}' text-anchor='middle' fill='${st.color}' font-size='10'>${st.name.slice(0,2)}</text>`;
+    s+=`<text x='${x}' y='${y+34}' text-anchor='middle' fill='#8A8272' font-size='9'>${st.rel}</text>`;
   });
   document.getElementById('sectNet').innerHTML=s;
 })();
 document.getElementById('sectTable').innerHTML=
- '<table><thead><tr><th>仙门</th><th>关系</th><th>我方出口</th><th>我方进口</th><th>年往来</th></tr></thead><tbody>'+
+ '<table class="tbl"><thead><tr><th>仙门</th><th>关系</th><th>我方出口</th><th>我方进口</th><th>年往来</th></tr></thead><tbody>'+
  SECTS.map(st=>`<tr>
-   <td><b style='color:${st.color}'>${st.name}</b></td>
+   <td class='nm' style='color:${st.color}'>${st.name}</td>
    <td>${st.rel}</td>
    <td style='font-size:11px'>${st.exp}</td>
    <td style='font-size:11px'>${st.imp}</td>
@@ -358,12 +414,12 @@ document.getElementById('sectTable').innerHTML=
 </script>
 <script>
 (function(){
-  var ids=['91001','91002','91003','91004','91005','91006','91007','91008','91013','91014','90001'];
-  var box=document.getElementById('avwall');
+  var ids=['91001','90001','91005','91008','91002','91004','91006','91013'];
+  var box=document.getElementById('facesBox');
   if(!box||typeof avatarOf==='undefined')return;
   box.innerHTML=ids.map(function(id){
     var m=(window.AVATAR_META&&window.AVATAR_META[id])||{};
-    return `<a class='avcard' href='relationship-map.html'><img src='${avatarOf(id)}' data-fb='${avatarFallback(id)}' alt='' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'><span><b>${m.name||''}</b><small>${m.title||''}</small></span></a>`;
+    return `<a class='face' href='roster.html'><img src='${avatarOf(id)}' data-fb='${avatarFallback(id)}' alt='' onerror='if(this.dataset.fb){this.onerror=null;this.src=this.dataset.fb;}'><b>${m.name||''}</b><span>${m.title||''}</span></a>`;
   }).join('');
 })();
 </script>

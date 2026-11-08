@@ -156,6 +156,129 @@
     .foot{max-width:100%}
   }
 </style>
+<link rel='stylesheet' href='qt-ink.css'>
+<style>
+/* ================= 视制覆盖层 · 宣纸 ================= */
+body{--panel:#F2ECDF;--panel2:#EFE7D7;--line:#C3B69D;--gold:#9C3B31;--jade:#5C7D74;
+  --red:#9C3B31;--violet:#7A5F76;--blue:#4C6B7D;--orange:#A5764F;
+  --ink:#1D1B17;--dim:#6E6656;font-size:13px;overflow:hidden}
+/* 顶栏 */
+.top{height:54px;background:var(--paper);border-bottom:1px solid var(--rule);
+  backdrop-filter:none;padding:0 18px;gap:10px}
+.back{border-radius:0;border:1px solid var(--rule);background:none;color:var(--ink-3);
+  width:28px;height:28px;font-size:15px}
+.back:hover{color:var(--zhu);border-color:var(--zhu)}
+.top h1{font-family:var(--serif);font-weight:400;font-size:15px;letter-spacing:.18em;
+  color:var(--ink);text-shadow:none}
+.top .sub{font-family:var(--kai);font-size:10.5px;color:var(--ink-4);letter-spacing:.12em;max-width:300px}
+.search{flex:0 0 200px}
+.search input{height:28px;border-radius:0;border:1px solid var(--rule);background:var(--paper-hi);
+  color:var(--ink);font-size:11.5px;padding:0 9px 0 26px}
+.search input:focus{border-color:var(--zhu)}
+.search .ic{color:var(--ink-4);top:6px}
+.sres{background:var(--paper-hi);border:1px solid var(--rule);border-radius:0;
+  box-shadow:0 10px 26px rgba(29,27,23,.16)}
+.sres .it{border-bottom:1px solid var(--rule-3);color:var(--ink-2);font-size:11.5px}
+.sres .it:hover{background:rgba(165,118,79,.09);color:var(--zhu)}
+.sres .it small{color:var(--ink-4)}
+.chip{border-radius:0;border:1px solid var(--rule);background:none;color:var(--ink-3);
+  font-family:var(--serif);font-size:10.5px;letter-spacing:.08em;padding:4px 8px}
+.chip.on{color:var(--paper-hi)!important;background:var(--c)!important;
+  border-color:var(--c)!important;font-weight:400}
+.tbtn{border-radius:0;border:1px solid var(--rule);background:none;color:var(--ink-3);
+  font-family:var(--serif);font-size:10.5px;letter-spacing:.1em;padding:4px 8px}
+.tbtn:hover,.tbtn.on{color:var(--zhu);border-color:var(--zhu);background:none}
+/* 舞台 */
+#stage{top:54px}
+.av{border-radius:2px;border:1px solid var(--ring);box-shadow:none;background:var(--paper-lo);
+  filter:sepia(.18) saturate(.84)}
+.av .ini{color:var(--ink-3);font-family:var(--serif);font-weight:400}
+.node.core .av{border-color:var(--zhu);border-width:2px;box-shadow:none}
+.node.dao .av{border-color:var(--ink);border-width:2px;box-shadow:none}
+.node.tainted .av{border-color:var(--zhu);border-width:3px;border-style:double;box-shadow:none}
+.node .nm{color:var(--ink);text-shadow:none;font-family:var(--serif);font-size:10.5px;
+  letter-spacing:.04em;background:rgba(234,227,211,.86);padding:0 3px;margin-top:2px}
+.node.sel .av{outline:2px solid var(--zhu);outline-offset:3px;box-shadow:none}
+.node.pair .av{outline:2px solid var(--qing);outline-offset:2px}
+.zlab{text-shadow:none;font-family:var(--serif);letter-spacing:.26em;opacity:.82;font-size:12.5px}
+.zlab:hover{opacity:1;color:var(--zhu)}
+.zlab.off{opacity:.22}
+.edge{stroke-width:1;opacity:.42}
+.edge.hi{opacity:.92;stroke-width:1.8}
+.edge.dim{opacity:.05}
+/* 中央浮层 */
+#center{top:44%}
+.hero,.card{background:rgba(242,236,223,.95);border:1px solid var(--rule);border-radius:0;
+  box-shadow:0 14px 36px rgba(29,27,23,.14)}
+.hero{padding:15px 18px}
+.hero .big{font-family:var(--serif);font-weight:400;color:var(--ink);text-shadow:none;
+  letter-spacing:.14em;font-size:17px}
+.hero .lead{color:var(--ink-3);font-size:11px;line-height:1.95}
+.hero .lead b{color:var(--zhu);font-weight:400}
+.card .av2{border-radius:2px;border:1px solid var(--rule);box-shadow:none;background:var(--paper-lo);
+  filter:sepia(.18) saturate(.84)}
+.card .av2 .ini{color:var(--ink-3);font-weight:400}
+.card .cname{font-family:var(--serif);font-weight:400;color:var(--ink);font-size:16px;letter-spacing:.1em}
+.card .cmeta{color:var(--ink-4);font-size:10.5px}
+.card .count{font-size:12px;color:var(--ink-2)}
+.card .count b{color:var(--qing);font-size:14px;font-weight:400}
+.card .count i{color:var(--zhu);font-size:14px;font-weight:400;font-family:var(--mono)}
+.card .tip{color:var(--ink-4);border-top:1px dashed var(--rule-2);font-size:10.5px}
+.card .clr{color:var(--ink-4)}
+.qrow{border-bottom:1px dashed var(--rule-3);font-size:11px;line-height:1.85;color:var(--ink-2)}
+.qrow .who{color:var(--ink);font-family:var(--serif);font-weight:400}
+.qrow .txt{color:var(--ink-2)}
+.qrow .emptyq{color:var(--ink-4)}
+.badge{border-radius:0;border:1px solid currentColor;background:none!important;
+  font-family:var(--serif);font-size:9.5px;padding:0 4px;letter-spacing:.06em}
+.b-fact{color:var(--qing)} .b-doubt{color:var(--zhe)}
+.b-bias{color:var(--r1)} .b-taint{color:var(--zhu)}
+/* 右栏 */
+.side{background:var(--paper-hi);border-left:1px solid var(--rule);width:318px;padding:16px}
+.side.hide{opacity:0;pointer-events:none;transform:none!important}
+.side.show{opacity:1;transform:none!important}
+.side h2{font-family:var(--serif);font-weight:400;color:var(--ink);font-size:13.5px;
+  letter-spacing:.14em;border-bottom:1px solid var(--rule);padding-bottom:8px}
+.side .card2{background:none;border:1px solid var(--rule-2);border-radius:0;padding:12px}
+.side .hd .av3{border-radius:2px;border:1px solid var(--rule);background:var(--paper-lo);
+  filter:sepia(.18) saturate(.84)}
+.side .hd .av3 .ini{color:var(--ink-3);font-weight:400}
+.side .nm2{font-family:var(--serif);font-weight:400;color:var(--ink);font-size:15px;letter-spacing:.08em}
+.side .meta{color:var(--ink-4);font-size:11px;line-height:1.85}
+.side .bio{color:var(--ink-2);font-size:11.5px;line-height:1.95}
+.side h3{font-family:var(--serif);font-weight:400;color:var(--ink-3);font-size:11.5px;letter-spacing:.16em}
+.side .q{background:none;border-left:2px solid var(--rule);border-radius:0;font-size:11px;
+  line-height:1.8;color:var(--ink-2);padding:6px 9px}
+.side .q:hover{background:rgba(165,118,79,.06)}
+.side .q .t{color:var(--ink-4)}
+.side .q .t b{color:var(--zhe);font-weight:400}
+.side .empty{color:var(--ink-4);font-size:11.5px}
+.side .fognote{background:none;border:1px dashed var(--rule);border-radius:0;color:var(--ink-4);font-size:10.5px}
+/* 底栏 */
+.foot{background:var(--paper-hi);border-top:1px solid var(--rule);border-right:1px solid var(--rule);
+  border-radius:0;padding:10px 18px;box-shadow:0 -8px 22px rgba(29,27,23,.05)}
+.stat .v{font-family:var(--mono);font-weight:400;font-size:19px;color:var(--ink);line-height:1.2}
+.stat .k{font-size:9.5px;color:var(--ink-4);letter-spacing:.14em;margin-top:3px}
+.foot .src,.foot .desc{color:var(--ink-4);border-top:1px dashed var(--rule-2);font-size:10.5px;line-height:1.9}
+.foldbtn{color:var(--ink-4)}
+.hint{background:rgba(242,236,223,.9);border:1px solid var(--rule);border-radius:0;
+  color:var(--ink-4);font-family:var(--kai);font-size:10.5px}
+#tip{background:var(--paper-hi);border:1px solid var(--ink-3);border-radius:0;
+  color:var(--ink);box-shadow:0 8px 20px rgba(29,27,23,.16);font-size:11.5px}
+#q::placeholder{color:var(--ink-4)}
+@media(max-width:760px){
+  .top{height:50px;padding:0 10px;gap:7px}
+  .top h1{font-size:13.5px;letter-spacing:.08em}
+  .search{flex:1 1 auto;min-width:0;max-width:none}
+  .tbtn{padding:4px 6px;font-size:10px;letter-spacing:.02em}
+  #stage{top:50px}
+  .side{width:100%;padding:12px;height:46%}
+  .foot{padding:8px 12px}
+  .stats{gap:18px}
+  .stat .v{font-size:16px}
+  .hint{display:none}
+}
+</style>
 </head>
 <body>
 
@@ -210,14 +333,14 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 /* ===== 世界常量（与 roster / WORLD-LORE 对齐）===== */
 const REALM=['练气','筑基','金丹','元婴','化神','炼虚','合道'];
 const DEPTS={
-  neimen:  {name:'内门修炼',color:'#ff9f43'},
-  danding: {name:'丹鼎房',  color:'#e9c46a'},
-  lingchong:{name:'灵兽苑', color:'#5b9dff'},
-  lingzhi: {name:'灵植苑',  color:'#7ee787'},
-  hongxian:{name:'红线仙司',color:'#ffd76b'},
-  hongluan:{name:'红鸾院',  color:'#ff6b6b'},
-  waimao:  {name:'外事贸易司',color:'#9d7bff'},
-  tangyi:  {name:'棠医堂',  color:'#5fd6c2'},
+  neimen:  {name:'内门修炼',color:'#8A8272'},
+  danding: {name:'丹鼎房',  color:'#6E6656'},
+  lingchong:{name:'灵兽苑', color:'#7D8B77'},
+  lingzhi: {name:'灵植苑',  color:'#4C6B7D'},
+  hongxian:{name:'红线仙司',color:'#A5764F'},
+  hongluan:{name:'红鸾院',  color:'#9C3B31'},
+  waimao:  {name:'外事贸易司',color:'#7A5F76'},
+  tangyi:  {name:'棠医堂',  color:'#5C7D74'},
 };
 const DEPT_KEYS=Object.keys(DEPTS);
 const GODS={'sla':'色孽','tze':'奸奇','nur':'纳垢','kho':'恐虐','ny':'奈亚拉托提普','yog':'犹格索托斯','has':'哈斯塔','cth':'克苏鲁','shu':'莎布·尼古拉丝','aza':'阿撒托斯'};
@@ -365,12 +488,12 @@ const ZLABS=DEPT_KEYS.map((d,di)=>{
 
 /* ===== 关系类型（沿用旧版关系网六类与配色）===== */
 const REL={
-  mentor :{label:'师徒',    short:'师徒',  color:'#e9c46a'},
-  couple :{label:'道侣',    short:'道侣',  color:'#ff6b6b'},
-  peer   :{label:'同门',    short:'同门',  color:'#5fd6c2'},
-  lead   :{label:'上下级',  short:'上下级',color:'#5b9dff'},
-  rival  :{label:'仇敌',    short:'仇敌',  color:'#d05757'}, // 旧版 #8a2b2b，暗底提亮以便辨认
-  foreign:{label:'跨门交往',short:'跨门',  color:'#9d7bff'}
+  mentor :{label:'师徒',    short:'师徒',  color:'#A5764F'},
+  couple :{label:'道侣',    short:'道侣',  color:'#9C3B31'},
+  peer   :{label:'同门',    short:'同门',  color:'#5C7D74'},
+  lead   :{label:'上下级',  short:'上下级',color:'#4C6B7D'},
+  rival  :{label:'仇敌',    short:'仇敌',  color:'#3B372F'},
+  foreign:{label:'跨门交往',short:'跨门',  color:'#7A5F76'}
 };
 
 /* ===== 生成关系（旧版规则，节点换为本版 125 人环）===== */
@@ -468,12 +591,12 @@ function svgEl(tag,attrs){const e=document.createElementNS(NS,tag);for(const k i
 // 装饰：同心圆 + 星点 + 刻度
 let decoHtml='';
 [128,205,268,318,372,426,462].forEach((r,i)=>{
-  decoHtml+=`<circle cx='${CX}' cy='${CY}' r='${r}' fill='none' stroke='#2c3d68' stroke-width='${i%2?0.6:0.9}' opacity='${i===6?0.5:0.28}' ${i===6?'stroke-dasharray="2 7"':''}/>`;
+  decoHtml+=`<circle cx='${CX}' cy='${CY}' r='${r}' fill='none' stroke='#D6CBB6' stroke-width='${i%2?0.6:0.9}' opacity='${i===6?0.7:0.5}' ${i===6?'stroke-dasharray="2 7"':''}/>`;
 });
 for(let i=0;i<70;i++){const a=RND()*Math.PI*2,r=110+RND()*355;
-  decoHtml+=`<circle cx='${(CX+Math.cos(a)*r).toFixed(1)}' cy='${(CY+Math.sin(a)*r).toFixed(1)}' r='${(0.5+RND()*1.1).toFixed(1)}' fill='#9fb4e0' opacity='${(0.15+RND()*0.5).toFixed(2)}'/>`;}
+  decoHtml+=`<circle cx='${(CX+Math.cos(a)*r).toFixed(1)}' cy='${(CY+Math.sin(a)*r).toFixed(1)}' r='${(0.5+RND()*1.1).toFixed(1)}' fill='#B9A98C' opacity='${(0.2+RND()*0.5).toFixed(2)}'/>`;}
 for(let i=0;i<48;i++){const a=i/48*Math.PI*2;
-  decoHtml+=`<line x1='${(CX+Math.cos(a)*462).toFixed(1)}' y1='${(CY+Math.sin(a)*462).toFixed(1)}' x2='${(CX+Math.cos(a)*468).toFixed(1)}' y2='${(CY+Math.sin(a)*468).toFixed(1)}' stroke='#3a4d7e' stroke-width='0.8' opacity='.4'/>`;}
+  decoHtml+=`<line x1='${(CX+Math.cos(a)*462).toFixed(1)}' y1='${(CY+Math.sin(a)*462).toFixed(1)}' x2='${(CX+Math.cos(a)*468).toFixed(1)}' y2='${(CY+Math.sin(a)*468).toFixed(1)}' stroke='#C3B69D' stroke-width='0.8' opacity='.6'/>`;}
 deco.innerHTML=decoHtml;
 // 连线
 const edgeEls=[];
@@ -719,7 +842,7 @@ document.getElementById('stats').innerHTML=[
  {v:STATS.tainted,k:'位已魔染'},
 ].map(s=>`<div class='stat'><div class='v'>${s.v}</div><div class='k'>${s.k}</div></div>`).join('');
 document.getElementById('desc').innerHTML=
- `六类关系分色：<b style='color:#e9c46a'>师徒</b>／<b style='color:#ff6b6b'>道侣</b>／<b style='color:#5fd6c2'>同门</b>／<b style='color:#5b9dff'>上下级</b>／<b style='color:#d05757'>仇敌</b>／<b style='color:#9d7bff'>跨门交往</b>。点一个人看他的关系脉络，再点一个人看二人之间有何牵连；顶栏可逐类开关，点击部门名称只看该部门。`;
+ `六类关系分色：<b style='color:#A5764F'>师徒</b>／<b style='color:#9C3B31'>道侣</b>／<b style='color:#5C7D74'>同门</b>／<b style='color:#4C6B7D'>上下级</b>／<b style='color:#3B372F'>仇敌</b>／<b style='color:#7A5F76'>跨门交往</b>。点一个人看他的关系脉络，再点一个人看二人之间有何牵连；顶栏可逐类开关，点击部门名称只看该部门。`;
 document.getElementById('src').innerHTML=
  `信息源：青棠宗·六司职司簿 ／ 三生簿旁注 ／ 跨门往来牒　｜　${STATS.core} 位具名核心 · ${STATS.tainted} 位已魔染（色孽／奸奇居多）· 道门合道真君 3 位（非本宗，仅传闻可及）　｜　背景故事见 WORLD-LORE.md §七 认知迷雾、§九 魔染产业链、§十二 网道与大崩溃`;
 

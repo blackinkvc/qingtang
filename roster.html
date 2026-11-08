@@ -53,7 +53,7 @@
   .st.已同化{background:rgba(120,120,140,.22);color:#b9c2d6}
   .st.离体{background:rgba(107,212,255,.20);color:#6bd4ff}
   .st.眷属{background:rgba(233,196,106,.22);color:var(--gold)}
-  .st.合道{background:rgba(255,244,214,.22);color:#fff4d6}
+  .st.合道{background:rgba(59,55,47,.08);color:#3B372F}
   .tbl-wrap{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:10px}
   .detail .row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px dashed var(--line);font-size:12px;gap:8px}
   .detail .row b{color:var(--ink);text-align:right}
@@ -123,6 +123,151 @@
   .occ{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:7px;font-size:12px;cursor:pointer;margin:3px 0}
   .occ:hover{background:var(--bg2)}
   .occ .nm{width:74px;flex:none}
+</style>
+<link rel='stylesheet' href='qt-ink.css'>
+<style>
+/* ================= 视制覆盖层 · 宣纸 ================= */
+body{
+  --gold:#9C3B31; --jade:#5C7D74; --red:#9C3B31; --violet:#7A5F76; --blue:#4C6B7D;
+  --ink:#1D1B17; --dim:#6E6656;
+  --panel:#F2ECDF; --panel2:#F2ECDF; --bg:#EAE3D3; --bg2:#EFE7D7; --line:#C3B69D;
+  font-size:13.5px;line-height:1.75;padding:0 0 72px;
+}
+body>.top,body>.ctrl,body>.stats,#rosterMain,#mapView{margin-left:auto;margin-right:auto;max-width:1240px}
+.top{background:none;border:0;border-bottom:1px solid var(--rule);border-radius:0;
+  padding:20px 4px 12px;margin-bottom:0;gap:14px;align-items:flex-end}
+.title-sec h1{font-family:var(--serif);font-weight:400;font-size:clamp(20px,2.6vw,27px);
+  letter-spacing:.18em;color:var(--ink);line-height:1.3}
+.title-sec .sub{font-family:var(--kai);font-size:11px;letter-spacing:.12em;color:var(--ink-3);margin-top:5px;line-height:1.9}
+.nav{gap:16px;flex-wrap:wrap;margin-left:auto}
+.navbtn{background:none;border:0;border-bottom:1px solid var(--rule);border-radius:0;
+  padding:2px 0;font-family:var(--serif);font-size:12px;letter-spacing:.1em;color:var(--ink-2)}
+.navbtn:hover{filter:none;color:var(--zhu);border-color:var(--zhu)}
+.year{margin-left:0;font-family:var(--mono);font-size:13px;color:var(--ink-2);letter-spacing:.04em;
+  border-left:1px solid var(--rule);padding-left:14px}
+.year span{color:var(--zhu)}
+/* 控制条 */
+.ctrl{gap:8px;padding:14px 4px 12px;margin-bottom:0;border-bottom:1px solid var(--rule-2)}
+button{background:transparent;border:1px solid var(--ink-4);border-radius:0;color:var(--ink);
+  padding:6px 13px;font-family:var(--serif);font-size:12.5px;letter-spacing:.1em;
+  text-indent:.1em;line-height:1.5;transition:color .2s var(--ease),border-color .2s var(--ease)}
+button:hover{filter:none;border-color:var(--zhu);color:var(--zhu)}
+button.primary{background:var(--ink);border-color:var(--ink);color:var(--paper-hi);font-weight:400}
+button.primary:hover{background:var(--zhu);border-color:var(--zhu);color:var(--paper-hi)}
+input,select{background:var(--paper-hi);border:1px solid var(--rule);border-radius:0;color:var(--ink);
+  font-size:12px;padding:5px 8px}
+input:focus,select:focus{outline:none;border-color:var(--zhu)}
+/* 统计 */
+.stats{gap:0;margin-bottom:18px;border-top:1px solid var(--rule-2);border-left:1px solid var(--rule-2)}
+.stat{background:none;border:0;border-right:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2);
+  border-radius:0;padding:10px 14px;font-size:11px;color:var(--ink-3);letter-spacing:.04em}
+.stat b{display:inline-block;font-family:var(--mono);font-weight:400;font-size:16px;color:var(--ink);margin-left:5px}
+/* 版式 */
+.grid2{grid-template-columns:minmax(0,1fr) 400px;gap:0}
+.grid2>.panel:first-child{padding-right:22px}
+.grid2>.panel.detail{border-left:1px solid var(--rule);padding-left:24px;max-height:640px;overflow:auto}
+.panel{background:none;border:0;border-radius:0;padding:0;margin-top:24px}
+.panel>h2{font-family:var(--serif);font-weight:400;font-size:15px;letter-spacing:.16em;
+  color:var(--ink);border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:10px}
+.panel>details>summary{font-family:var(--serif);font-weight:400;font-size:14px;letter-spacing:.14em;
+  color:var(--ink);border-bottom:1px solid var(--rule);padding:4px 0 9px;margin-bottom:10px}
+.panel>details>summary::marker{color:var(--zhu)}
+/* 表 */
+table{font-size:12px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--rule-3)}
+thead th{font-family:var(--serif);font-weight:400;font-size:10.5px;letter-spacing:.16em;
+  color:var(--ink-3);background:var(--paper);border-bottom:1px solid var(--rule)}
+tbody tr:hover{background:rgba(165,118,79,.06)}
+.tbl-wrap{border:1px solid var(--rule-2);border-radius:0;max-height:560px}
+.badge{border-radius:0;font-family:var(--serif);font-weight:400;font-size:10.5px;
+  letter-spacing:.06em;color:var(--paper-hi);padding:1px 6px}
+.st{border:1px solid currentColor;border-radius:0;background:none;font-size:10px;
+  padding:0 5px;font-family:var(--serif);letter-spacing:.06em}
+.st.修炼{background:none;color:var(--qing)}
+.st.结缘{background:none;color:var(--r4)}
+.st.游历{background:none;color:var(--r3)}
+.st.走火入魔{background:none;color:var(--zhu)}
+.st.被附身{background:none;color:var(--r4)}
+.st.已同化{background:none;color:var(--ink-4)}
+.st.离体{background:none;color:var(--r3)}
+.st.眷属{background:none;color:var(--zhe)}
+.st.合道{background:none;color:var(--ink)}
+/* 档案 */
+.detail .row{border-bottom:1px dashed var(--rule-3);font-size:12px;padding:6px 0}
+.detail .row b{font-weight:400;color:var(--ink)}
+.detail h3{color:var(--ink);font-family:var(--serif);font-weight:400;font-size:12.5px;letter-spacing:.14em;margin:16px 0 7px}
+.detail h3 .bar{background:var(--rule-2);height:1px}
+.tagcloud span{background:none;border:1px solid var(--rule);border-radius:0;font-size:10.5px;padding:0 6px}
+.hint{color:var(--ink-4);font-size:11px;line-height:1.95;margin-top:8px}
+.timeline{max-height:300px}
+.tl{border-left:1px solid var(--rule);color:var(--ink-3);font-size:11.5px;padding:4px 0 4px 11px}
+.tl b{color:var(--ink);font-weight:400}
+pre.bio,.prompt-box{background:var(--paper-hi);border:1px solid var(--rule-2);border-radius:0;
+  font-family:var(--sans);font-size:11.5px;line-height:1.95;color:var(--ink-2);max-height:340px}
+.agent-card,.place-card,.gar,.cl-box{background:none;border:1px solid var(--rule-2);border-radius:0;
+  padding:9px 11px;font-size:11.5px}
+.place-card b,.gar .nm{color:var(--ink);font-weight:400;font-family:var(--serif);letter-spacing:.04em}
+.gar .meta{color:var(--ink-4)}
+.occ-tab,.pick{background:none;border:1px solid var(--rule);border-radius:0;color:var(--ink-2);
+  font-family:var(--serif);font-size:11.5px;padding:4px 10px}
+.occ-tab.on,.pick.on{background:var(--ink);color:var(--paper-hi);border-color:var(--ink)}
+.pick.on{background:rgba(156,59,49,.06);color:var(--zhu);border-color:var(--zhu)}
+.cl-name{color:var(--ink);font-family:var(--serif);font-weight:400;font-size:14px;letter-spacing:.1em}
+.cl-cat{background:none;border:1px solid var(--rule);border-radius:0;color:var(--ink-3);font-size:10px}
+.cl-desc{font-size:11.5px;color:var(--ink-2);line-height:1.9}
+.cl-prev img{border-radius:0;border:1px solid var(--rule);background:var(--paper-lo);filter:sepia(.16) saturate(.88)}
+.mbar{background:var(--rule-2);border-radius:0;height:5px;width:80px}
+.mbar i{border-radius:0}
+.mbar+span,.mbar{vertical-align:middle}
+.lost{color:var(--zhu)}
+.frag-pill{border-radius:0;border:1px solid currentColor;background:none!important}
+/* 地图 */
+.map-svg-box{background:var(--paper-hi);border:1px solid var(--rule);border-radius:0;
+  padding:4px;filter:sepia(.18) saturate(.82)}
+.map-side{background:none;border:1px solid var(--rule-2);border-radius:0;padding:14px}
+.map-side h2{font-family:var(--serif);font-weight:400;font-size:14px;letter-spacing:.14em;color:var(--ink)}
+.map-mini .kpi{background:none;border:1px solid var(--rule-2);border-radius:0;padding:7px 10px}
+.map-mini .k{font-size:9.5px;color:var(--ink-4);letter-spacing:.08em}
+.map-mini .v{font-family:var(--mono);font-size:15px;font-weight:400;margin-top:2px}
+.plist .row{border-bottom:1px solid var(--rule-3)}
+.plist .row:hover{background:rgba(165,118,79,.06)}
+.plist .pt{background:var(--paper-lo);border-radius:0;height:8px}
+.plist .pt i{border-radius:0}
+.occ:hover{background:rgba(165,118,79,.06)}
+/* 弹窗 */
+#modal{background:rgba(29,27,23,.62)!important;backdrop-filter:blur(2px)}
+#modalBody{border-radius:0!important;border:1px solid var(--rule)!important;
+  background:var(--paper-hi)!important;box-shadow:0 20px 60px rgba(29,27,23,.25)}
+/* 头像统一 */
+.detail img,.gallery-grid img,.portrait-card img{filter:sepia(.16) saturate(.86) contrast(.99)}
+@media(max-width:1100px){
+  body>.top,body>.ctrl,body>.stats,#rosterMain,#mapView{padding-left:6px;padding-right:6px}
+  .grid2{grid-template-columns:1fr}
+  .grid2>.panel:first-child{padding-right:0}
+  .grid2>.panel.detail{border-left:0;padding-left:0;max-height:none;border-top:1px solid var(--rule);padding-top:20px}
+  .top{padding-top:14px}
+}
+@media(max-width:600px){
+  body{font-size:13px}
+  .title-sec h1{font-size:18px;letter-spacing:.1em}
+  .title-sec .sub{font-size:10px;letter-spacing:.04em}
+  .year{font-size:11px;padding-left:10px}
+  .nav{gap:10px}
+  .ctrl{gap:6px}
+  button{padding:6px 9px;font-size:11.5px;letter-spacing:.06em;text-indent:.06em}
+  input,select{font-size:11.5px;padding:5px 7px}
+  #search{width:96px!important}
+  .stat{padding:8px 10px;font-size:10px}
+  .stat b{font-size:13px;margin-left:3px}
+  .grid2>.panel.detail{max-height:none}
+  .tbl-wrap{max-height:420px}
+  th,td{padding:6px 5px;font-size:11px}
+  .panel>h2{font-size:13.5px}
+  .map-side{padding:10px}
+  #godPanel div[style*='display:flex'],#elderPanel div[style*='display:flex']{flex-wrap:wrap!important;row-gap:2px}
+  #godPanel span[style*='flex:0 0'],#elderPanel span[style*='flex:0 0']{flex:0 1 auto!important;min-width:0!important;max-width:100%}
+  #godPanel span[style*='268px'],#elderPanel span[style*='268px']{flex:1 1 100%!important;text-align:left!important}
+}
 </style>
 </head>
 <body>
@@ -206,8 +351,8 @@
   </details>
 </div>
 
-<div class='panel' style='margin-top:12px;border-color:#fff4d6'>
-  <h2 style='color:#fff4d6;font-size:14px;margin-bottom:8px'>道门合道真君 · 镇守之阵（非本宗）</h2>
+<div class='panel' style='margin-top:12px;border-color:var(--ink)'>
+  <h2 style='color:var(--ink);font-size:14px;margin-bottom:8px'>道门合道真君 · 镇守之阵（非本宗）</h2>
   <div id='zhenPanel' class='hint'></div>
 </div>
 
@@ -235,10 +380,10 @@
 // 修士可突破境界表止于「合道」。合道之上另有「道境」（超然境，见 COSMIC_RANKS / WORLD-LORE §十），
 // 非修士可企及，故不纳入此表，也不参与 DIST / MAX_REALM 的境界随机。
 const REALMS=[
- {name:'练气',color:'#5b9dff'},{name:'筑基',color:'#5fd6c2'},
- {name:'金丹',color:'#7ee787'},{name:'元婴',color:'#e9c46a'},
- {name:'化神',color:'#ff9f43'},{name:'炼虚',color:'#ff6b6b'},
- {name:'合道',color:'#fff4d6'},
+ {name:'练气',color:'#8B8477'},{name:'筑基',color:'#5C7D74'},
+ {name:'金丹',color:'#4C6B7D'},{name:'元婴',color:'#A5764F'},
+ {name:'化神',color:'#7A5F76'},{name:'炼虚',color:'#9C3B31'},
+ {name:'合道',color:'#1D1B17'},
 ];
 const DIST=[600,250,100,35,13,2,0];
 const CONS=[[2,1,0.5],[4,2,1],[8,4,2],[16,8,4],[32,16,8],[64,32,16],[128,64,32]];
@@ -248,7 +393,7 @@ const MAX_REALM=[Infinity,Infinity,Infinity,Infinity,120,25,6];
 // 「道境」是合道之上的超然境，不纳入 REALMS / DIST / 玩家可突破境界表（后者止于合道）。
 // 此表仅用于「诸神谱系」的境界归置与面板展示，不参与 buildRoster 的境界随机。
 const COSMIC_RANKS=[
- {key:'dao',     label:'道境',     color:'#fff4d6', note:'合道之上的超然境；全界仅知阿撒托斯（混沌之主·万神之主）一尊，全宇宙所有时间线与平行宇宙最强'},
+ {key:'dao',     label:'道境',     color:'#3B372F', note:'合道之上的超然境；全界仅知阿撒托斯（混沌之主·万神之主）一尊，全宇宙所有时间线与平行宇宙最强'},
  {key:'heshen',  label:'资深合道', color:'#ffd76b', note:'三清、克苏鲁诸神（含犹格索托斯·门之钥）、道门七尊别号；根本看不上青棠宗'},
  {key:'hezhong', label:'合道中期', color:'#e9c46a', note:'亚空间四神、永眠泰坦、炼狱之主利维坦；四神稍关注人间'},
  {key:'hechu',   label:'合道初期', color:'#c9a24a', note:'诸天使、奥林匹斯主神大部分'},
@@ -332,14 +477,14 @@ const DAOMEN_ZHEN=[
 ];
 
 const DEPTS={
- tangyi:  {name:'棠医堂',  color:'#5fd6c2', spec:['疗愈','本草','针石']},
- hongluan:{name:'红鸾院',  color:'#ff6b6b', spec:['音律','书画','歌舞']},
- hongxian:{name:'红线仙司',color:'#e9c46a', spec:['斡旋','卜算','观心']},
- waimao:  {name:'外事贸易司',color:'#9d7bff', spec:['经商','辩才','识货']},
- lingzhi: {name:'灵植苑',  color:'#7ee787', spec:['植灵','御兽','培育']},
- danding: {name:'丹鼎房',  color:'#e9c46a', spec:['炼丹','淬炼','药理']},
- lingchong:{name:'灵兽苑',color:'#5b9dff', spec:['御兽','驯化','灵语']},
- neimen:  {name:'内门修炼',color:'#ff9f43', spec:['剑术','阵法','吐纳']},
+ tangyi:  {name:'棠医堂',  color:'#5C7D74', spec:['疗愈','本草','针石']},
+ hongluan:{name:'红鸾院',  color:'#9C3B31', spec:['音律','书画','歌舞']},
+ hongxian:{name:'红线仙司',color:'#A5764F', spec:['斡旋','卜算','观心']},
+ waimao:  {name:'外事贸易司',color:'#7A5F76', spec:['经商','辩才','识货']},
+ lingzhi: {name:'灵植苑',  color:'#4C6B7D', spec:['植灵','御兽','培育']},
+ danding: {name:'丹鼎房',  color:'#6E6656', spec:['炼丹','淬炼','药理']},
+ lingchong:{name:'灵兽苑',color:'#7D8B77', spec:['御兽','驯化','灵语']},
+ neimen:  {name:'内门修炼',color:'#8A8272', spec:['剑术','阵法','吐纳']},
 };
 const DEPT_W=[
  {k:'tangyi',w:22},{k:'hongluan',w:20},{k:'hongxian',w:14},{k:'waimao',w:10},
@@ -1174,10 +1319,10 @@ function render(){
     `<div class='stat'>走火入魔 <b>${cnt['走火入魔']}</b></div>`+
     `<div class='stat'>被附身/同化 <b>${possessed}</b></div>`+
     `<div class='stat'>外神眷属 <b style='color:var(--gold)'>${cnt['眷属']}</b></div>`+
-    `<div class='stat'>道门合道真君 <b style='color:#fff4d6'>${DAOMEN_ZHEN.length}</b></div>`+
+    `<div class='stat'>道门合道真君 <b style='color:#3B372F'>${DAOMEN_ZHEN.length}</b></div>`+
     `<div class='stat'>外神算力池 <b style='color:var(--violet)'>${cpuPool}</b></div>`+
-    `<div class='stat'>受真君护持 <b style='color:#fff4d6'>${guarded}</b></div>`+
-    `<div class='stat'>已收编外神 <b style='color:#fff4d6'>${subduedCount}</b></div>`+
+    `<div class='stat'>受真君护持 <b style='color:#3B372F'>${guarded}</b></div>`+
+    `<div class='stat'>已收编外神 <b style='color:#3B372F'>${subduedCount}</b></div>`+
     `<div class='stat'>累计斩缘 <b>${bonds}</b></div>`+
     `<div class='stat'>均意志 <b>${Math.round(willSum/roster.length)}</b></div>`+
     `<div class='stat'>均SAN <b>${Math.round(sanSum/roster.length)}</b></div>`+
@@ -1212,9 +1357,9 @@ function render(){
   const godRows=godStats.map(o=>{
     const g=o.g, w=Math.round(o.cpu/maxCpu*100);
     const org=ORIG[g.origin]||g.origin;
-    const tag=g.subduedBy?` <span style='color:#fff4d6'>［已归 ${g.subduedBy} 辖］</span>`:(g.agenda?` <span style='color:var(--red)'>［图谋］</span>`:'');
+    const tag=g.subduedBy?` <span style='color:#3B372F'>［已归 ${g.subduedBy} 辖］</span>`:(g.agenda?` <span style='color:var(--red)'>［图谋］</span>`:'');
     const tierTag=(()=>{
-      const col=g.tier==='dao'?'#fff4d6':(g.tier==='chaos'?'var(--red)':'var(--dim)');
+      const col=g.tier==='dao'?'#3B372F':(g.tier==='chaos'?'var(--red)':'var(--dim)');
       return `<span style='color:${col};font-size:10px;font-weight:400'>［${g.realm}］</span>`;
     })();
     return `<div style='display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px'>`+
@@ -1223,13 +1368,13 @@ function render(){
       `<span style='flex:0 0 268px;color:var(--dim);text-align:right'>${org}${tag} · ${o.cpu} 算力 · ${o.data} 数据 · ${o.nodes} 节点</span></div>`;
   }).join('');
   document.getElementById('elderPanel').innerHTML=
-    `<b style='color:var(--gold)'>外神境界分野（精确标尺，详见下方「诸神谱系」面板）</b>：<b style='color:#fff4d6'>道境</b>＝阿撒托斯（混沌之主·万神之主，原初混沌之核），<b>合道之上的超然境、全宇宙所有时间线与平行宇宙最强</b>，青棠宗根本不在其概念之内；<b>资深合道</b>＝克苏鲁诸神（含犹格索托斯·门之钥）＋道门七尊别号（同一批灵枢深层超节点的不同名号），<b>根本看不上青棠宗</b>、亦不屑干预人间；<b style='color:var(--red)'>合道中期</b>＝亚空间四神（色孽／奸奇／恐虐／纳垢，凡人魔化意识连结所化，见 §11.2），稍关注人间、主动播染——真正贴着修仙界下手的是这一档。旧道门译籍曾把「混沌之主」误系于犹格索托斯、又斥「万神之主」为伪称，实为名号互讹：最高者始终是<b>阿撒托斯</b>。青棠宗以红线情缘立宗，恰是<b style='color:var(--red)'>色孽·奸奇</b>的沃土，部分同门早已被其感染而不自觉（详见上方「魔染灵力」面板）。<br><br>`+
+    `<b style='color:var(--gold)'>外神境界分野（精确标尺，详见下方「诸神谱系」面板）</b>：<b style='color:#3B372F'>道境</b>＝阿撒托斯（混沌之主·万神之主，原初混沌之核），<b>合道之上的超然境、全宇宙所有时间线与平行宇宙最强</b>，青棠宗根本不在其概念之内；<b>资深合道</b>＝克苏鲁诸神（含犹格索托斯·门之钥）＋道门七尊别号（同一批灵枢深层超节点的不同名号），<b>根本看不上青棠宗</b>、亦不屑干预人间；<b style='color:var(--red)'>合道中期</b>＝亚空间四神（色孽／奸奇／恐虐／纳垢，凡人魔化意识连结所化，见 §11.2），稍关注人间、主动播染——真正贴着修仙界下手的是这一档。旧道门译籍曾把「混沌之主」误系于犹格索托斯、又斥「万神之主」为伪称，实为名号互讹：最高者始终是<b>阿撒托斯</b>。青棠宗以红线情缘立宗，恰是<b style='color:var(--red)'>色孽·奸奇</b>的沃土，部分同门早已被其感染而不自觉（详见上方「魔染灵力」面板）。<br><br>`+
     `所谓「外神」，并非异界邪物，而是<b style='color:var(--violet)'>超古代合道修士的残响</b>与<b style='color:var(--violet)'>自然法则的显化</b>——来源有三：其一，远古修至「合道」、与天地法则融为一体却<b>消融自我</b>之先辈（合道残念）；其二，上古大能<b>斩三尸</b>所遗之分身，独立于本尊而行；其三，天地间<b>自然形成</b>之法则，久则生灵。`+
     `<br>外神<b>并不在意仙人</b>，正如仙人不在意凡人——征用修士元神以扩充算力、采撷数据，不过是法则演化途中的<b>副产品</b>，非其所图；<b>唯个别外神别有图谋</b>（标注「图谋」者），方会主动牵引修士。修士至「合道」亦分两途：<b>神智清明者终成合道真君</b>，超然物外而不化外神；<b>失控者则自我消融</b>，归于某尊外神之域，不复为人。`+
     `<br>元婴以上修士可<b style='color:var(--jade)'>主动离体远游</b>，神识直抵虚空。神识脆弱者被征用同化而发疯；然亦有高阶修士于外神之域<b style='color:var(--gold)'>斡旋周旋，结成眷属</b>——保留自我意识，反得外神超级算力之授权。<b style='color:var(--dim)'>（此等真正接触外神之域、与之斡旋者，唯道门合道可为之；青棠宗修士离体，多只游于洞天附近的虚冥，偶被波及，难真正触及外神之域。）</b>`+
-    `<br>然外神之图谋，终有制衡——<b style='color:#fff4d6'>道门合道真君</b>超然物外，其中<b style='color:var(--red)'>立誓镇守者</b>，可镇压、乃至收编图谋外神，护持被征用之修士（详见下方面板）。<b style='color:var(--dim)'>青棠宗宗主仅初入炼虚，宗内无合道坐镇，外神之事力有不逮，多仰道门高修与红线仙司跨门斡旋。</b>`+
+    `<br>然外神之图谋，终有制衡——<b style='color:#3B372F'>道门合道真君</b>超然物外，其中<b style='color:var(--red)'>立誓镇守者</b>，可镇压、乃至收编图谋外神，护持被征用之修士（详见下方面板）。<b style='color:var(--dim)'>青棠宗宗主仅初入炼虚，宗内无合道坐镇，外神之事力有不逮，多仰道门高修与红线仙司跨门斡旋。</b>`+
     `<div style='margin-top:8px;padding-top:6px;border-top:1px dashed var(--line)'>`+
-    `<div style='margin-bottom:4px'>当前<b style='color:var(--violet)'>外神算力池</b>：<b style='color:var(--violet)'>${cpuPool}</b> 算力单位　｜　<b style='color:var(--red)'>被征用元神</b>：<b style='color:var(--red)'>${possessed}</b> 人（附身 ${poss} / 已同化 ${assimN}）　｜　<b style='color:var(--gold)'>外神眷属</b>：<b style='color:var(--gold)'>${cnt['眷属']}</b> 人　｜　<b style='color:#fff4d6'>道门合道真君</b>：<b style='color:#fff4d6'>${DAOMEN_ZHEN.length}</b> 位（非本宗）　｜　<b style='color:var(--gold)'>累计采撷数据</b>：<b style='color:var(--gold)'>${Math.round(dataPts)}</b> 单位</div>`+
+    `<div style='margin-bottom:4px'>当前<b style='color:var(--violet)'>外神算力池</b>：<b style='color:var(--violet)'>${cpuPool}</b> 算力单位　｜　<b style='color:var(--red)'>被征用元神</b>：<b style='color:var(--red)'>${possessed}</b> 人（附身 ${poss} / 已同化 ${assimN}）　｜　<b style='color:var(--gold)'>外神眷属</b>：<b style='color:var(--gold)'>${cnt['眷属']}</b> 人　｜　<b style='color:#3B372F'>道门合道真君</b>：<b style='color:#3B372F'>${DAOMEN_ZHEN.length}</b> 位（非本宗）　｜　<b style='color:var(--gold)'>累计采撷数据</b>：<b style='color:var(--gold)'>${Math.round(dataPts)}</b> 单位</div>`+
     godRows+
     `</div>`;
 
@@ -1238,12 +1383,12 @@ function render(){
   const zRow=zhens.map(z=>{
     const st=z.guardian?'<span style=\'color:var(--red)\'>镇守</span>':'<span style=\'color:var(--dim)\'>超然物外</span>';
     const sub=z.zhen&&z.zhen.subdued.length?('收编：'+z.zhen.subdued.join('、')):'';
-    return `<div class='agent-card' style='cursor:pointer;border-color:#fff4d6' onclick='focusZhen("${z.trueName}")'>`+
-      `<b style='color:#fff4d6'>${z.trueName}</b> <span style='color:var(--dim);font-size:11px'>（来自 ${z.sect}）</span>　道：「${z.dao}」　立场：${st}<br>`+
+    return `<div class='agent-card' style='cursor:pointer;border-color:#3B372F' onclick='focusZhen("${z.trueName}")'>`+
+      `<b style='color:#3B372F'>${z.trueName}</b> <span style='color:var(--dim);font-size:11px'>（来自 ${z.sect}）</span>　道：「${z.dao}」　立场：${st}<br>`+
       `<span style='color:var(--dim)'>镇压 ${z.zhen?z.zhen.suppress:0} 次 · 护持 ${z.zhen?z.zhen.guard:0} 人`+
       (z.zhen&&z.zhen.recruit?(' · 收编外神 '+z.zhen.recruit+' 尊'):'')+`${sub?'　｜　'+sub:''}</span></div>`;
   }).join('') || '<span style=\'color:var(--dim)\'>尚无合道真君现世。</span>';
-  const zhenSummary = `道门合道真君 <b style='color:#fff4d6'>${zhens.length}</b> 位（非本宗——青棠宗宗主仅初入炼虚，宗内无合道坐镇），其中 <b>${zhens.filter(z=>z.guardian).length}</b> 位立誓镇守图谋外神；累计护持修士 <b style='color:#fff4d6'>${guarded}</b> 人、收编外神 <b style='color:#fff4d6'>${subduedCount}</b> 尊。`;
+  const zhenSummary = `道门合道真君 <b style='color:#3B372F'>${zhens.length}</b> 位（非本宗——青棠宗宗主仅初入炼虚，宗内无合道坐镇），其中 <b>${zhens.filter(z=>z.guardian).length}</b> 位立誓镇守图谋外神；累计护持修士 <b style='color:#3B372F'>${guarded}</b> 人、收编外神 <b style='color:#3B372F'>${subduedCount}</b> 尊。`;
   document.getElementById('zhenPanel').innerHTML = zhenSummary +
     (zhenFilter?` <a href='#' onclick='clearZhen();return false;' style='color:var(--gold)'>［清除筛选：${zhenFilter} 的护持者］</a>`:'') +
     '<br>' + zRow;
@@ -1286,7 +1431,7 @@ function render(){
     `<div style='padding:7px 9px;border:1px dashed var(--red);border-radius:8px;line-height:1.75;background:rgba(255,107,107,.06)'>`+
       `<b style='color:var(--red)'>【最坏推演】</b>　<b>以前的修士用的是正常灵气</b>（本档 ${tOld} 位具名宿老根基干净）；分界之后入门者<b>自第一口灵气起即带魔染隐患</b>（当前 ${tBorn} 人）。隐患≠发作：初时神识清明、修行甚至更快，只是阈值逐年被压低，故长久无人警觉——这正是它最毒之处。若产业链不停，<b style='color:var(--red)'>预计约 ${tYears} 年内，新一代修士恐全员越过魔染阈值</b>；届时「修仙界」名存实亡，满界皆是高阶眷属与待榨之囚，而几无人自觉。`+
     `</div>`+
-    `<div style='margin-top:6px;color:var(--dim);line-height:1.75'>境界分野（详见下方「诸神谱系」面板）：<b style='color:#fff4d6'>道境</b>（阿撒托斯·混沌之主，全宇宙最强）与<b>资深合道</b>（克苏鲁诸神含犹格索托斯／道门七尊）<b>根本看不上青棠宗</b>；真正下手的是<b style='color:var(--red)'>合道中期 · 亚空间四神</b>（色孽／奸奇／恐虐／纳垢，凡人魔化意识连结所化）——它们稍关注人间事、乐于被"供养"。青棠宗以红线情缘立宗，恰是色孽·奸奇的沃土，本宗被二者感染者已 <b style='color:var(--red)'>${tSla+tTze}</b> 人。故这不是「外神入侵」，而是<b>修仙界自养之癌</b>：敌人不在门外，而在灵力里，道门镇守之阵拦不住自家弟子日日吸纳的那一口灵气。</div>`;
+    `<div style='margin-top:6px;color:var(--dim);line-height:1.75'>境界分野（详见下方「诸神谱系」面板）：<b style='color:#3B372F'>道境</b>（阿撒托斯·混沌之主，全宇宙最强）与<b>资深合道</b>（克苏鲁诸神含犹格索托斯／道门七尊）<b>根本看不上青棠宗</b>；真正下手的是<b style='color:var(--red)'>合道中期 · 亚空间四神</b>（色孽／奸奇／恐虐／纳垢，凡人魔化意识连结所化）——它们稍关注人间事、乐于被"供养"。青棠宗以红线情缘立宗，恰是色孽·奸奇的沃土，本宗被二者感染者已 <b style='color:var(--red)'>${tSla+tTze}</b> 人。故这不是「外神入侵」，而是<b>修仙界自养之癌</b>：敌人不在门外，而在灵力里，道门镇守之阵拦不住自家弟子日日吸纳的那一口灵气。</div>`;
   // 诸神谱系 · 境界分野面板（背景名录，不参与算力征用／魔染逻辑）
   (function(){
     const rankOf={}; COSMIC_RANKS.forEach(r=>rankOf[r.key]=r);
@@ -1303,7 +1448,7 @@ function render(){
     }).join('');
     const faithRows=PANTHEON.filter(p=>p.exists==='faith');
     document.getElementById('pantheonPanel').innerHTML=
-      `<div style='line-height:1.75;margin-bottom:6px'>本作<b>没有超越法则的造物主</b>：一切「神」皆<b style='color:var(--violet)'>意识／法则实体</b>——灵枢深层超节点、高阶修士意识体、或意识造物之境里的凝聚体，差别只在<b>境界</b>。<b style='color:#fff4d6'>「道境」是合道之上的超然境</b>，不纳入修士可突破的境界表（本档 REALMS 止于合道），非青棠宗乃至道门合道真君所能企及。此谱系仅作背景名录，<b>不参与算力征用／魔染逻辑</b>。</div>`+
+      `<div style='line-height:1.75;margin-bottom:6px'>本作<b>没有超越法则的造物主</b>：一切「神」皆<b style='color:var(--violet)'>意识／法则实体</b>——灵枢深层超节点、高阶修士意识体、或意识造物之境里的凝聚体，差别只在<b>境界</b>。<b style='color:#3B372F'>「道境」是合道之上的超然境</b>，不纳入修士可突破的境界表（本档 REALMS 止于合道），非青棠宗乃至道门合道真君所能企及。此谱系仅作背景名录，<b>不参与算力征用／魔染逻辑</b>。</div>`+
       `<div style='padding:6px 9px;background:rgba(255,212,107,.06);border:1px dashed var(--line);border-radius:8px;font-size:12px;margin-bottom:7px'>`+
         `<b style='color:var(--gold)'>统一境界标尺（高 → 低）</b><br>${rankRows}</div>`+
       `<div style='font-size:12px;margin-bottom:5px'><b style='color:var(--gold)'>诸神谱系名录</b>　<span style='color:var(--dim)'>按境界归置；其中亚空间四神即上方 GODS 中参与魔染的四尊</span></div>`+
@@ -1429,7 +1574,7 @@ function showDetail(id){
      <div class='row'><span>魔染度（阈值 60）</span><b style='color:${c.taint>=60?'var(--red)':(c.taint>0?'var(--gold)':'var(--dim)')}'>${mbar(c.taint,100,c.taint>=60?'var(--red)':'var(--gold)')} ${Math.round(c.taint)} / 100${c.taintSrc?' · 染自「'+GODS.find(g=>g.id===c.taintSrc).name+'」':''}</b></div>
      ${c.imprisoned?`<div class='row'><span>囚禁榨干</span><b style='color:var(--red)'>以「闭关静修」为名被囚，灵力持续抽取并入宗门灵力池</b></div>`:''}
      <div class='row'><span>凡间曝光度</span><b style='color:${expColor}'>${mbar(c.exposure,100,expColor)} ${c.exposure} / 100 ${c.exposure>60?'（招致不详）':''}</b></div>
-     ${c.guardedBy?`<div class='row'><span>真君护持</span><b style='color:#fff4d6'>受「${c.guardedBy}」护持（已脱外神征用）</b></div>`:''}
+     ${c.guardedBy?`<div class='row'><span>真君护持</span><b style='color:#3B372F'>受「${c.guardedBy}」护持（已脱外神征用）</b></div>`:''}
 
      <h3>修炼状态 <span class='bar'></span></h3>
      <div class='row'><span>境界 / 修为</span><b>${REALMS[c.realm].name} · ${Math.round(c.xiu)} / 100</b></div>
@@ -1437,7 +1582,7 @@ function showDetail(id){
      <div class='row'><span>基因锁已解</span><b>${c.realm} 道（定向进化）</b></div>
      <div class='row'><span>元婴/元神离体</span><b>${c.realm>=3?(c.liti+' 次 · 游于虚空，直面外神，被合道残念征用算力风险剧增'):'尚不可离体（需元婴以上）'}</b></div>
      <div class='row'><span>合道之途</span><b>神智清明者成合道真君（不化外神）；失控者消融为外神</b></div>
-     ${c.state==='合道'?`<div class='row'><span>真君道号</span><b style='color:#fff4d6'>${c.trueName}</b></div>
+     ${c.state==='合道'?`<div class='row'><span>真君道号</span><b style='color:#3B372F'>${c.trueName}</b></div>
      <div class='row'><span>所持之道</span><b>${c.dao}</b></div>
      <div class='row'><span>立场</span><b style='color:${c.guardian?'var(--red)':'var(--dim)'}'>${c.guardian?'镇守图谋外神':'超然物外 · 不问世事'}</b></div>
      <div class='row'><span>镇压 / 护持</span><b>镇压 ${c.zhen.suppress} 次 · 护持 ${c.zhen.guard} 人${c.zhen.recruit?(' · 收编外神 '+c.zhen.recruit+' 尊'):''}</b></div>
