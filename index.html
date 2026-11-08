@@ -23,6 +23,12 @@
       <div class="cell"><span class="k" data-a="茧">囊中茧</span><span class="v" id="v-pod">0</span></div>
       <button class="seal-maint" id="seal" type="button" title="双击进入">维</button>
     </div>
+    <div class="m-stat">
+      <span>神识 <b id="m-shen">72</b></span>
+      <span>体力 <b id="m-ti">64</b></span>
+      <span>囊中茧 <b id="m-bag">0</b></span>
+      <span>育茧畦 <b id="m-plots">2/9</b></span>
+    </div>
   </header>
 
   <div class="g-main">
@@ -34,27 +40,24 @@
         <div class="meter"><i id="bar-shen" style="width:72%"></i></div>
       </div>
       <div class="stat">
-        <div class="lab"><span>体魄</span><b>64 / 100</b></div>
-        <div class="meter"><i style="width:64%;background:var(--qing)"></i></div>
+        <div class="lab"><span>体力</span><b><span id="s-ti">64</span> / 100</b></div>
+        <div class="meter"><i id="bar-ti" style="width:64%;background:var(--qing)"></i></div>
       </div>
-      <div class="pane-h" style="margin-top:16px"><span>今 日</span></div>
-      <div class="rows">
-        <div class="row"><span class="k">拾茧</span><span class="n" id="r-pick">0</span></div>
-        <div class="row"><span class="k">可偷额度</span><span class="n">2 / 3</span></div>
-        <div class="row"><span class="k">窃名</span><span class="n">1</span></div>
-        <div class="row"><span class="k">熟茧</span><span class="n" id="r-ripe">0</span></div>
-      </div>
-      <div class="pane-h" style="margin-top:16px"><span>育 茧 畦</span><span class="mono"><span id="r-plot">2</span> / 9</span></div>
-      <div class="mini-plots" id="plots">
-        <i class="on"></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i>
-      </div>
-      <div class="ops-note">不明之茧需种入畦中，方显品阶与倾向。<br>偷来之茧，可能孵出妖魔。</div>
+
+      <div class="pane-h" style="margin-top:16px"><span>囊 中 茧</span><span class="mono" id="bag-n">0 枚</span></div>
+      <div class="bag-dots" id="bag-dots"><span class="none">空</span></div>
+
+      <div class="pane-h"><span>育 茧 畦</span><a class="mini-link" href="#" data-sheet="plots">细看</a></div>
+      <div class="plots-line" id="plots-line">2/9 已种 · 0 可孵</div>
+      <div class="ops-note">不明之茧需种入畦中，方显品阶与倾向。</div>
     </aside>
 
     <section class="rift" id="rift" aria-label="时空裂缝">
       <div class="grain"></div>
       <div class="vignette"></div>
       <div class="rift-label">时 空 裂 缝</div>
+
+      <div class="spark" id="spark" hidden></div>
 
       <button class="pod" id="pod" type="button" aria-label="拾取茧">
         <svg viewBox="0 0 200 268" width="100%" aria-hidden="true">
@@ -79,29 +82,59 @@
         </svg>
         <span class="hint">拾 取</span>
       </button>
-      <div class="rift-empty" id="rift-empty" hidden>此处寂然<br>裂缝须臾再生一茧</div>
+
+      <div class="rift-empty" id="rift-empty" hidden>
+        <svg class="notch" viewBox="0 0 200 268" aria-hidden="true">
+          <defs>
+            <radialGradient id="notchGlow" cx=".5" cy=".5" r=".5">
+              <stop offset="0" stop-color="rgba(214,190,140,.30)"/>
+              <stop offset=".62" stop-color="rgba(214,190,140,.10)"/>
+              <stop offset="1" stop-color="rgba(214,190,140,0)"/>
+            </radialGradient>
+          </defs>
+          <line x1="100" y1="0" x2="100" y2="40" stroke="rgba(222,210,184,.34)" stroke-width="1.2"/>
+          <ellipse cx="100" cy="148" rx="46" ry="70" fill="url(#notchGlow)"/>
+          <ellipse cx="100" cy="148" rx="50" ry="76" fill="none" stroke="rgba(226,214,188,.72)"
+                   stroke-width="1.3" stroke-dasharray="4 7"/>
+        </svg>
+        <div class="rg">
+          <div class="rg-bar"><i id="rg-i"></i></div>
+          <div class="rg-f"><span>再 生</span><span class="mono" id="regen-n">12.0s</span></div>
+        </div>
+      </div>
+
       <div class="rift-foot" id="rift-foot">缝口生茧 1 / 3 · 距下一枚 01:28</div>
     </section>
 
     <aside class="g-right">
       <div class="pane-h"><span>行 事</span><span class="mono">择一</span></div>
       <div class="ops">
-        <button class="btn main" id="op-pick" type="button">拾 茧 <em>神识 −2</em></button>
-        <button class="btn" id="op-plant" type="button" disabled title="囊中无茧">种 下 <em>畦 · 3 石</em></button>
-        <button class="btn" id="op-hatch" type="button" disabled title="尚无熟茧">孵 化 <em>先看风险</em></button>
-        <button class="btn" id="op-steal" type="button">偷 <em>40–70%</em></button>
-        <button class="btn" id="op-market" type="button">市 集 <em>30 石起</em></button>
-        <button class="btn" id="op-suppress" type="button" disabled title="无妖魔可镇">镇 压 <em>神识 −30</em></button>
+        <button class="op" id="op-pick" type="button">
+          <span class="op-n">拾 茧</span><span class="op-c">神识 −2</span>
+          <span class="op-why" id="why-pick"></span>
+        </button>
+        <button class="op" id="op-plant" type="button">
+          <span class="op-n">种 下</span><span class="op-c">灵石 −3 · 占一畦</span>
+          <span class="op-why" id="why-plant"></span>
+        </button>
+        <button class="op danger" id="op-hatch" type="button">
+          <span class="op-n">孵 化</span><span class="op-c">灵石 24 · 神识 10</span>
+          <span class="op-why" id="why-hatch"></span>
+        </button>
+        <button class="op" id="op-steal" type="button">
+          <span class="op-n">偷 取</span><span class="op-c">体力 −8 · 四至七成</span>
+          <span class="op-why" id="why-steal"></span>
+        </button>
       </div>
-      <div class="ops-note">孵化非必得真物，亦有空壳、妖物、无意义物。</div>
 
-      <div class="pane-h" style="margin-top:18px"><span>裂 缝</span><span class="mono">三</span></div>
-      <div class="rows">
-        <div class="row"><span class="k">缝口生茧</span><span class="n">1 / 3</span></div>
-        <div class="row"><span class="k">距下一枚</span><span class="n">01:28</span></div>
-        <div class="row"><span class="k">今日异动</span><span class="n">2</span></div>
+      <div class="alert" id="alert" hidden>
+        <div class="a-t">妖魔破茧 · 该畦冷却加倍，茧未毁</div>
+        <button class="op danger" id="op-suppress" type="button">
+          <span class="op-n">镇 压</span><span class="op-c">神识 −30</span>
+        </button>
       </div>
-      <div class="ops-note hint-block">传闻 · 守缝人说<br>从裂缝里出来的，未必都是活物。<br><span style="color:var(--ink-4)">——《茧谱》卷上残页</span></div>
+
+      <div class="ops-note">孵化非必得真物，亦有空壳、妖物、无意义物。<br>偷来之茧，可能孵出妖魔。</div>
     </aside>
   </div>
 
@@ -115,7 +148,27 @@
     </nav>
     <div class="login">
       <span class="t" id="log">初入裂缝，风止，缝口悬一枚不明之茧。</span>
-      <span class="mono" style="font-size:10.5px;color:var(--ink-4)" id="clock">--:--</span>
+      <button class="log-toggle" id="log-toggle" type="button" aria-expanded="false" aria-controls="log-more">详</button>
+      <span class="mono" style="font-size:10.5px;color:var(--ink-4);flex:none" id="clock">--:--</span>
+    </div>
+    <div class="log-more" id="log-more" hidden>
+      <div class="lm">
+        <div class="lm-h">今 日</div>
+        <div class="row"><span class="k">拾茧</span><span class="n" id="r-pick">0</span></div>
+        <div class="row"><span class="k">可偷额度</span><span class="n">2 / 3</span></div>
+        <div class="row"><span class="k">窃名</span><span class="n">1</span></div>
+        <div class="row"><span class="k">熟茧</span><span class="n" id="r-ripe">0</span></div>
+      </div>
+      <div class="lm">
+        <div class="lm-h">裂 缝</div>
+        <div class="row"><span class="k">缝口生茧</span><span class="n" id="r-pod">1 / 3</span></div>
+        <div class="row"><span class="k">距下一枚</span><span class="n" id="r-next">01:28</span></div>
+        <div class="row"><span class="k">今日异动</span><span class="n">2</span></div>
+      </div>
+      <div class="lm">
+        <div class="lm-h">传 闻</div>
+        <div class="note">守缝人说：从裂缝里出来的，未必都是活物。<br>——《茧谱》卷上残页</div>
+      </div>
     </div>
   </footer>
 </div>
@@ -159,7 +212,7 @@
         <div class="h-sec">
           <div class="lab">投 入</div>
           <div class="cost">
-            <span>灵石 <b id="h-cost">24</b></span>
+            <span>灵石 <b>24</b></span>
             <span>神识 <b>10</b></span>
             <span style="color:var(--ink-4)">中品基准，异品另计</span>
           </div>
@@ -188,80 +241,198 @@
 
 <script>
 (function(){
-  var S = {stone:480, shen:72, shenMax:100, bag:0, ripe:0, pick:0, hasPod:true, plots:2};
+  var REGEN_MS = 12000;
+  var RAR = ["", "凡", "良", "珍", "秘", "绝"];
+  var S = {stone:480, shen:72, shenMax:100, ti:64, tiMax:100,
+           bag:[], ripe:0, pick:0, plots:2, hasPod:true, state:'ready'};
+  var regenT = null, regenAt = 0, formT = null, readyT = null;
+
   var $ = function(id){ return document.getElementById(id); };
-  function log(t){ $('log').innerHTML = '<b>' + t + '</b>'; }
+  function log(t){ $('log').textContent = t; }
+  function why(k, t){ $('why-' + k).textContent = t || ''; }
 
   function paint(){
     $('v-stone').textContent = S.stone;
     $('v-shen').textContent  = S.shen;
-    $('v-pod').textContent   = S.bag;
+    $('v-pod').textContent   = S.bag.length;
     $('s-shen').textContent  = S.shen;
+    $('s-ti').textContent    = S.ti;
     $('bar-shen').style.width = Math.max(0, S.shen / S.shenMax * 100) + '%';
+    $('bar-ti').style.width   = Math.max(0, S.ti / S.tiMax * 100) + '%';
+
+    $('m-shen').textContent  = S.shen;
+    $('m-ti').textContent    = S.ti;
+    $('m-bag').textContent   = S.bag.length;
+    $('m-plots').textContent = S.plots + '/9';
+
+    $('bag-n').textContent = S.bag.length + ' 枚';
+    $('bag-dots').innerHTML = S.bag.length
+      ? S.bag.map(function(r){ return '<i class="bd r' + r + '" title="' + RAR[r] + '品"></i>'; }).join('')
+      : '<span class="none">空</span>';
+
+    $('plots-line').textContent = S.plots + '/9 已种 · ' + S.ripe + ' 可孵';
     $('r-pick').textContent = S.pick;
     $('r-ripe').textContent = S.ripe;
-    $('r-plot').textContent = S.plots;
-    $('op-plant').disabled = !(S.bag > 0 && S.plots < 9);
-    $('op-plant').title = S.bag < 1 ? '囊中无茧' : (S.plots >= 9 ? '畦已满' : '择一空畦种下');
-    $('op-hatch').disabled = S.ripe < 1;
-    $('op-hatch').title = S.ripe < 1 ? '尚无熟茧' : '先看风险评估';
-    $('op-pick').disabled = !S.hasPod;
-    $('h-cost').textContent = S.ripe > 0 ? 24 : 0;
+    $('r-pod').textContent  = S.hasPod ? '1 / 3' : '0 / 3';
+    if(S.hasPod) $('r-next').textContent = '01:28';
+
+    $('op-pick').disabled = !(S.hasPod && S.shen >= 2);
+    why('pick', !S.hasPod
+      ? (S.state === 'forming' ? '茧正在化形' : '缝口空了，正自再生')
+      : (S.shen < 2 ? '神识不足（需 2）' : ''));
+
+    $('op-plant').disabled = !(S.bag.length > 0 && S.plots < 9 && S.stone >= 3);
+    why('plant', S.bag.length < 1 ? '囊中无茧'
+      : (S.plots >= 9 ? '畦已满（9/9）' : (S.stone < 3 ? '灵石不足（需 3）' : '')));
+
+    $('op-hatch').disabled = !(S.ripe > 0 && S.stone >= 24 && S.shen >= 10);
+    why('hatch', S.ripe < 1 ? '尚无熟茧'
+      : (S.stone < 24 ? '灵石不足（需 24）' : (S.shen < 10 ? '神识不足（需 10）' : '')));
+
+    $('op-steal').disabled = S.ti < 8;
+    why('steal', S.ti < 8 ? '体力不足（需 8）' : '');
+  }
+
+  /* —— 茧再生：空位 → 进度 → 聚光 → 化形 → 落定 —— */
+  function startRegen(){
+    S.hasPod = false; S.state = 'regen';
+    var pod = $('pod');
+    pod.classList.remove('forming');
+    pod.classList.add('gone');
+    $('rift-empty').hidden = false;
+    $('rg-i').style.width = '0%';
+    $('regen-n').textContent = (REGEN_MS / 1000).toFixed(1) + 's';
+    regenAt = Date.now();
+    $('rift-foot').textContent = '缝口空悬 · 正自再生';
+    log('茧已拾走，裂缝正自行收拢。');
+    clearInterval(regenT);
+    regenT = setInterval(tickRegen, 100);
+    paint();
+  }
+
+  function tickRegen(){
+    var p = Math.min(1, (Date.now() - regenAt) / REGEN_MS);
+    var left = Math.max(0, (REGEN_MS - (Date.now() - regenAt)) / 1000);
+    $('rg-i').style.width = (p * 100).toFixed(1) + '%';
+    $('regen-n').textContent = left.toFixed(1) + 's';
+    $('r-next').textContent = Math.ceil(left) + 's';
+    if(p >= 1){
+      clearInterval(regenT); regenT = null;
+      beginForm();
+    }
+  }
+
+  function beginForm(){
+    S.state = 'forming';
+    $('rift-empty').hidden = true;             // 进度满即收，不留"满了还在转"
+    $('rift-foot').textContent = '裂缝微张 · 茧由虚转实';
+    log('缝口聚光，茧正在化形。');
+    paint();
+
+    var spark = $('spark');
+    spark.hidden = false;
+    spark.classList.remove('on');
+    void spark.offsetWidth;
+    spark.classList.add('on');
+
+    clearTimeout(formT);
+    formT = setTimeout(function(){
+      var pod = $('pod');
+      pod.classList.remove('gone');
+      pod.classList.remove('forming');
+      void pod.offsetWidth;                    // 强制回流，动画从头播
+      pod.classList.add('forming');
+      pod.addEventListener('animationend', onFormed, {once:true});
+      clearTimeout(readyT);
+      readyT = setTimeout(completeForm, 1500); // 动画事件兜底
+    }, 520);
+  }
+
+  function onFormed(e){
+    if(e.animationName !== 'podForm') return;
+    completeForm();
+  }
+
+  function completeForm(){
+    if(S.state !== 'forming') return;
+    $('pod').classList.remove('forming');
+    $('spark').hidden = true; $('spark').classList.remove('on');
+    S.hasPod = true; S.state = 'ready';
+    $('rift-foot').textContent = '缝口生茧 1 / 3 · 距下一枚 01:28';
+    $('r-next').textContent = '01:28';
+    log('裂缝微张，又生一茧。');
+    paint();
   }
 
   function pickUp(){
-    if(!S.hasPod) return;
+    if(S.state !== 'ready' || !S.hasPod) return;
     if(S.shen < 2){ log('神识不足，缝口之茧触手即散。'); return; }
-    S.hasPod = false; S.bag++; S.pick++; S.shen -= 2;
-    $('pod').classList.add('gone'); $('rift-empty').hidden = false;
-    $('rift-foot').textContent = '缝口空悬 · 距下一枚 01:30';
-    log('拾得一枚不明之茧。囊中 ' + S.bag + ' 枚。');
-    paint();
-    setTimeout(function(){
-      S.hasPod = true;
-      var p = $('pod'); p.classList.remove('gone'); p.classList.add('appear');
-      $('rift-empty').hidden = true;
-      $('rift-foot').textContent = '缝口生茧 1 / 3 · 距下一枚 01:28';
-      log('裂缝微张，又生一茧。'); paint();
-    }, 9000);
+    S.bag.push(1 + Math.floor(Math.random() * 3));
+    S.pick++; S.shen -= 2;
+    startRegen();
   }
 
   $('pod').onclick = pickUp;
   $('op-pick').onclick = pickUp;
 
   $('op-plant').onclick = function(){
-    if(S.bag < 1) return;
-    if(S.stone < 3){ log('灵石不足，培土需三石。'); return; }
-    S.bag--; S.stone -= 3; S.plots++;
-    var cell = document.querySelectorAll('#plots i')[S.plots - 1];
-    if(cell) cell.classList.add('on');
-    log('此茧已入畦，片刻后显其品阶。'); paint();
+    if(!(S.bag.length > 0 && S.plots < 9 && S.stone >= 3)) return;
+    S.bag.pop(); S.stone -= 3; S.plots++;
+    log('此茧已入畦，片刻后显其品阶。');
+    paint();
     setTimeout(function(){
-      S.ripe++; log('畦中茧已熟，可开孵化。'); paint();
+      S.ripe++;
+      log('畦中茧已熟，可开孵化。');
+      paint();
     }, 6000);
   };
 
-  $('op-hatch').onclick = function(){ if(S.ripe > 0) $('hatch').hidden = false; };
+  $('op-hatch').onclick = function(){ if(!$('op-hatch').disabled) $('hatch').hidden = false; };
   $('h-cancel').onclick = function(){ $('hatch').hidden = true; };
   $('h-go').onclick = function(){
     $('hatch').hidden = true;
+    if(S.ripe < 1) return;
     if(S.stone < 24){ log('灵石不足，孵化需二十四石。'); return; }
     if(S.shen < 10){ log('神识不足，难以催茧。'); return; }
+
     S.ripe--; S.stone -= 24; S.shen -= 10;
     var roll = Math.random(), out;
     if(roll < .48) out = '真物：残锋一柄，已入密库。';
     else if(roll < .72) out = '空壳一具，可回收五石。';
-    else if(roll < .90){ out = '妖魔破茧！神识 −30，此畦冷却加倍，茧未毁。'; S.shen = Math.max(0, S.shen - 30); $('op-suppress').disabled = false; }
+    else if(roll < .90){
+      out = '妖魔破茧！神识 −30，此畦冷却加倍，茧未毁。';
+      S.shen = Math.max(0, S.shen - 30);
+      $('alert').hidden = false;
+    }
     else out = '一堆无意义的湿纸，辨不出字。';
-    log('孵化 · ' + out); paint();
+    log('孵化 · ' + out);
+    paint();
   };
 
-  $('op-steal').onclick = function(){ log('潜入同门畦边……手未落，忽觉身后有人。'); };
-  $('op-market').onclick = function(){ log('市集今日收茧七枚，品阶未明，最贱者三十石。'); };
+  $('op-steal').onclick = function(){
+    if(S.ti < 8) return;
+    S.ti -= 8;
+    if(Math.random() < .55){
+      S.bag.push(1 + Math.floor(Math.random() * 3));
+      log('潜入同门畦边，得茧一枚，无人知觉。');
+    } else {
+      log('手未落而人已至，记窃名一条。');
+    }
+    paint();
+  };
+
   $('op-suppress').onclick = function(){
     S.shen = Math.max(0, S.shen - 30);
+    $('alert').hidden = true;
     log('镇压已成，得妖丹一枚，畦格复常。');
-    $('op-suppress').disabled = true; paint();
+    paint();
+  };
+
+  $('log-toggle').onclick = function(){
+    var m = $('log-more'), open = m.hidden;
+    m.hidden = !open;
+    this.setAttribute('aria-expanded', String(open));
+    this.textContent = open ? '略' : '详';
   };
 
   document.querySelectorAll('[data-sheet]').forEach(function(a){
@@ -283,7 +454,7 @@
         t = '育 茧 畦';
         b = '<div class="rows"><div class="row"><span class="k">已用</span><span class="n">' + S.plots + ' / 9</span></div>'
           + '<div class="row"><span class="k">熟茧</span><span class="n">' + S.ripe + '</span></div>'
-          + '<div class="row"><span class="k">冷却格</span><span class="n">1</span></div></div>'
+          + '<div class="row"><span class="k">冷却格</span><span class="n">' + ($('alert').hidden ? 0 : 1) + '</span></div></div>'
           + '<div class="ops-note">妖魔逃走之格冷却加倍，须待其散。</div>';
       }
       $('sheet-t').textContent = t;
