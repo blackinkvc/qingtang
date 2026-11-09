@@ -28,7 +28,7 @@
 
   <div style="margin-top:26px;font-size:11.5px;color:var(--ink-4);letter-spacing:.1em;line-height:2">
     未识之物只留轮廓与序次；已收录者标注出处与稀有度。<br>
-    配图编号与条目对应：<code class="mono">c-</code> 场景 · <code class="mono">k-</code> 茧 · <code class="mono">m-</code> 妖魔 · <code class="mono">b-</code> 残卷 · <code class="mono">e-</code> 事件。未出图者留空栏，不碍收录。
+    配图编号与条目对应：<code class="mono">c-</code> 场景 · <code class="mono">k-</code> 茧 · <code class="mono">m-</code> 妖魔 · <code class="mono">p-</code> 人物 · <code class="mono">e-</code> 事件 · <code class="mono">b-</code> 残卷。未出图者留空栏，不碍收录。
   </div>
 </div>
 
@@ -48,80 +48,67 @@
 </footer>
 
 <script src="store.js"></script>
+<script src="codex-data.js"></script>
 <script>
-var DATA = {
-  cocoon: {name:"茧", items:[
-    {t:"青皮茧", r:1, no:"k-01", img:"assets/gen/k-01-qingpi.jpg", m:["中品","偏木","生长期 18 min"], d:"最常见的青皮，茧衣薄，透出隐约的木气。"},
-    {t:"赭纹茧", r:2, no:"k-02", m:["中品","偏土","生长期 26 min"], d:"茧衣有赭色横纹，土气沉稳，宜培不宜急。"},
-    {t:"白霜茧", r:2, no:"k-03", m:["上品","偏水","生长期 32 min"], d:"霜色覆壳，触之生寒，多生于裂缝阴面。"},
-    {t:"朱砂茧", r:3, no:"k-04", m:["上品","偏火","生长期 14 min"], d:"壳内似有火脉游走，熟时微微发烫。"},
-    {t:"藕紫茧", r:4, no:"k-05", m:["异品","倾向不明","生长期 40 min"], d:"紫而不艳，宗门记载中仅三见。对着它久了，会忘记时辰。"},
-    {t:"", r:0, no:"k-06", m:[], d:""},
-    {t:"", r:0, no:"k-07", m:[], d:""},
-    {t:"", r:0, no:"k-08", m:[], d:""}
-  ]},
-  thing: {name:"茧中物", items:[
-    {t:"残锋", r:2, no:"m-02", m:["真物","出自·青皮茧"], d:"断去半截的短锋，仍可割裂薄茧。"},
-    {t:"空壳", r:1, no:"m-03", m:["空壳","可回收 5 石"], d:"孵后仅余茧衣，卷起如纸。"},
-    {t:"青面小妖", r:3, no:"m-01", img:"assets/gen/m-01-qingmian.jpg", m:["妖魔","镇压 30%–55%"], d:"孵自贼手之茧，见人即扑，需以神识镇之。"},
-    {t:"废纸一叠", r:1, no:"m-04", m:["无意义物","灰料"], d:"湿烂的纸，辨不出一个字。"},
-    {t:"细线", r:2, no:"m-05", m:["非茧丝","断口齐整"], d:"一根极细的线，不是茧丝。断口平整，像被人从另一端抽走。"},
-    {t:"冷石", r:1, no:"m-06", m:["缝口拾得","贴身不凉"], d:"从缝口捡的石头。揣在怀里，贴着皮肉，一直是温的。"},
-  ]},
-  person: {name:"人物", items:[
-    {t:"沈砚", r:2, no:"p-01", m:["外门","筑基三层"], d:"好拾茧，手快，窃名一条。近来开茧不开灯。"},
-    {t:"柳七娘", r:3, no:"p-02", m:["内门","金丹一层","掌育茧畦"], d:"畦中之茧多半经她手，话少。问起沈砚，只说：他数茧数得比谁都细。"},
-    {t:"守缝人", r:4, no:"p-03", m:["身份不明"], d:"常立于裂缝侧，不问不答。沈砚站过去时，他会让开半步。"},
-    {t:"顾岐", r:2, no:"p-04", m:["外门","师兄"], d:"总说各人有各人的路。别人问沈砚的路通向哪里，他就不说了。"},
-    {t:"郑小满", r:1, no:"p-05", m:["同门","贩卖处"], d:"卖茧爱抬价。说沈砚开出来的壳总是空的，人也越来越静。"}
-  ]},
-  event: {name:"事件", items:[
-    {t:"初拾", r:1, no:"e-01", img:"assets/gen/c-01-rift.jpg", m:["辛亥年·霜降","裂缝"], d:"第一次拾得不明之茧，囊中微沉。"},
-    {t:"窃名", r:2, no:"e-02", m:["同门畦","未遂"], d:"手未落而人已至，记窃名一条。"},
-    {t:"夜坐", r:1, no:"e-03", m:["缝边","至天明"], d:"在缝边坐到天亮。回房时鞋底是湿的，缝边并未下雨。"},
-    {t:"数茧", r:1, no:"e-04", m:["房中","第三遍"], d:"一夜数了三遍。每遍数目都对，还是又数了一遍。"}
-  ]},
-  book: {name:"书籍残片", items:[
-    {t:"《茧谱》卷上", r:3, no:"b-01", m:["残卷","存 12 页 / 全 40 页"], d:"记茧之品阶与倾性，缺下半。"},
-    {t:"《缝口杂记》", r:3, no:"b-02", m:["残页","字迹渐软"], d:"残页上反复写着同一句：它在听。一封比一封写得软。"},
-    {t:"《红线谱》", r:2, no:"b-03", m:["残卷","借者不详"], d:"讲牵线之法。借书人的名字被磨去了，只剩一个沈字。"}
-  ]}
-};
-
+var S = QT.load();
+var DATA = CODEX;
 var order = ["cocoon","thing","person","event","book"];
 var cur = "cocoon";
 var RAR = ["", "凡", "良", "珍", "秘", "绝"];
 
-/* 鉴定记录：从本档读 */
-if (window.QT){
-  var S = QT.load();
-  var arr = (S.codex || []).map(function(x){
-    var nm = (QT.KINDS[x.kind] || {}).n || '茧';
-    return {
-      t: nm, r: x.r, no: 'a-' + x.id,
-      m: [RAR[x.r] + '品', x.v, x.lo + '–' + x.hi + ' 石', '缝势 ' + x.rift],
-      d: new Date(x.at).toLocaleDateString() + ' 鉴 · 费 ' + x.fee + ' 石'
-    };
-  });
-  if (!arr.length) arr = [{ t: '', r: 0, no: 'a-00', m: [], d: '' }];
-  DATA.appraise = { name: '鉴定记录', items: arr };
-  order.push('appraise');
+/* 与条目 need 前缀对应的计数 */
+var T = {
+  s: S.pick || 0,
+  t: S.steals || 0,
+  y: (S.secrets && S.secrets.fines) || 0,
+  w: S.whispers || 0,
+  k: QT.kinN(),
+  a: (S.codex || []).length,
+  r: S.hadRift ? 1 : 0,
+  b: S.hadBond ? 1 : 0,
+  m: S.taints || 0
+};
 
-  var hd = (S.heard || []).map(function(h){
-    var nm = (QT.GODS[h.g] || {}).n || '';
-    return { t: nm, r: 0, no: 'w-' + h.at, m: ['清明 ' + h.clarity],
-             d: new Date(h.at).toLocaleString('zh-CN', { hour12: false }) };
-  });
-  if (!hd.length) hd = [{ t: '', r: 0, no: 'w-00', m: [], d: '' }];
-  DATA.whisper = { name: '低语', items: hd };
-  order.push('whisper');
+function ok(it){
+  if (!it.need) return true;
+  if (it.need.indexOf('c:') === 0 || it.need.indexOf('f:') === 0) {
+    return !!(S.seen && S.seen[it.need]);
+  }
+  var p = it.need.split(':');
+  return (T[p[0]] || 0) >= +p[1];
 }
+
+order.forEach(function(k){
+  DATA[k].items.forEach(function(it){ it._ok = ok(it); });
+});
+
+/* 鉴定记录：从本档读 */
+var arr = (S.codex || []).map(function(x){
+  var nm = (QT.KINDS[x.kind] || {}).n || '茧';
+  return {
+    t: nm, r: x.r, no: 'a-' + x.id, _ok: true,
+    m: [RAR[x.r] + '品', x.v, x.lo + '–' + x.hi + ' 石', '缝势 ' + x.rift],
+    d: new Date(x.at).toLocaleDateString() + ' 鉴 · 费 ' + x.fee + ' 石'
+  };
+});
+if (!arr.length) arr = [{ t: '', r: 0, no: 'a-00', m: [], d: '', _ok: true }];
+DATA.appraise = { name: '鉴定记录', items: arr };
+order.push('appraise');
+
+var hd = (S.heard || []).map(function(h){
+  var nm = (QT.GODS[h.g] || {}).n || '';
+  return { t: nm, r: 0, no: 'w-' + h.at, _ok: true, m: ['清明 ' + h.clarity],
+           d: new Date(h.at).toLocaleString('zh-CN', { hour12: false }) };
+});
+if (!hd.length) hd = [{ t: '', r: 0, no: 'w-00', m: [], d: '', _ok: true }];
+DATA.whisper = { name: '低语', items: hd };
+order.push('whisper');
 
 function renderTabs(){
   var n = 0;
   var host = document.getElementById("tabs");
   host.innerHTML = order.map(function(k){
-    var d = DATA[k], got = d.items.filter(function(x){ return x.t; }).length;
+    var d = DATA[k], got = d.items.filter(function(x){ return x._ok !== false; }).length;
     n += got;
     return '<button class="cx-tab' + (k === cur ? ' on' : '') + '" data-k="' + k + '">'
       + d.name + '<span class="c">' + got + '/' + d.items.length + '</span></button>';
@@ -146,8 +133,8 @@ function renderCards(){
   var items = DATA[cur].items;
   document.getElementById("cards").innerHTML = items.map(function(x, i){
     var no = x.no || String(i + 1).padStart(2, "0");
-    if(!x.t){
-      return '<article class="cx-card lock">' + pic(x)
+    if(!x.t || x._ok === false){
+      return '<article class="cx-card lock">' + pic({ no: no })
         + '<div class="no">' + no + '</div>'
         + '<div class="ttl">未 识</div><div class="desc">待解封</div></article>';
     }

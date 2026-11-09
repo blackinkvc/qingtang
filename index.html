@@ -664,25 +664,30 @@
     if(S.shen < 10){ log('神识不足，难以催茧。'); return; }
 
     S.stone -= 24; S.shen -= 10;
-    var roll = Math.random(), out;
+    var roll = Math.random(), out, om;
     var c = h.c, K = QT.KINDS[c.kind];
     if(roll < .48){
       out = '真物：残锋一柄，已入库藏。';
+      om = '吉';
       S.vault.edge++;
       S.house.splice(S.house.indexOf(h), 1);
     } else if(roll < .72){
       out = '空壳一具，可回收五石。壳里留着一根很细的线。';
+      om = '平';
       S.vault.shell++; S.stone += 5;
       S.house.splice(S.house.indexOf(h), 1);
     } else if(roll < .90){
       out = '妖魔破茧！神识 −30，茧未毁，可镇后再孵。';
+      om = '凶';
       S.shen = Math.max(0, S.shen - 30);
       S.vault.dan++;
       $('alert').hidden = false;
     } else {
       out = '一堆无意义的湿纸，辨不出字。';
+      om = '平';
       S.house.splice(S.house.indexOf(h), 1);
     }
+    QT.mark('f:' + om);
     QT.save();
     log('孵化「' + K.n + '」 · ' + out);
     paint();

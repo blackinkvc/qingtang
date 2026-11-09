@@ -62,6 +62,8 @@
 
   function mk(kind, r, src) {
     S.seq++;
+    if (!S.seen) S.seen = {};
+    S.seen['c:' + kind + ':' + r] = 1;
     return {
       id: 'q' + S.seq,
       kind: kind,
@@ -84,6 +86,7 @@
       path: null, debt: 0, incident: null,
       whispers: 0,
       heard: [],
+      seen: {}, mends: 0, hadRift: false, hadBond: false, steals: 0, taints: 0,
       secrets: { p: 0, stolen: 0, hidden: 0, hiddenW: 0, fines: 0, off: 0 },
       gods: { g1: { favor: 0, kin: false, ask: true }, g2: { favor: 0, kin: false, ask: true }, g3: { favor: 0, kin: false, ask: true } },
       pick: 0,
@@ -127,6 +130,12 @@
     if (typeof d.path === 'undefined') d.path = null;
     if (typeof d.debt !== 'number') d.debt = 0;
     if (!d.incident) d.incident = null;
+    if (!d.seen) d.seen = {};
+    if (typeof d.mends !== 'number') d.mends = 0;
+    if (typeof d.hadRift !== 'boolean') d.hadRift = false;
+    if (typeof d.hadBond !== 'boolean') d.hadBond = false;
+    if (typeof d.steals !== 'number') d.steals = 0;
+    if (typeof d.taints !== 'number') d.taints = 0;
     return d;
   }
 
@@ -207,6 +216,7 @@
   }
   function riftSync() {
     if (!S || !S.rift) return;
+    if (S.rift.r >= 100 && !S.rift.tainted) S.taints = (S.taints || 0) + 1;
     S.rift.r = +riftNow().toFixed(2);
     S.rift.at = now();
     S.rift.tainted = S.rift.r >= 100 ? true : (S.rift.tainted && S.rift.r >= 70);
@@ -252,6 +262,7 @@
     S.will = w0 - 10; S.willAt = now();
     S.rift.r = Math.max(0, +(S.rift.r - R.dr).toFixed(2));
     S.rift.tainted = S.rift.r >= 100 ? true : (S.rift.tainted && S.rift.r >= 70);
+    S.mends = (S.mends || 0) + 1;
     save();
     return { ok: true, before: before, after: +S.rift.r.toFixed(1), dr: R.dr, will: S.will };
   }
@@ -429,6 +440,7 @@
   /* —— 两条负债路 —— */
   function enterRift() {
     S.path = 'rift';
+    S.hadRift = true;
     S.stone = 0; S.rank = 1; S.willMax = RANKS[1].willMax; S.will = 0; S.willAt = now();
     S.bag = []; S.plots = []; S.house = []; S.listings = [];
     S.incident = null;
@@ -441,6 +453,7 @@
 
   function signBond(F) {
     S.path = 'bond';
+    S.hadBond = true;
     S.debt = F;
     S.stone = 0;
     S.secrets.fines += 1;
@@ -471,6 +484,7 @@
   function steal() {
     if (S.ti < 8) return { ok: false, why: '体力不足（需 8）' };
     S.ti -= 8;
+    S.steals = (S.steals || 0) + 1;
     var got = Math.random() < .55, c = null;
     if (got) {
       c = mk(Math.floor(Math.random() * 5), 1 + Math.floor(Math.random() * 3), 'stolen');
@@ -575,6 +589,14 @@
     return true;
   }
 
+  /* 图鉴解锁打点：'f:凶' / 'f:平' / 'f:吉' 等 */
+  function mark(key) {
+    if (!key) return;
+    if (!S.seen) S.seen = {};
+    S.seen[key] = 1;
+    save();
+  }
+
   w.QT = {
     KINDS: KINDS, RAR: RAR, PRICE: PRICE, SUGGEST: SUGGEST, STAGES: STAGES,
     RIFT: RIFT, RANKS: RANKS,
@@ -590,6 +612,7 @@
     steal: steal,
     GODS: GODS, whisperRate: whisperRate, rollWhisper: rollWhisper,
     hear: hear, declineKin: declineKin, becomeKin: becomeKin, kinN: kinN,
+    mark: mark,
     get s() { return load(); }
   };
 })(window);
