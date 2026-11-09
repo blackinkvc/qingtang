@@ -677,3 +677,81 @@ body.tainted .rift{filter:saturate(.68) contrast(1.08) brightness(.94)}
 @media (max-width:900px){
   .res .cell.rift-cell{display:none}
 }
+
+/* ============================================================
+   缝势扩展 · 阶段二：鉴定 / 私藏 / 罚金 / 两条负债路
+   ============================================================ */
+
+.res .cell.clarity-cell{flex-wrap:wrap;max-width:82px;row-gap:3px}
+.clarity-cell .rbar{flex:0 0 100%;height:2px;background:var(--rule-2);display:block}
+.clarity-cell .rbar i{display:block;height:100%;background:var(--qing);transition:width .5s linear}
+
+.side-note{font-size:10px;line-height:1.7;color:var(--ink-4);letter-spacing:.04em;margin-top:5px}
+
+/* 鉴定结果 */
+.app-out{border:1px solid var(--rule);background:var(--paper-lo);padding:10px 12px;margin:10px 0;
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-height:48px;
+  font-size:11.5px;color:var(--ink-4);letter-spacing:.1em}
+.app-out b{font-family:var(--serif);font-size:24px;font-weight:400;letter-spacing:.1em;color:var(--ink)}
+.app-out span{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.app-out em{font-style:normal;flex:1 0 100%;font-size:10px;color:var(--ink-4);letter-spacing:.04em}
+.app-out.v-ji b{color:var(--qing)}
+.app-out.v-xiong b{color:var(--zhu)}
+.app-out.v-ping b{color:var(--zhe)}
+.app-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.app-acts .btn{justify-content:center}
+.pt-note{font-size:10px;color:var(--zhe);padding:6px 0 0;letter-spacing:.06em}
+
+/* 岔路两选一 */
+.fork{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.fork-c{display:grid;gap:4px;text-align:left;font:inherit;cursor:pointer;
+  border:1px solid var(--rule);background:var(--paper-hi);padding:14px 14px 16px;
+  transition:border-color .25s var(--ease),background .25s var(--ease)}
+.fork-c:hover{border-color:var(--zhu);background:var(--paper-warm)}
+.fork-c b{font-family:var(--serif);font-size:16px;font-weight:400;letter-spacing:.18em;color:var(--ink)}
+.fork-c span{font-size:10.5px;line-height:1.75;color:var(--ink-3)}
+.inc-note{font-size:11px;line-height:1.9;color:var(--ink-3);margin:12px 0 0}
+
+/* 裂缝之内 / 市不与缝通 */
+.path-block{border:1px solid var(--rule);background:var(--paper-hi);margin:40px auto;max-width:460px;
+  padding:38px 30px;text-align:center;display:grid;gap:10px;justify-items:center}
+.path-block[hidden]{display:none}
+.path-block .pb-mark{font-family:var(--serif);font-size:44px;color:var(--ink-4);line-height:1;letter-spacing:.1em}
+.path-block h2{font-family:var(--serif);font-size:19px;font-weight:400;letter-spacing:.24em;margin:0}
+.path-block p{font-size:11.5px;line-height:1.9;color:var(--ink-3);margin:0 0 6px}
+
+/* 缝内：纸色反转，字迹发亮 */
+body.in-rift{--paper:#26241F;--paper-hi:#2E2B25;--paper-warm:#332F28;--paper-lo:#211F1A;
+  --ink:#E3DAC6;--ink-2:#CFC5B0;--ink-3:#A79E8B;--ink-4:#7E7767;
+  --rule:rgba(226,214,188,.26);--rule-2:rgba(226,214,188,.18);--rule-3:rgba(226,214,188,.12)}
+body.in-rift .rift{filter:invert(1) hue-rotate(180deg) brightness(.92) saturate(.7)}
+.rift-path{position:absolute;top:16px;left:0;right:0;text-align:center;
+  font-family:var(--serif);font-size:11px;letter-spacing:.5em;color:var(--ink-3);
+  text-shadow:0 0 12px rgba(226,214,188,.35)}
+.rift-path[hidden]{display:none}
+
+/* 孵房「载」印 */
+.hx-zai{position:absolute;right:8px;top:26px;width:22px;height:22px;display:grid;place-items:center;
+  font-family:var(--serif);font-size:11px;color:var(--zhu);border:1px solid var(--zhu);opacity:.72;
+  transform:rotate(-6deg)}
+
+/* 低语 */
+.whisper{position:fixed;right:18px;bottom:78px;z-index:120;width:min(268px,74vw);
+  background:rgba(29,27,23,.94);color:var(--paper-hi);padding:12px 14px 11px;
+  border-left:2px solid rgba(226,214,188,.5);display:grid;gap:8px;
+  animation:whIn .5s var(--ease) both}
+.whisper[hidden]{display:none}
+@keyframes whIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wh-k{font-size:9.5px;letter-spacing:.28em;color:rgba(226,214,188,.55)}
+.wh-t{font-family:var(--serif);font-size:14.5px;line-height:1.85;letter-spacing:.06em}
+.wh-a{display:flex;gap:8px;justify-content:flex-end}
+.wh-a .btn{border-color:rgba(226,214,188,.4);color:rgba(226,214,188,.9);background:none}
+.wh-a .btn:hover{background:rgba(226,214,188,.12);border-color:rgba(226,214,188,.7)}
+.wh-a .btn.main{border-color:rgba(226,214,188,.7);color:var(--paper-hi)}
+
+@media (max-width:900px){
+  .res .cell.clarity-cell{display:none}
+  .fork{grid-template-columns:1fr}
+  .whisper{right:10px;left:10px;width:auto;bottom:64px}
+  .path-block{margin:20px 12px;padding:26px 18px}
+}

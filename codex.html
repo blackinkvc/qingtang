@@ -47,6 +47,7 @@
   </div>
 </footer>
 
+<script src="store.js"></script>
 <script>
 var DATA = {
   cocoon: {name:"茧", items:[
@@ -90,6 +91,22 @@ var DATA = {
 var order = ["cocoon","thing","person","event","book"];
 var cur = "cocoon";
 var RAR = ["", "凡", "良", "珍", "秘", "绝"];
+
+/* 鉴定记录：从本档读 */
+if (window.QT){
+  var S = QT.load();
+  var arr = (S.codex || []).map(function(x){
+    var nm = (QT.KINDS[x.kind] || {}).n || '茧';
+    return {
+      t: nm, r: x.r, no: 'a-' + x.id,
+      m: [RAR[x.r] + '品', x.v, x.lo + '–' + x.hi + ' 石', '缝势 ' + x.rift],
+      d: new Date(x.at).toLocaleDateString() + ' 鉴 · 费 ' + x.fee + ' 石'
+    };
+  });
+  if (!arr.length) arr = [{ t: '', r: 0, no: 'a-00', m: [], d: '' }];
+  DATA.appraise = { name: '鉴定记录', items: arr };
+  order.push('appraise');
+}
 
 function renderTabs(){
   var n = 0;

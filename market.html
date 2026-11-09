@@ -37,6 +37,22 @@
 
   <aside class="mk-right">
 
+    <div class="mk-card" id="card-app">
+      <div class="mk-h"><span>宗 门 鉴 定</span><span class="mono">付 费</span></div>
+      <p class="mk-p">只看凶吉与一段区间，不给准数。清明越低，报得越偏。</p>
+      <div class="mk-now">
+        <span class="t">鉴 费</span>
+        <span class="d" id="app-fee-d">—</span>
+        <span class="v"><b id="app-fee">—</b><small>石</small></span>
+      </div>
+      <div class="app-out" id="app-out">未 鉴</div>
+      <div class="app-acts">
+        <button class="btn full" id="btn-app" type="button">鉴 定</button>
+        <button class="btn full" id="btn-hide" type="button">私 藏</button>
+      </div>
+      <div class="mk-why" id="why-app"></div>
+    </div>
+
     <div class="mk-card" id="card-sect">
       <div class="mk-h"><span>卖 予 宗 门</span><span class="mono">明 码</span></div>
       <p class="mk-p">按品阶定价，当场交割。不问来历，也没有失手。</p>
@@ -86,6 +102,13 @@
       急用灵石、或不想担风险，走宗门。
     </div>
   </aside>
+</div>
+
+<div class="path-block" id="path-block" hidden>
+  <div class="pb-mark">缝</div>
+  <h2>裂 缝 之 内</h2>
+  <p>市不与缝通。此处没有价目，也没有同门。</p>
+  <a class="btn main" href="index.html">回 裂 缝</a>
 </div>
 
 <footer class="g-bottom">
@@ -149,6 +172,63 @@
   }
   function fmtP(lo, hi){ return Math.round(lo * 100) + '%–' + Math.round(hi * 100) + '%'; }
 
+  /* 裂缝之内：市不通 */
+  if (S.path === 'rift'){
+    $('path-block').hidden = false;
+    document.querySelector('.mk-wrap').hidden = true;
+    $('log').textContent = '缝内无市。';
+  }
+
+  /* —— 鉴定 —— */
+  function renderApp(){
+    var c = sel();
+    if (!c){
+      $('app-fee').textContent = '—'; $('app-fee-d').textContent = '未选茧';
+      $('app-out').textContent = '未 鉴';
+      $('app-out').className = 'app-out';
+      $('btn-app').disabled = true; $('btn-hide').disabled = true;
+      $('why-app').textContent = '先在左侧选一枚茧';
+      return;
+    }
+    var fee = QT.appCost(c.r);
+    $('app-fee').textContent = fee;
+    $('app-fee-d').textContent = QT.RAR[c.r] + ' 品 · ' + QT.KINDS[c.kind].n;
+    $('btn-app').disabled = S.stone < fee || !!c.appraised;
+    $('btn-hide').disabled = false;
+    $('why-app').textContent = c.appraised ? '已鉴 · 私藏仍可' : (S.stone < fee ? '灵石不足（需 ' + fee + '）' : '');
+    if (c.appraised){
+      var a = c.appraised;
+      $('app-out').className = 'app-out v-' + (a.v === '吉' ? 'ji' : a.v === '凶' ? 'xiong' : 'ping');
+      $('app-out').innerHTML = '<b>' + a.v + '</b><span>获益 ' + a.lo + '–' + a.hi + ' 石</span>'
+        + '<em>误差 ±' + Math.round(a.e * 100) + '% · 缝势 ' + a.rift + '</em>';
+    } else {
+      $('app-out').className = 'app-out';
+      $('app-out').textContent = '未 鉴';
+    }
+  }
+
+  $('btn-app').onclick = function(){
+    var c = sel(); if (!c) return;
+    var r = QT.appraise(c);
+    if (!r.ok){ toast(r.why); return; }
+    log('鉴定「' + QT.KINDS[c.kind].n + '」 · ' + r.a.v + ' · ' + r.a.lo + '–' + r.a.hi + ' 石');
+    toast('鉴定 · ' + r.a.v + ' · 费 ' + r.a.fee + ' 石');
+    renderAll();
+  };
+
+  $('btn-hide').onclick = function(){
+    var c = sel(); if (!c) return;
+    var app = !!c.appraised;
+    var r = QT.hide(c);
+    if (!r.ok){ toast(r.why); return; }
+    selId = S.bag.length ? S.bag[0].id : null;
+    $('price').value = sel() ? QT.SUGGEST[sel().r] : '';
+    renderAll();
+    toast('私藏 · 记 ' + (app ? '1' : '1.3') + ' · 已入孵房');
+    log('「' + QT.KINDS[c.kind].n + '」私藏入房 · 私藏 ' + QT.secretP().toFixed(1) + ' 记');
+    if (S.incident) setTimeout(function(){ location.href = 'index.html#fine'; }, 900);
+  };
+
   /* —— 囊中茧 —— */
   function renderPool(){
     ensureSel();
@@ -164,7 +244,7 @@
           + '<span class="tag r' + c.r + '">' + QT.RAR[c.r] + ' 品</span>'
           + '<span class="pi-src">' + (c.src === 'stolen' ? '窃来' : c.src === 'plot' ? '畦出' : '缝口') + '</span>'
           + '</span></span>'
-          + '<span class="pi-p"><b>' + QT.PRICE[c.r] + '</b><small>宗门</small>'
+          + '<span class="pi-p"><b>' + QT.sectPrice(c.r) + '</b><small>宗门</small>'
           + '<em>' + QT.SUGGEST[c.r] + '</em><small>同门</small></span>'
           + '</button>';
       }).join('');
@@ -182,9 +262,10 @@
       + [1, 2, 3, 4, 5].map(function(r){
           return '<div class="pt-r' + (c && c.r === r ? ' on' : '') + '">'
             + '<span class="tag r' + r + '">' + QT.RAR[r] + '</span>'
-            + '<span class="n">' + QT.PRICE[r] + ' 石</span>'
+            + '<span class="n">' + QT.sectPrice(r) + ' 石</span>'
             + '<span class="n d">' + QT.SUGGEST[r] + ' 石</span></div>';
-        }).join('');
+        }).join('')
+      + (S.path === 'bond' ? '<div class="pt-note">杂役期间，宗门价七折。</div>' : '');
   }
 
   function renderSect(){
@@ -197,9 +278,9 @@
       return;
     }
     $('sect-d').textContent = QT.RAR[c.r] + ' 品 · ' + QT.KINDS[c.kind].n;
-    $('sect-v').textContent = QT.PRICE[c.r];
+    $('sect-v').textContent = QT.sectPrice(c.r);
     $('btn-sect').disabled = false;
-    $('why-sect').textContent = '';
+    $('why-sect').textContent = S.path === 'bond' ? '杂役 · 七折' : '';
   }
 
   /* —— 同门估价 —— */
@@ -299,7 +380,7 @@
   }
 
   function renderAll(){
-    renderPool(); renderPrice(); renderSect();
+    renderPool(); renderPrice(); renderSect(); renderApp();
     if (sel() && !$('price').value) $('price').value = QT.SUGGEST[sel().r];
     renderPeer(); renderListings();
     $('n-bag').textContent = S.bag.length;
@@ -328,14 +409,14 @@
   /* 宗门：确认后即时成交 */
   $('btn-sect').onclick = function(){
     var c = sel(); if (!c) return;
-    pending = { kind: 'sect', c: c, price: QT.PRICE[c.r] };
+    pending = { kind: 'sect', c: c, price: QT.sectPrice(c.r) };
     var K = QT.KINDS[c.kind];
     $('cf-t').textContent = K.n + ' · ' + QT.RAR[c.r] + '品';
     $('cf-tag').className = 'risk safe';
-    $('cf-tag').textContent = '必 成';
-    $('cf-b').innerHTML = '<div class="cf-line big"><span>此茧卖出可得</span><b>' + QT.PRICE[c.r] + ' 灵石</b></div>'
+    $('cf-tag').textContent = '即 成';
+    $('cf-b').innerHTML = '<div class="cf-line big"><span>此茧卖出可得</span><b>' + QT.sectPrice(c.r) + ' 灵石</b></div>'
       + '<div class="cmp">'
-      + '<div class="cmp-c on"><span class="t">宗 门</span><b class="mono">' + QT.PRICE[c.r] + ' 石</b>'
+      + '<div class="cmp-c on"><span class="t">宗 门</span><b class="mono">' + QT.sectPrice(c.r) + ' 石</b>'
       + '<span class="d">即时到账 · 无一失手</span></div>'
       + '<div class="cmp-c"><span class="t">同 门 建 议</span><b class="mono">' + QT.SUGGEST[c.r] + ' 石</b>'
       + '<span class="d">须挂单，未必卖得掉</span></div>'
@@ -357,7 +438,7 @@
     $('cf-tag').textContent = '未 定';
     $('cf-b').innerHTML = '<div class="cf-line big"><span>你定的价</span><b>' + v + ' 灵石</b></div>'
       + '<div class="cmp">'
-      + '<div class="cmp-c"><span class="t">宗 门</span><b class="mono">' + QT.PRICE[c.r] + ' 石</b>'
+      + '<div class="cmp-c"><span class="t">宗 门</span><b class="mono">' + QT.sectPrice(c.r) + ' 石</b>'
       + '<span class="d">落袋即定</span></div>'
       + '<div class="cmp-c on"><span class="t">同 门 · 你 的 挂 价</span><b class="mono">' + v + ' 石</b>'
       + '<span class="d">预计成交 ' + fmtP(q.lo, q.hi) + ' · 等 ' + q.wLo + '–' + q.wHi + ' 秒</span></div>'

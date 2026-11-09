@@ -80,10 +80,13 @@
       stone: 480, shen: 72, shenMax: 100, ti: 64, tiMax: 100,
       rank: 3, will: 62, willMax: 75, willAt: t,
       rift: { r: 34.2, at: t, tainted: false },
-      clarity: 100,
-      secrets: { p: 0, stolen: 0, hidden: 0, fines: 0 },
-      gods: { g1: { favor: 0, kin: false }, g2: { favor: 0, kin: false }, g3: { favor: 0, kin: false } },
+      clarity: 100, clarityMax: 100,
+      path: null, debt: 0, incident: null,
+      whispers: 0,
+      secrets: { p: 0, stolen: 0, hidden: 0, hiddenW: 0, fines: 0, off: 0 },
+      gods: { g1: { favor: 0, kin: false, ask: true }, g2: { favor: 0, kin: false, ask: true }, g3: { favor: 0, kin: false, ask: true } },
       pick: 0,
+      codex: [],
       bag: [], plots: [], house: [], listings: [], vault: { edge: 1, shell: 2, dan: 0 }
     };
     /* 囊中：四枚，品阶与来历不同，贩卖页一进去就有货 */
@@ -112,8 +115,16 @@
     if (!d.willAt) d.willAt = now();
     if (!d.rift) d.rift = { r: 34.2, at: now(), tainted: false };
     if (typeof d.clarity !== 'number') d.clarity = 100;
-    if (!d.secrets) d.secrets = { p: 0, stolen: 0, hidden: 0, fines: 0 };
+    if (!d.secrets) d.secrets = { p: 0, stolen: 0, hidden: 0, hiddenW: 0, fines: 0, off: 0 };
     if (!d.gods) d.gods = { g1: { favor: 0, kin: false }, g2: { favor: 0, kin: false }, g3: { favor: 0, kin: false } };
+    if (typeof d.clarityMax !== 'number') d.clarityMax = 100;
+    if (typeof d.secrets.hiddenW !== 'number') d.secrets.hiddenW = d.secrets.hidden || 0;
+    if (typeof d.secrets.off !== 'number') d.secrets.off = 0;
+    if (!d.codex) d.codex = [];
+    if (typeof d.whispers !== 'number') d.whispers = 0;
+    if (typeof d.path === 'undefined') d.path = null;
+    if (typeof d.debt !== 'number') d.debt = 0;
+    if (!d.incident) d.incident = null;
     return d;
   }
 
@@ -320,6 +331,239 @@
       + '</g></svg>';
   }
 
+  /* ============================================================
+     阶段二 · 鉴定 / 私藏 / 罚金 / 两条负债路
+     ============================================================ */
+
+  function appCost(r) { return 4 + 3 * r; }
+  function floor5(v) { return Math.max(5, Math.round(v / 5) * 5); }
+
+  /* 私藏记：已鉴 1 记，未鉴 1.3 记；偷取 1.5 记；缴罚清去一半 */
+  function secretP() {
+    var s = S.secrets;
+    return Math.max(0, (s.hiddenW || 0) + 1.5 * (s.stolen || 0) - (s.off || 0));
+  }
+  function syncP() { S.secrets.p = +secretP().toFixed(1); return S.secrets.p; }
+
+  function appraise(c) {
+    var fee = appCost(c.r);
+    if (S.stone < fee) return { ok: false, why: '灵石不足（需 ' + fee + '）' };
+    var cl = S.clarity;
+    var e = .15 + (100 - cl) / 100 * .45;
+    if (typeof c._t !== 'number') c._t = Math.random();
+    var truth = c._t;
+    if (S.gods.g1.kin || S.gods.g2.kin || S.gods.g3.kin) truth = Math.min(.995, truth + .08);
+    var real = truth < .22 ? '凶' : truth > .78 ? '吉' : '平';
+    var mis = (100 - cl) / 100 * .35;
+    var say = real;
+    if (Math.random() < mis) {
+      var alt = ['凶', '平', '吉'].filter(function (x) { return x !== real; });
+      say = alt[Math.floor(Math.random() * alt.length)];
+    }
+    var V = PRICE[c.r] * rnd(.55, 1.45);
+    var lo = floor5(V * (1 - e)), hi = floor5(V * (1 + e));
+    S.stone -= fee;
+    c.appraised = { v: say, lo: lo, hi: hi, fee: fee, at: now(), rift: +riftNow().toFixed(1), e: +e.toFixed(2) };
+    S.codex.unshift({
+      id: c.id, kind: c.kind, r: c.r, v: say, lo: lo, hi: hi,
+      fee: fee, at: c.appraised.at, rift: c.appraised.rift
+    });
+    if (S.codex.length > 60) S.codex.length = 60;
+    save();
+    return { ok: true, a: c.appraised };
+  }
+
+  /* 私藏：移入孵房，记一笔，并作一次判定 */
+  function hide(c) {
+    var i = -1;
+    for (var k = 0; k < S.bag.length; k++) if (S.bag[k].id === c.id) { i = k; break; }
+    if (i < 0) return { ok: false, why: '囊中无此茧' };
+    S.bag.splice(i, 1);
+    S.secrets.hidden += 1;
+    S.secrets.hiddenW += c.appraised ? 1 : 1.3;
+    c.hidden = true;
+    S.house.push({ c: c, at: now(), dur: 90 * 60000, secret: true });
+    syncP();
+    var chk = foundCheck(c.r);
+    if (chk.found) S.incident = { fine: chk.fine, r: c.r, kind: 'hide', at: now() };
+    save();
+    return { ok: true, chk: chk };
+  }
+
+  function pFound(r) {
+    var P = secretP();
+    return clamp(.03 + .028 * P + .06 * (r - 1) - .012 * S.rank
+      + .0015 * (100 - S.clarity) + rnd(-.02, .02), .01, .92);
+  }
+
+  function fineOf(P, r) {
+    return Math.max(5, Math.round(PRICE[r] * (1 + .35 * P) * rnd(.8, 1.2) / 5) * 5);
+  }
+
+  /* 每次私藏 / 偷取各一次。测试钩子：window.__qtfound = 'yes' | 'no' */
+  function foundCheck(r) {
+    var p = pFound(r);
+    var force = w.__qtfound;
+    var hit = force === 'yes' ? true : force === 'no' ? false : Math.random() < p;
+    if (!hit) { save(); return { found: false, p: +p.toFixed(3) }; }
+    var F = fineOf(secretP(), r);
+    return { found: true, p: +p.toFixed(3), fine: F, pay: S.stone >= F };
+  }
+
+  function payFine() {
+    var inc = S.incident;
+    if (!inc) return { ok: false };
+    if (S.stone < inc.fine) return { ok: false, why: '灵石不足' };
+    S.stone -= inc.fine;
+    S.secrets.fines += 1;
+    var half = secretP() * .5;
+    S.secrets.off += half;
+    syncP();
+    S.incident = null;
+    save();
+    return { ok: true, fine: inc.fine, p: S.secrets.p };
+  }
+
+  /* —— 两条负债路 —— */
+  function enterRift() {
+    S.path = 'rift';
+    S.stone = 0; S.rank = 1; S.willMax = RANKS[1].willMax; S.will = 0; S.willAt = now();
+    S.bag = []; S.plots = []; S.house = []; S.listings = [];
+    S.incident = null;
+    S.secrets.off += secretP();
+    S.secrets.stolen = 0; S.secrets.hiddenW = 0; S.secrets.hidden = 0;
+    syncP();
+    save();
+    return S.path;
+  }
+
+  function signBond(F) {
+    S.path = 'bond';
+    S.debt = F;
+    S.stone = 0;
+    S.secrets.fines += 1;
+    S.secrets.off += secretP() * .5;
+    syncP();
+    S.incident = null;
+    save();
+    return S.path;
+  }
+
+  /* 杂役：拾茧时抵去部分债 */
+  function bondWork() {
+    if (S.path !== 'bond' || S.debt <= 0) return { done: false };
+    var cut = Math.min(S.debt, 3);
+    S.debt -= cut;
+    var freed = S.debt <= 0;
+    if (freed) { S.path = null; S.debt = 0; }
+    save();
+    return { done: true, cut: cut, freed: freed };
+  }
+
+  function sectPrice(r) {
+    var v = PRICE[r] || 0;
+    return S.path === 'bond' ? Math.max(1, Math.round(v * .7)) : v;
+  }
+
+  /* —— 偷取：得茧 / 失手，各作一次判定 —— */
+  function steal() {
+    if (S.ti < 8) return { ok: false, why: '体力不足（需 8）' };
+    S.ti -= 8;
+    var got = Math.random() < .55, c = null;
+    if (got) {
+      c = mk(Math.floor(Math.random() * 5), 1 + Math.floor(Math.random() * 3), 'stolen');
+      S.bag.push(c);
+      S.secrets.stolen += 1;
+      syncP();
+    }
+    var chk = S.path === 'rift' ? { found: false, p: 0 } : foundCheck(c ? c.r : 1);
+    if (chk.found) S.incident = { fine: chk.fine, r: c ? c.r : 1, kind: 'steal', at: now() };
+    save();
+    return { ok: true, got: got, c: c, chk: chk };
+  }
+
+  /* ============================================================
+     阶段三 · 低语 / 眷属 / 清明
+     ============================================================ */
+  var GODS = {
+    g1: {
+      n: '垂听的',
+      lines: [
+        '再近些。',
+        '这里的回声是旧的。',
+        '你站的地方，从前有水。',
+        '冷吗。我也冷。',
+        '我在下面，一直听着。',
+        '你把茧拿来时，我听见了。'
+      ]
+    },
+    g2: {
+      n: '数名的',
+      lines: [
+        '孩子，线乱了。',
+        '一根，两根……你数不清的。',
+        '把结拆开，就看见我了。',
+        '你的线头，我替你留着。',
+        '慢慢来，我有的是时候数。',
+        '这根线，绕过你师门的匾。'
+      ]
+    },
+    g3: {
+      n: '缝外的',
+      lines: [
+        '换。',
+        '你手里那枚，给我。',
+        '我饿了很久。',
+        '拿你的，换我的。',
+        '你给得起。',
+        '再多一点，就够了。'
+      ]
+    }
+  };
+
+  function kinN() {
+    return (S.gods.g1.kin ? 1 : 0) + (S.gods.g2.kin ? 1 : 0) + (S.gods.g3.kin ? 1 : 0);
+  }
+  function whisperRate() {
+    return Math.min(.45, .06 + .004 * (100 - S.clarity) + .02 * kinN()
+      + (isTainted() ? .08 : 0));
+  }
+  function rollWhisper() {
+    if (Math.random() >= whisperRate()) return null;
+    var keys = ['g1', 'g2', 'g3'];
+    var ws = keys.map(function (k) { return S.gods[k].kin ? 2 : 1; });
+    var sum = ws[0] + ws[1] + ws[2], x = Math.random() * sum, g = 'g1';
+    if (x > ws[0]) { g = x > ws[0] + ws[1] ? 'g3' : 'g2'; }
+    var G = GODS[g];
+    return { g: g, n: G.n, line: G.lines[Math.floor(Math.random() * G.lines.length)] };
+  }
+  function hear(g) {
+    if (!S.gods[g]) return null;
+    S.gods[g].favor += 1;
+    S.gods[g].ask = true;
+    S.clarity = Math.max(0, S.clarity - 3);
+    S.whispers += 1;
+    save();
+    return {
+      favor: S.gods[g].favor,
+      kin: S.gods[g].kin,
+      ask: S.gods[g].favor >= 7 && !S.gods[g].kin && S.gods[g].ask
+    };
+  }
+  function declineKin(g) {
+    if (S.gods[g]) S.gods[g].ask = false;
+    save();
+  }
+  function becomeKin(g) {
+    var G = S.gods[g];
+    if (!G || G.kin) return false;
+    G.kin = true;
+    S.clarityMax = Math.max(20, S.clarityMax - 20);
+    S.clarity = Math.max(0, Math.min(S.clarity, S.clarityMax) - 20);
+    save();
+    return true;
+  }
+
   w.QT = {
     KINDS: KINDS, RAR: RAR, PRICE: PRICE, SUGGEST: SUGGEST, STAGES: STAGES,
     RIFT: RIFT, RANKS: RANKS,
@@ -329,6 +573,12 @@
     isLocal: isLocal, demo: demo, setDemo: setDemo,
     riftNow: riftNow, riftStage: riftStage, intervalSec: intervalSec,
     willNow: willNow, mend: mend, setRank: setRank,
+    appCost: appCost, appraise: appraise, hide: hide,
+    secretP: secretP, syncP: syncP, pFound: pFound, payFine: payFine,
+    enterRift: enterRift, signBond: signBond, bondWork: bondWork, sectPrice: sectPrice,
+    steal: steal,
+    GODS: GODS, whisperRate: whisperRate, rollWhisper: rollWhisper,
+    hear: hear, declineKin: declineKin, becomeKin: becomeKin, kinN: kinN,
     get s() { return load(); }
   };
 })(window);

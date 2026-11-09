@@ -22,6 +22,7 @@
       <div class="cell"><span class="k" data-a="识">神识</span><span class="v"><span id="v-shen">72</span><small>/100</small></span></div>
       <div class="cell"><span class="k" data-a="茧">囊中茧</span><span class="v" id="v-pod">0</span></div>
       <div class="cell rift-cell"><span class="k" data-a="缝">缝势</span><span class="v"><span id="v-rift">34.2</span><small id="v-rift-n">平静</small></span><span class="rbar"><i id="v-rift-i" style="width:34%"></i></span></div>
+      <div class="cell clarity-cell"><span class="k" data-a="清">清明</span><span class="v" id="v-clar">100</span><span class="rbar"><i id="v-clar-i" style="width:100%"></i></span></div>
       <button class="seal-maint" id="seal" type="button" title="双击进入">维</button>
     </div>
     <div class="m-stat">
@@ -64,12 +65,19 @@
         <div class="lab"><span>缝势</span><b><span id="rift-num">34.2</span> / 100</b></div>
         <div class="meter"><i id="bar-rift" style="width:34%;background:var(--zhe)"></i></div>
       </div>
+
+      <div class="pane-h" style="margin-top:14px"><span>私 藏</span><span class="mono" id="secret-seg">未问</span></div>
+      <div class="stat" style="margin-bottom:0">
+        <div class="lab"><span>私藏记</span><b id="secret-n">0</b></div>
+        <div class="side-note" id="path-n">宗门未问。</div>
+      </div>
     </aside>
 
     <section class="rift" id="rift" aria-label="时空裂缝">
       <div class="grain"></div>
       <div class="vignette"></div>
       <div class="rift-label">时 空 裂 缝</div>
+      <div class="rift-path" id="rift-path" hidden>裂 缝 之 内</div>
 
       <div class="spark" id="spark" hidden></div>
 
@@ -258,6 +266,49 @@
   </div>
 </div>
 
+<!-- 低语 -->
+<div class="whisper" id="whisper" hidden>
+  <div class="wh-k" id="wh-k">缝 里 有 声 音</div>
+  <div class="wh-t" id="wh-t">—</div>
+  <div class="wh-a">
+    <button class="btn xs" type="button" id="wh-hear">听</button>
+    <button class="btn xs ghost" type="button" id="wh-no">不 听</button>
+  </div>
+</div>
+
+<!-- 眷属 -->
+<div class="hatch" id="kin" hidden>
+  <div class="hatch-box cf-box">
+    <div class="hatch-head">
+      <div>
+        <div class="h-k">缝 里 · 眷 属</div>
+        <div class="h-t" id="kin-t">—</div>
+      </div>
+      <div class="risk warn">问</div>
+    </div>
+    <div class="cf-body" id="kin-b"></div>
+    <div class="hatch-foot">
+      <button class="btn" type="button" id="kin-no">不 应</button>
+      <button class="btn main" type="button" id="kin-yes">应 下</button>
+    </div>
+  </div>
+</div>
+
+<!-- 罚金 / 岔路 -->
+<div class="hatch" id="fine" hidden>
+  <div class="hatch-box cf-box">
+    <div class="hatch-head">
+      <div>
+        <div class="h-k" id="fine-k">宗 门 · 私 藏</div>
+        <div class="h-t" id="fine-t">—</div>
+      </div>
+      <div class="risk bad" id="fine-tag">罚</div>
+    </div>
+    <div class="cf-body" id="fine-b"></div>
+    <div class="hatch-foot" id="fine-foot"></div>
+  </div>
+</div>
+
 <script src="store.js"></script>
 <script>
 (function(){
@@ -269,6 +320,15 @@
   var wasTaint = QT.riftStage().tainted;
 
   function nextMs(){ return Math.max(1200, Math.round(QT.intervalSec() * 1000)); }
+
+  function pathName(){
+    return S.path === 'rift' ? '裂缝之内' : S.path === 'bond' ? '杂役 · 欠 ' + S.debt + ' 石' : '';
+  }
+  function secretLine(){
+    if (S.path === 'rift') return '账已勾销。';
+    if (S.path === 'bond') return '宗门记账，拾茧抵去三石。';
+    return S.secrets.hidden || S.secrets.stolen ? '宗门未问。' : '囊中干净。';
+  }
 
   function ripeN(){ var t = Date.now(); return S.plots.filter(function(p){ return p.ripeAt <= t; }).length; }
   function nearCocoon(){
@@ -323,9 +383,18 @@
     $('m-will').textContent = wv;
     $('r-will').textContent = wv + ' / ' + RK.willMax;
     $('s-rank').textContent = RK.n;
-    $('v-rank').textContent = RK.n + ' · 外门';
+    $('v-rank').textContent = RK.n + ' · ' + (S.path === 'rift' ? '缝内' : S.path === 'bond' ? '杂役' : '外门');
     $('mend-c').textContent = '缝势 −' + RK.dr + ' · 意志 10';
     document.body.classList.toggle('tainted', rs.tainted);
+    document.body.classList.toggle('in-rift', S.path === 'rift');
+    document.body.classList.toggle('in-bond', S.path === 'bond');
+
+    $('v-clar').textContent = S.clarity;
+    $('v-clar-i').style.width = Math.max(0, S.clarity / 100 * 100) + '%';
+    $('secret-n').textContent = S.path === 'rift' ? '—' : QT.secretP().toFixed(1);
+    $('secret-seg').textContent = S.path === 'rift' ? '勾销' : S.path === 'bond' ? '杂役' : '未问';
+    $('path-n').textContent = S.path ? pathName() + ' · ' + secretLine() : secretLine();
+    $('rift-path').hidden = S.path !== 'rift';
 
     $('op-pick').disabled = !(S.hasPod && S.shen >= 2);
     why('pick', !S.hasPod
@@ -419,13 +488,133 @@
     paint();
   }
 
+  /* —— 低语 —— */
+  var whCur = null;
+  function showWhisper(){
+    var x = QT.rollWhisper();
+    if(!x) return;
+    whCur = x;
+    $('wh-k').textContent = x.n + ' · 缝里有声音';
+    $('wh-t').textContent = x.line;
+    $('wh').hidden = false;
+  }
+  function closeWhisper(){ $('wh').hidden = true; whCur = null; }
+
+  $('wh-no').onclick = function(){
+    closeWhisper();
+    log('你没有应声。');
+  };
+  $('wh-hear').onclick = function(){
+    if(!whCur) return;
+    var g = whCur.g, r = QT.hear(g);
+    closeWhisper();
+    log('听 · ' + QT.GODS[g].n + ' · 清明 ' + S.clarity);
+    paint();
+    if(r && r.ask) askKin(g);
+  };
+
+  function askKin(g){
+    $('kin-t').textContent = QT.GODS[g].n;
+    $('kin-b').innerHTML =
+      '<div class="cf-line big"><span>它问</span><b>做我的眷属</b></div>'
+      + '<div class="cmp">'
+      + '<div class="cmp-c on"><span class="t">应 下</span><b class="mono">清明上限 −20</b>'
+      + '<span class="d">清明再落二十；它的声音更常来；鉴定的凶吉向「吉」偏。</span></div>'
+      + '<div class="cmp-c"><span class="t">不 应</span><b class="mono">无</b>'
+      + '<span class="d">它退回去。下次还会来问。</span></div>'
+      + '</div>';
+    $('kin').hidden = false;
+    $('kin-yes').onclick = function(){
+      QT.becomeKin(g);
+      $('kin').hidden = true;
+      log('应下 · ' + QT.GODS[g].n + ' · 清明 ' + S.clarity);
+      paint();
+    };
+    $('kin-no').onclick = function(){
+      QT.declineKin(g);
+      $('kin').hidden = true;
+      log('不应。声音退回去了。');
+    };
+  }
+
+  /* —— 罚金与岔路 —— */
+  function forkHTML(fine){
+    return '<div class="fork">'
+      + '<button class="fork-c" type="button" data-path="rift">'
+      + '<b>入 缝</b><span>灵石清零 · 境界退回凡俗</span><span>囊中、畦、房皆空 · 图鉴与低语留</span></button>'
+      + '<button class="fork-c" type="button" data-path="bond">'
+      + '<b>签 杂 役</b><span>欠 ' + fine + ' 石 · 灵石清零</span>'
+      + '<span>拾茧抵去三石 · 宗门价七折</span></button>'
+      + '</div>';
+  }
+
+  function showIncident(){
+    var inc = S.incident;
+    if(!inc) return;
+    var pay = S.stone >= inc.fine;
+    $('fine-k').textContent = inc.kind === 'hide' ? '宗 门 · 私 藏' : '宗 门 · 窃 名';
+    $('fine-t').textContent = '罚 ' + inc.fine + ' 石';
+    $('fine-tag').textContent = pay ? '可 缴' : '不 足';
+    $('fine-b').innerHTML =
+      '<div class="cf-line big"><span>灵石 ' + S.stone + ' · 私藏 ' + QT.secretP().toFixed(1) + ' 记</span>'
+      + '<b>' + (pay ? '可缴' : '不足') + '</b></div>'
+      + (pay
+        ? '<p class="inc-note">缴罚之后，私藏记减去一半。不缴，宗门按下面的两条办。</p>'
+        : '<p class="inc-note">灵石不足。两项可选，各有各的算法。</p>')
+      + (pay ? '' : forkHTML(inc.fine));
+    $('fine-foot').innerHTML = pay
+      ? '<button class="btn main" type="button" id="fi-pay">缴 罚 ' + inc.fine + '</button>'
+        + '<button class="btn ghost" type="button" id="fi-no">不 缴</button>'
+      : '<button class="btn ghost" type="button" id="fi-back">先 不 动</button>';
+    $('fine').hidden = false;
+
+    if(pay){
+      $('fi-pay').onclick = function(){
+        var r = QT.payFine();
+        $('fine').hidden = true;
+        if(r.ok) log('缴罚 ' + r.fine + ' 石 · 私藏 ' + r.p + ' 记');
+        paint();
+      };
+      $('fi-no').onclick = function(){
+        $('fine-b').innerHTML = '<p class="inc-note">灵石不足。两项可选，各有各的算法。</p>' + forkHTML(inc.fine);
+        $('fine-foot').innerHTML = '';
+        bindFork();
+      };
+    } else {
+      $('fi-back').onclick = function(){ $('fine').hidden = true; };
+      bindFork();
+    }
+  }
+
+  function bindFork(){
+    var f = $('fine-b').querySelectorAll('[data-path]');
+    Array.prototype.forEach.call(f, function(b){
+      b.onclick = function(){
+        if(b.dataset.path === 'rift'){
+          QT.enterRift();
+          $('fine').hidden = true;
+          log('入缝 · 缝势 ' + QT.riftStage().r.toFixed(1) + ' · 外面的事留在外面。');
+        } else {
+          var inc = S.incident;
+          QT.signBond(inc ? inc.fine : 0);
+          $('fine').hidden = true;
+          log('签杂役 · 欠 ' + S.debt + ' 石，拾茧抵去。');
+        }
+        paint();
+      };
+    });
+  }
+
   function pickUp(){
     if(S.state !== 'ready' || !S.hasPod) return;
     if(S.shen < 2){ log('神识不足，缝口之茧触手即散。'); return; }
     S.bag.push(QT.mk(Math.floor(Math.random() * 5), 1 + Math.floor(Math.random() * 3), 'rift'));
     S.pick++; S.shen -= 2;
+    var bw = S.path === 'bond' ? QT.bondWork() : null;
     QT.save();
     startRegen();
+    if(bw && bw.done) log('拾茧一枚 · 抵 ' + bw.cut + ' 石 · ' + (bw.freed ? '债已清' : '尚欠 ' + S.debt + ' 石'));
+    showWhisper();
   }
 
   $('pod').onclick = pickUp;
@@ -488,19 +677,15 @@
     QT.save();
     log('孵化「' + K.n + '」 · ' + out);
     paint();
+    showWhisper();
   };
 
   $('op-steal').onclick = function(){
-    if(S.ti < 8) return;
-    S.ti -= 8;
-    if(Math.random() < .55){
-      S.bag.push(QT.mk(Math.floor(Math.random() * 5), 1 + Math.floor(Math.random() * 3), 'stolen'));
-      log('潜入同门畦边，得茧一枚，无人知觉。');
-    } else {
-      log('手未落而人已至，记窃名一条。');
-    }
-    QT.save();
+    var r = QT.steal();
+    if(!r.ok){ log(r.why); return; }
+    log(r.got ? '潜入同门畦边，得茧一枚，无人知觉。' : '手未落而人已至，记窃名一条。');
     paint();
+    if(S.incident) showIncident();
   };
 
   $('op-mend').onclick = function(){
@@ -617,6 +802,11 @@
   }
   tick(); paint();
   setInterval(tick, 1000);
+
+  if(S.incident){
+    log('宗门的账送到门上 · 罚 ' + S.incident.fine + ' 石');
+    setTimeout(showIncident, 260);
+  }
 
   // 图鉴底栏指向本页的分卷
   var h = location.hash.replace('#', '');

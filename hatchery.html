@@ -70,6 +70,13 @@
   </aside>
 </div>
 
+<div class="path-block" id="path-block" hidden>
+  <div class="pb-mark">缝</div>
+  <h2>裂 缝 之 内</h2>
+  <p>房在缝外。此处只剩茧与灰。</p>
+  <a class="btn main" href="index.html">回 裂 缝</a>
+</div>
+
 <footer class="g-bottom">
   <nav class="navbar">
     <a href="index.html"><i class="dot"></i>裂缝</a>
@@ -104,6 +111,12 @@
   var grid = $('hx-grid'), empty = $('hx-empty');
   var refs = {};   /* id -> {el, m, pct, ...} */
 
+  if (S.path === 'rift'){
+    $('path-block').hidden = false;
+    document.querySelector('.hx-wrap').hidden = true;
+    $('log').textContent = '缝内无房。';
+  }
+
   function log(t){ $('log').textContent = t; }
 
   function toast(t){
@@ -127,6 +140,7 @@
       + '<svg class="crack" viewBox="0 0 120 168" aria-hidden="true"><path d="M78 68 L70 82 L76 86 L64 102"/></svg>'
       + '<span class="hx-rank tag r' + c.r + '">' + QT.RAR[c.r] + ' 品</span>'
       + '<span class="hx-no mono">' + (idx + 1) + '</span>'
+      + (h.secret || c.hidden ? '<span class="hx-zai">载</span>' : '')
       + '</div>'
       + '<div class="hx-info">'
       + '<div class="hx-top"><span class="hx-name">' + K.n + '</span><span class="hx-src">' + srcName(c.src) + '</span></div>'
