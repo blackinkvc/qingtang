@@ -8,14 +8,65 @@
 
   var KEY = 'qt.save.v1';
 
-  /* —— 茧的五种品类：底色 / 亮面 / 暗面 —— */
+  /* —— 茧的五种品类：底色 / 亮面 / 暗面 / 纹理 / 纹路编号 —— */
   var KINDS = [
-    { n: '青皮茧', y: '木', base: '#7E8C74', light: '#ABB79C', dark: '#525E49' },
-    { n: '赭纹茧', y: '土', base: '#A5764F', light: '#C69E77', dark: '#6C4A2F' },
-    { n: '白霜茧', y: '金', base: '#CDC5B2', light: '#E7E1D1', dark: '#968E7B' },
-    { n: '朱砂茧', y: '火', base: '#9C3B31', light: '#C06A5E', dark: '#66211A' },
-    { n: '藕紫茧', y: '水', base: '#7A5F76', light: '#9E879A', dark: '#4E3A4B' }
+    { n: '青皮茧', y: '木', base: '#7E8C74', light: '#ABB79C', dark: '#525E49', tr: '丝直，纹从蒂起', pat: 0 },
+    { n: '赭纹茧', y: '土', base: '#A5764F', light: '#C69E77', dark: '#6C4A2F', tr: '横纹绕壳，色沉', pat: 1 },
+    { n: '白霜茧', y: '金', base: '#CDC5B2', light: '#E7E1D1', dark: '#968E7B', tr: '霜色覆壳，触之生寒', pat: 2 },
+    { n: '朱砂茧', y: '火', base: '#9C3B31', light: '#C06A5E', dark: '#66211A', tr: '壳内似有火脉', pat: 3 },
+    { n: '藕紫茧', y: '水', base: '#7A5F76', light: '#9E879A', dark: '#4E3A4B', tr: '紫而不艳，色近墨', pat: 2 }
   ];
+
+  /* ============================================================
+     茧的三维：品类（纹 · 属）× 品阶（衣 · 光）× 凶吉（征）
+     一切"捡来的茧长什么样"都由这三轴定，孵房与图鉴共用。
+     ============================================================ */
+  var COCOON = {
+    kinds: KINDS,
+    grades: [null,
+      { n: '凡', dur: 18, line: .30, sheen: 0,   s: '茧衣薄，指压即陷' },
+      { n: '良', dur: 26, line: .36, sheen: 0,   s: '丝线匀，握之微沉' },
+      { n: '珍', dur: 32, line: .42, sheen: .10, s: '茧衣紧实，光下有色' },
+      { n: '秘', dur: 40, line: .48, sheen: .16, s: '壳外有暗纹，触之如瓷' },
+      { n: '绝', dur: 52, line: .56, sheen: .22, s: '通体如一，不见缝口' }
+    ],
+    omens: {
+      '凶': { vis: '裂', d: '壳上有一线暗裂，贴耳无声。', glow: 0, crack: 1 },
+      '平': { vis: '净', d: '壳面干净，无裂无缝。', glow: 0, crack: 0 },
+      '吉': { vis: '纹', d: '细纹如网，光下微亮。', glow: 1, crack: 0 }
+    },
+    /* 行 = 品阶 1..5，列 = 品类 0..4 */
+    fort: [
+      ['平', '凶', '平', '凶', '平'],
+      ['平', '平', '吉', '平', '凶'],
+      ['吉', '平', '吉', '吉', '平'],
+      ['凶', '吉', '吉', '凶', '吉'],
+      ['吉', '吉', '凶', '吉', '吉']
+    ]
+  };
+
+  function cocoonOmen(kind, grade) {
+    var row = COCOON.fort[(grade || 1) - 1] || COCOON.fort[0];
+    return row[kind] || '平';
+  }
+  function cocoonName(kind, grade) {
+    var K = KINDS[kind] || KINDS[0];
+    var G = COCOON.grades[grade] || COCOON.grades[1];
+    return K.n + ' · ' + G.n;
+  }
+  /* 三维 → 一组稳定的视觉与文案参数 */
+  function phase(kind, grade) {
+    var K = KINDS[kind] || KINDS[0];
+    var G = COCOON.grades[grade] || COCOON.grades[1];
+    var o = cocoonOmen(kind, grade);
+    return {
+      kind: kind, grade: grade, omen: o,
+      pat: K.pat, line: G.line, sheen: G.sheen,
+      glow: COCOON.omens[o].glow, crack: COCOON.omens[o].crack,
+      dur: G.dur, name: cocoonName(kind, grade),
+      text: K.tr + '；' + G.s + '。' + COCOON.omens[o].d
+    };
+  }
 
   var RAR = ['', '凡', '良', '珍', '秘', '绝'];
   /* 宗门明码价 */
@@ -70,7 +121,6 @@
       r: r,
       w: +rnd(.88, 1.13).toFixed(2),   /* 大小差异 */
       h: Math.round(rnd(-9, 9)),        /* 色相偏移 */
-      pat: Math.floor(Math.random() * 4), /* 纹理 */
       src: src || 'rift'
     };
   }
@@ -298,15 +348,17 @@
     return { sug: sug, p: p, lo: lo, hi: hi, wLo: wLo, wHi: wHi };
   }
 
-  /* —— 茧的样子：按拾到时的品类 / 大小 / 色相 / 纹理画 —— */
+  /* —— 茧的样子：品类定纹，品阶定衣与光，凶吉定壳面征象 —— */
   function svg(c, opt) {
     opt = opt || {};
     var K = KINDS[c.kind] || KINDS[0];
+    var ph = phase(c.kind, c.r);
     var wf = c.w || 1;
     var rx = 30 * wf, ry = 48 * wf, cy = 96;
     var s = wf;
     var gid = 'g' + c.id + (opt.sfx || '');
-    var pat = c.pat || 0;
+    var lid = gid + 'l';
+    var pat = ph.pat;
     var lines = '';
 
     if (pat === 0) {
@@ -325,22 +377,46 @@
             + 'M33 96 C50 106 70 106 87 96';
     }
 
+    var glowDef = ph.glow
+      ? '<defs><radialGradient id="' + lid + '">'
+        + '<stop offset="0" stop-color="#fff" stop-opacity=".52"/>'
+        + '<stop offset=".55" stop-color="' + K.light + '" stop-opacity=".20"/>'
+        + '<stop offset="1" stop-color="' + K.light + '" stop-opacity="0"/></radialGradient></defs>'
+      : '';
+    var glow = ph.glow
+      ? '<ellipse cx="60" cy="' + (cy + ry * .05).toFixed(1) + '" rx="' + (rx * .64).toFixed(1)
+        + '" ry="' + (ry * .66).toFixed(1) + '" fill="url(#' + lid + ')"/>'
+      : '';
+    var crack = ph.crack
+      ? '<path d="M78 68 L70 82 L76 86 L64 102" fill="none" stroke="' + K.dark
+        + '" stroke-opacity=".62" stroke-width="1.2"/>'
+      : '';
+    var sheen = ph.sheen
+      ? '<ellipse cx="' + (60 - rx * .30).toFixed(1) + '" cy="' + (cy - ry * .40).toFixed(1) + '" '
+        + 'rx="' + (rx * .20).toFixed(1) + '" ry="' + (ry * .24).toFixed(1) + '" '
+        + 'fill="rgba(255,255,255,' + ph.sheen + ')"/>'
+      : '';
+
     return '<svg viewBox="0 0 120 168" role="img" aria-label="' + K.n + '">'
       + '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="1" y2="1">'
       + '<stop offset="0" stop-color="' + K.light + '"/>'
       + '<stop offset=".55" stop-color="' + K.base + '"/>'
       + '<stop offset="1" stop-color="' + K.dark + '"/></linearGradient></defs>'
+      + glowDef
       + '<g style="filter:hue-rotate(' + (c.h || 0) + 'deg)">'
       + '<line x1="60" y1="4" x2="60" y2="' + (cy - ry + 2).toFixed(1) + '" '
       + 'stroke="' + K.dark + '" stroke-width="1.1" opacity=".5"/>'
       + '<ellipse cx="60" cy="' + cy + '" rx="' + rx.toFixed(1) + '" ry="' + ry.toFixed(1) + '" '
       + 'fill="url(#' + gid + ')" stroke="' + K.dark + '" stroke-opacity=".5" stroke-width="1.1"/>'
+      + glow
       + '<g transform="translate(60 ' + cy + ') scale(' + s.toFixed(3) + ') translate(-60 -' + cy + ')" '
-      + 'fill="none" stroke="' + K.dark + '" stroke-opacity=".42" stroke-width=".95">'
+      + 'fill="none" stroke="' + K.dark + '" stroke-opacity="' + ph.line + '" stroke-width=".95">'
       + '<path d="' + lines + '"/></g>'
+      + crack
       + '<ellipse cx="' + (60 - rx * .34).toFixed(1) + '" cy="' + (cy - ry * .36).toFixed(1) + '" '
       + 'rx="' + (rx * .26).toFixed(1) + '" ry="' + (ry * .3).toFixed(1) + '" '
       + 'fill="rgba(255,255,255,.26)" transform="rotate(-16 ' + (60 - rx * .34).toFixed(1) + ' ' + (cy - ry * .36).toFixed(1) + ')"/>'
+      + sheen
       + '</g></svg>';
   }
 
@@ -600,6 +676,7 @@
   w.QT = {
     KINDS: KINDS, RAR: RAR, PRICE: PRICE, SUGGEST: SUGGEST, STAGES: STAGES,
     RIFT: RIFT, RANKS: RANKS,
+    COCOON: COCOON, phase: phase, cocoonOmen: cocoonOmen, cocoonName: cocoonName,
     load: load, save: save, reset: reset, seed: seed,
     mk: mk, prog: prog, stageOf: stageOf, fmt: fmt, riskOf: riskOf,
     quote: quote, svg: svg,

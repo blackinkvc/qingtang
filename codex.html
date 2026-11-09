@@ -26,6 +26,19 @@
   <nav class="cx-tabs" id="tabs"></nav>
   <div class="cards" id="cards"></div>
 
+  <section class="cx-lat">
+    <div class="cl-h">
+      <span class="cl-t">茧 谱</span>
+      <span class="cl-s">品阶 × 品类 × 凶吉</span>
+    </div>
+    <p class="cl-p">品类定其纹与属，品阶定茧衣厚薄与光泽，凶吉只留在壳面：裂、净、纹。谱上二十五格，即缝口可能捡到的全部。</p>
+    <div class="cl-grid" id="lattice"></div>
+    <div class="cl-foot">
+      <span class="om x">裂 · 凶</span><span class="om p">净 · 平</span><span class="om j">纹 · 吉</span>
+      <span class="cl-n">25 谱 · 自上而下，品阶递降</span>
+    </div>
+  </section>
+
   <div style="margin-top:26px;font-size:11.5px;color:var(--ink-4);letter-spacing:.1em;line-height:2">
     未识之物只留轮廓与序次；已收录者标注出处与稀有度。<br>
     配图编号与条目对应：<code class="mono">c-</code> 场景 · <code class="mono">k-</code> 茧 · <code class="mono">m-</code> 妖魔 · <code class="mono">p-</code> 人物 · <code class="mono">e-</code> 事件 · <code class="mono">b-</code> 残卷。未出图者留空栏，不碍收录。
@@ -149,6 +162,27 @@ function renderCards(){
 }
 
 renderTabs(); renderCards();
+
+/* 茧谱：二十五格，按三维规则现画 */
+(function(){
+  var C = QT.COCOON, h = '';
+  h += '<div class="cl-cell cl-corner"></div>';
+  C.kinds.forEach(function(K){
+    h += '<div class="cl-cell cl-th">' + K.n + '<span>' + K.y + '</span></div>';
+  });
+  for (var g = 5; g >= 1; g--) {
+    h += '<div class="cl-cell cl-th cl-gr"><b>' + C.grades[g].n + '</b><span>' + C.grades[g].dur + ' min</span></div>';
+    for (var k = 0; k < 5; k++) {
+      var ph = QT.phase(k, g), got = S.seen && S.seen['c:' + k + ':' + g];
+      var om = ph.omen === '凶' ? 'x' : ph.omen === '吉' ? 'j' : 'p';
+      h += '<div class="cl-cell cl-c' + (got ? ' on' : '') + '">'
+        + '<div class="cl-svg">' + QT.svg({ id: 'L' + k + g, kind: k, r: g, w: .74, h: 0 }, { sfx: 'L' }) + '</div>'
+        + '<div class="cl-nm">' + C.kinds[k].n.replace('茧', '') + ' · ' + C.grades[g].n + '</div>'
+        + '<div class="cl-om ' + om + '">' + C.omens[ph.omen].vis + '</div></div>';
+    }
+  }
+  document.getElementById('lattice').innerHTML = h;
+})();
 
 (function tick(){
   var d = new Date();
