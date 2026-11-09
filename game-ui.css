@@ -755,9 +755,18 @@ body.in-rift .rift{filter:invert(1) hue-rotate(180deg) brightness(.92) saturate(
   mix-blend-mode:multiply;transition:opacity .9s linear}
 body.in-rift .dim{display:none}
 
+/* 独白 / 旁话：贴在裂缝左下，随读随换 */
+.rift-mono{position:absolute;left:26px;bottom:64px;max-width:min(300px,42%);
+  font-family:var(--serif);font-size:12px;line-height:2;letter-spacing:.08em;
+  color:var(--ink-2);opacity:0;pointer-events:none;text-shadow:0 1px 12px rgba(20,16,10,.55)}
+.rift-mono.on{animation:monoIn 1.8s var(--ease) both}
+@keyframes monoIn{from{opacity:0;filter:blur(2px)}to{opacity:.82;filter:none}}
+body.in-rift .rift-mono{color:var(--ink-2);left:26px;bottom:96px}
+
 @media (max-width:900px){
   .res .cell.clarity-cell{display:none}
   .fork{grid-template-columns:1fr}
   .whisper{right:10px;left:10px;width:auto;bottom:64px}
   .path-block{margin:20px 12px;padding:26px 18px}
+  .rift-mono{left:14px;bottom:52px;max-width:56%;font-size:11px}
 }
