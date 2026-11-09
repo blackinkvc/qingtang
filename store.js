@@ -83,6 +83,7 @@
       clarity: 100, clarityMax: 100,
       path: null, debt: 0, incident: null,
       whispers: 0,
+      heard: [],
       secrets: { p: 0, stolen: 0, hidden: 0, hiddenW: 0, fines: 0, off: 0 },
       gods: { g1: { favor: 0, kin: false, ask: true }, g2: { favor: 0, kin: false, ask: true }, g3: { favor: 0, kin: false, ask: true } },
       pick: 0,
@@ -122,6 +123,7 @@
     if (typeof d.secrets.off !== 'number') d.secrets.off = 0;
     if (!d.codex) d.codex = [];
     if (typeof d.whispers !== 'number') d.whispers = 0;
+    if (!d.heard) d.heard = [];
     if (typeof d.path === 'undefined') d.path = null;
     if (typeof d.debt !== 'number') d.debt = 0;
     if (!d.incident) d.incident = null;
@@ -529,6 +531,12 @@
       + (isTainted() ? .08 : 0));
   }
   function rollWhisper() {
+    var force = w.__qtwhisper;
+    if (force === 'no') return null;
+    if (force === 'g1' || force === 'g2' || force === 'g3') {
+      var G0 = GODS[force];
+      return { g: force, n: G0.n, line: G0.lines[Math.floor(Math.random() * G0.lines.length)] };
+    }
     if (Math.random() >= whisperRate()) return null;
     var keys = ['g1', 'g2', 'g3'];
     var ws = keys.map(function (k) { return S.gods[k].kin ? 2 : 1; });
@@ -543,6 +551,9 @@
     S.gods[g].ask = true;
     S.clarity = Math.max(0, S.clarity - 3);
     S.whispers += 1;
+    if (!S.heard) S.heard = [];
+    S.heard.unshift({ g: g, at: now(), clarity: S.clarity });
+    if (S.heard.length > 40) S.heard.length = 40;
     save();
     return {
       favor: S.gods[g].favor,
@@ -559,7 +570,7 @@
     if (!G || G.kin) return false;
     G.kin = true;
     S.clarityMax = Math.max(20, S.clarityMax - 20);
-    S.clarity = Math.max(0, Math.min(S.clarity, S.clarityMax) - 20);
+    S.clarity = Math.max(0, S.clarity - 20);
     save();
     return true;
   }

@@ -749,6 +749,12 @@ body.in-rift .rift{filter:invert(1) hue-rotate(180deg) brightness(.92) saturate(
 .wh-a .btn:hover{background:rgba(226,214,188,.12);border-color:rgba(226,214,188,.7)}
 .wh-a .btn.main{border-color:rgba(226,214,188,.7);color:var(--paper-hi)}
 
+/* 清明下沉：纸色压暗，不配文字 */
+.dim{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at 50% 42%,rgba(26,21,15,0) 24%,rgba(26,21,15,.66) 100%);
+  mix-blend-mode:multiply;transition:opacity .9s linear}
+body.in-rift .dim{display:none}
+
 @media (max-width:900px){
   .res .cell.clarity-cell{display:none}
   .fork{grid-template-columns:1fr}

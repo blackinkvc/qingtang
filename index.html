@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="game-ui.css">
 </head>
 <body>
+
+<div class="dim" id="dim"></div>
 <div class="game">
 
   <header class="g-top">
@@ -70,6 +72,7 @@
       <div class="stat" style="margin-bottom:0">
         <div class="lab"><span>私藏记</span><b id="secret-n">0</b></div>
         <div class="side-note" id="path-n">宗门未问。</div>
+        <div class="side-note" id="god-n"></div>
       </div>
     </aside>
 
@@ -396,6 +399,11 @@
     $('path-n').textContent = S.path ? pathName() + ' · ' + secretLine() : secretLine();
     $('rift-path').hidden = S.path !== 'rift';
 
+    var kin = [];
+    ['g1', 'g2', 'g3'].forEach(function(g){ if(S.gods[g].kin) kin.push(QT.GODS[g].n); });
+    $('god-n').textContent = kin.length ? '眷属 · ' + kin.join('、') : '低语 ' + S.whispers + ' · 眷属 无';
+    $('dim').style.opacity = ((100 - S.clarity) / 100 * .72).toFixed(2);
+
     $('op-pick').disabled = !(S.hasPod && S.shen >= 2);
     why('pick', !S.hasPod
       ? (S.state === 'forming' ? '茧正在化形' : '缝口空了，正自再生')
@@ -496,9 +504,9 @@
     whCur = x;
     $('wh-k').textContent = x.n + ' · 缝里有声音';
     $('wh-t').textContent = x.line;
-    $('wh').hidden = false;
+    $('whisper').hidden = false;
   }
-  function closeWhisper(){ $('wh').hidden = true; whCur = null; }
+  function closeWhisper(){ $('whisper').hidden = true; whCur = null; }
 
   $('wh-no').onclick = function(){
     closeWhisper();

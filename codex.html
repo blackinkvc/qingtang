@@ -106,6 +106,15 @@ if (window.QT){
   if (!arr.length) arr = [{ t: '', r: 0, no: 'a-00', m: [], d: '' }];
   DATA.appraise = { name: '鉴定记录', items: arr };
   order.push('appraise');
+
+  var hd = (S.heard || []).map(function(h){
+    var nm = (QT.GODS[h.g] || {}).n || '';
+    return { t: nm, r: 0, no: 'w-' + h.at, m: ['清明 ' + h.clarity],
+             d: new Date(h.at).toLocaleString('zh-CN', { hour12: false }) };
+  });
+  if (!hd.length) hd = [{ t: '', r: 0, no: 'w-00', m: [], d: '' }];
+  DATA.whisper = { name: '低语', items: hd };
+  order.push('whisper');
 }
 
 function renderTabs(){
@@ -146,7 +155,7 @@ function renderCards(){
       + '<span class="seal-lock">已录</span>'
       + '<div class="no">' + no + '</div>'
       + '<div class="ttl">' + x.t + '</div>'
-      + '<div class="meta"><span class="rar r' + x.r + '">' + RAR[x.r] + '</span>'
+      + '<div class="meta">' + (x.r ? '<span class="rar r' + x.r + '">' + RAR[x.r] + '</span>' : '')
       + x.m.map(function(m){ return '<span>' + m + '</span>'; }).join("") + '</div>'
       + '<div class="desc">' + x.d + '</div></article>';
   }).join("");
