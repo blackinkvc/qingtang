@@ -108,10 +108,11 @@ if (!arr.length) arr = [{ t: '', r: 0, no: 'a-00', m: [], d: '', _ok: true }];
 DATA.appraise = { name: '鉴定记录', items: arr };
 order.push('appraise');
 
-var hd = (S.heard || []).map(function(h){
-  var nm = (QT.GODS[h.g] || {}).n || '';
-  return { t: nm, r: 0, no: 'w-' + h.at, _ok: true, m: ['清明 ' + h.clarity],
-           d: new Date(h.at).toLocaleString('zh-CN', { hour12: false }) };
+var hd = (S.heard || []).map(function(h, i){
+  var km = S.gods && S.gods[h.g] && S.gods[h.g].kin ? ' · 眷属' : '';
+  return { t: ((QT.GODS[h.g] || {}).n || '') + km, r: 0, no: 'w-' + ('0' + (i + 1)).slice(-2), _ok: true,
+           m: [new Date(h.at).toLocaleString('zh-CN', { hour12: false }), '清明 ' + h.clarity],
+           d: h.line || '（无声）' };
 });
 if (!hd.length) hd = [{ t: '', r: 0, no: 'w-00', m: [], d: '', _ok: true }];
 DATA.whisper = { name: '低语', items: hd };

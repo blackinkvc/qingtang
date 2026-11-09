@@ -577,27 +577,71 @@
   /* ============================================================
      阶段三 · 低语 / 眷属 / 清明
      ============================================================ */
+  /* 三位神各有两套用语：未成眷属时一套，成眷属后换一套。
+     g1 垂听的：短句、少主语、像水；成眷属后用「我们」。
+     g2 数名的：温柔、以丝线作喻、称「孩子」；成眷属后替你理线。
+     g3 缝外的：交易口吻、饥饿、直接；成眷属后视你为已换之物。 */
   var GODS = {
     g1: {
       n: '垂听的',
       lines: [
         '再近些。',
-        '这里的回声是旧的。',
-        '你站的地方，从前有水。',
-        '冷吗。我也冷。',
-        '我在下面，一直听着。',
-        '你把茧拿来时，我听见了。'
+        '冷。',
+        '深处。有水。',
+        '我在这里。',
+        '你踩到我了。',
+        '别抬头。',
+        '听见了。',
+        '水是旧的。',
+        '下面还有一层。',
+        '你的鞋湿了。',
+        '再站一会儿。',
+        '我记着你的脚步。',
+        '缝在呼吸。',
+        '往下。'
+      ],
+      kinLines: [
+        '我们在这里。',
+        '你听得见我，我听得到你。',
+        '再往下，我们一起。',
+        '我们的水。',
+        '别怕，我们泡着。',
+        '你已经凉了。',
+        '我们一直听着。',
+        '你回来时，我数过步子。',
+        '上面太吵。',
+        '我们不分。'
       ]
     },
     g2: {
       n: '数名的',
       lines: [
-        '孩子，线乱了。',
-        '一根，两根……你数不清的。',
-        '把结拆开，就看见我了。',
-        '你的线头，我替你留着。',
-        '慢慢来，我有的是时候数。',
-        '这根线，绕过你师门的匾。'
+        '孩子，别急着拆。',
+        '一根，两根，三根……剩下的我替你记着。',
+        '线头在你袖口，我看见的。',
+        '结不是坏事，结是记性。',
+        '坐下来，我数给你听。',
+        '你师门的匾上，有一根线松了。',
+        '拆开它，就看见里头是什么了。慢一点。',
+        '你的名字有四个结。',
+        '夜里线会自己走。',
+        '别剪，剪了要重数。',
+        '我数到你了。',
+        '孩子，手里那根别松。',
+        '一根线绕过两个人。',
+        '数不清，才叫多。'
+      ],
+      kinLines: [
+        '孩子，你的线我替你理。',
+        '我数过了，你身上没有断的。',
+        '这根结我留着，那根给你。',
+        '你睡的时候，线替你走路。',
+        '我们数同一根。',
+        '别动，我在拆。',
+        '你的名字现在有五个结了。',
+        '我替你把乱的那一段梳平。',
+        '数到你这里，我就不数了。',
+        '线归我，你归线。'
       ]
     },
     g3: {
@@ -605,13 +649,39 @@
       lines: [
         '换。',
         '你手里那枚，给我。',
-        '我饿了很久。',
+        '我饿了。',
+        '你有，我没有。',
         '拿你的，换我的。',
+        '不够。',
+        '再给一点。',
         '你给得起。',
-        '再多一点，就够了。'
+        '门开着，你不敢进。',
+        '我要的是你藏着的那枚。',
+        '别问价，先给。',
+        '你留不住的。',
+        '外面冷，里面也冷，但我饱。',
+        '你把什么藏在袖子里。'
+      ],
+      kinLines: [
+        '你的，现在都是我的。',
+        '进来。门不用关。',
+        '我不饿了，可我还想要。',
+        '你已经是我的那一份。',
+        '我们换过，别装忘了。',
+        '再给一枚，就一枚。',
+        '你的手伸出来。',
+        '我不吃你，我吃你给的。',
+        '缝外给你留了位置。',
+        '你走得再远，也算在里面。'
       ]
     }
   };
+
+  function godLine(g) {
+    var G = GODS[g];
+    var pool = S.gods[g].kin ? G.kinLines : G.lines;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
 
   function kinN() {
     return (S.gods.g1.kin ? 1 : 0) + (S.gods.g2.kin ? 1 : 0) + (S.gods.g3.kin ? 1 : 0);
@@ -624,25 +694,23 @@
     var force = w.__qtwhisper;
     if (force === 'no') return null;
     if (force === 'g1' || force === 'g2' || force === 'g3') {
-      var G0 = GODS[force];
-      return { g: force, n: G0.n, line: G0.lines[Math.floor(Math.random() * G0.lines.length)] };
+      return { g: force, n: GODS[force].n, line: godLine(force) };
     }
     if (Math.random() >= whisperRate()) return null;
     var keys = ['g1', 'g2', 'g3'];
     var ws = keys.map(function (k) { return S.gods[k].kin ? 2 : 1; });
     var sum = ws[0] + ws[1] + ws[2], x = Math.random() * sum, g = 'g1';
     if (x > ws[0]) { g = x > ws[0] + ws[1] ? 'g3' : 'g2'; }
-    var G = GODS[g];
-    return { g: g, n: G.n, line: G.lines[Math.floor(Math.random() * G.lines.length)] };
+    return { g: g, n: GODS[g].n, line: godLine(g) };
   }
-  function hear(g) {
+  function hear(g, line) {
     if (!S.gods[g]) return null;
     S.gods[g].favor += 1;
     S.gods[g].ask = true;
     S.clarity = Math.max(0, S.clarity - 3);
     S.whispers += 1;
     if (!S.heard) S.heard = [];
-    S.heard.unshift({ g: g, at: now(), clarity: S.clarity });
+    S.heard.unshift({ g: g, at: now(), clarity: S.clarity, line: line || '' });
     if (S.heard.length > 40) S.heard.length = 40;
     save();
     return {

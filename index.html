@@ -515,7 +515,7 @@
   };
   $('wh-hear').onclick = function(){
     if(!whCur) return;
-    var g = whCur.g, r = QT.hear(g);
+    var g = whCur.g, r = QT.hear(g, whCur.line);
     closeWhisper();
     log('听 · ' + QT.GODS[g].n + ' · 清明 ' + S.clarity);
     paint();
