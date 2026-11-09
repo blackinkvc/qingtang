@@ -7,6 +7,22 @@
 <link rel="icon" href="favicon.ico">
 <link rel="stylesheet" href="qt-ink.css">
 <link rel="stylesheet" href="game-ui.css">
+<style>
+/* 联机入口：地址来自 board-link.json，未配置时灰色不可点 */
+.navbar a.net-entry{flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;
+  padding-top:8px;padding-bottom:8px}
+.navbar a.net-entry .lbl{display:flex;align-items:center;gap:8px}
+.navbar a.net-entry small{font-family:var(--mono);font-size:9px;line-height:1;letter-spacing:.02em;
+  color:var(--ink-4);white-space:nowrap}
+.navbar a.net-entry.off{color:var(--ink-4);cursor:not-allowed}
+.navbar a.net-entry.off:hover{background:none;color:var(--ink-4)}
+.navbar a.net-entry.off .dot{background:var(--paper-dim)}
+@media (max-width:900px){
+  .navbar a.net-entry{padding:7px 3px;gap:1px;align-items:center}
+  .navbar a.net-entry .lbl{gap:0}
+  .navbar a.net-entry small{font-size:9px;letter-spacing:0}
+}
+</style>
 </head>
 <body>
 
@@ -174,6 +190,7 @@
       <a href="codex.html"><i class="dot"></i>图鉴</a>
       <a href="hatchery.html"><i class="dot"></i>孵房</a>
       <a href="market.html"><i class="dot"></i>贩卖</a>
+      <a class="net-entry off" id="net-entry" target="_blank" rel="noopener" aria-disabled="true"><span class="lbl"><i class="dot"></i>联机对局</span><small>临时地址 · 主机开着才有效</small></a>
       <a href="#" data-sheet="plots"><i class="dot"></i>育茧畦</a>
       <a href="#" data-sheet="vault"><i class="dot"></i>库藏</a>
     </nav>
@@ -876,6 +893,37 @@
     var a = document.querySelector('[data-sheet="' + h + '"]');
     if(a) a.click();
   }
+})();
+</script>
+
+<script>
+/* 联机入口 · 地址唯一来源：board-link.json（scripts/set-board-link.js 维护） */
+(function(){
+  var el = document.getElementById('net-entry');
+  if(!el) return;
+  var note = el.querySelector('small');
+  function disable(msg){
+    el.classList.add('off');
+    el.removeAttribute('href');
+    el.setAttribute('aria-disabled', 'true');
+    if(note) note.textContent = msg;
+  }
+  function usable(u){
+    if(typeof u !== 'string') return false;
+    try { var x = new URL(u); return x.protocol === 'https:' && !!x.hostname; }
+    catch(e){ return false; }
+  }
+  fetch('board-link.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function(r){ if(!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(function(cfg){
+      var u = (cfg && typeof cfg.url === 'string') ? cfg.url.trim() : '';
+      if(!usable(u)) return disable('联机地址未配置');
+      el.href = u;
+      el.title = '联机对局 · ' + u;
+      el.removeAttribute('aria-disabled');
+      el.classList.remove('off');
+    })
+    .catch(function(){ disable('联机地址未配置'); });
 })();
 </script>
 </body>
