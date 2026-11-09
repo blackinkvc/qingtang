@@ -76,6 +76,15 @@
     <div id="demo-list" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"></div>
   </div>
 
+  <div class="arch-grp">
+    <h2>重 开</h2>
+    <div class="d">抹去此局存档，回到初入裂缝的那一刻。茧、账、图鉴、低语与眷属一并归零。</div>
+    <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn" type="button" id="restart" style="font-size:12px">重 开 此 局</button>
+      <span id="restart-n" style="font-size:11.5px;color:var(--ink-4);letter-spacing:.08em"></span>
+    </div>
+  </div>
+
   <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:26px;padding-top:14px;border-top:1px solid var(--rule-2);font-size:11.5px;color:var(--ink-4);letter-spacing:.08em">
     <span>维内页面不设互链，回此处再往别处。</span>
     <button class="btn" type="button" id="quit" style="font-size:12px">退 出 维</button>
@@ -86,6 +95,23 @@
 <script>
 (function(){
   document.getElementById('quit').onclick = function(){ location.href = 'index.html'; };
+
+  /* 重开：两次点按，中间留四秒反悔 */
+  var rb = document.getElementById('restart'), rn = document.getElementById('restart-n'), armed = 0, armT = null;
+  rb.onclick = function(){
+    if(!armed){
+      armed = 1;
+      rb.textContent = '再 按 一 次 · 抹 去';
+      rn.textContent = '此局不留档。';
+      armT = setTimeout(function(){
+        armed = 0; rb.textContent = '重 开 此 局'; rn.textContent = '';
+      }, 4000);
+      return;
+    }
+    armed = 0; clearTimeout(armT);
+    QT.reset();
+    location.href = 'index.html';
+  };
 
   var host = document.getElementById('demo-list');
   if(!window.QT || !QT.isLocal()){

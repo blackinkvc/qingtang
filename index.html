@@ -345,6 +345,7 @@
   function why(k, t){ $('why-' + k).textContent = t || ''; }
 
   function paint(){
+    QT.vitals();
     $('v-stone').textContent = S.stone;
     $('v-shen').textContent  = S.shen;
     $('v-pod').textContent   = S.bag.length;
@@ -616,6 +617,7 @@
 
   function pickUp(){
     if(S.state !== 'ready' || !S.hasPod) return;
+    QT.vitals();
     if(S.shen < 2){ log('神识不足，缝口之茧触手即散。'); return; }
     S.bag.push(QT.mk(Math.floor(Math.random() * 5), 1 + Math.floor(Math.random() * 3), 'rift'));
     S.pick++; S.shen -= 2;
@@ -660,6 +662,7 @@
     $('hatch').hidden = true;
     var h = nearCocoon();
     if(!h) return;
+    QT.vitals();
     if(S.stone < 24){ log('灵石不足，孵化需二十四石。'); return; }
     if(S.shen < 10){ log('神识不足，难以催茧。'); return; }
 
@@ -695,6 +698,7 @@
   };
 
   $('op-steal').onclick = function(){
+    QT.vitals();
     var r = QT.steal();
     if(!r.ok){ log(r.why); return; }
     log(r.got ? '潜入同门畦边，得茧一枚，无人知觉。' : '手未落而人已至，记窃名一条。');
@@ -789,6 +793,9 @@
   });
 
   function tick(){
+    var s0 = S.shen, t0 = S.ti;
+    QT.vitals();
+    if(S.shen !== s0 || S.ti !== t0) paint();   /* 神识/体力回复后顺带刷新按钮可点状态 */
     var d = new Date();
     $('clock').textContent = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
 

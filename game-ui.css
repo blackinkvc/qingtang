@@ -270,7 +270,7 @@ body{padding-bottom:0}
 @media (max-width:900px){
   .g-top{padding:9px 13px;gap:8px}
   .who .name{font-size:17px}
-  .res{gap:12px}
+  .res{gap:8px}
   .res .k{display:inline;font-size:0}
   .res .k::before{content:attr(data-a);font-size:10.5px;letter-spacing:.1em}
   .hint-block{display:none}
@@ -292,7 +292,7 @@ body{padding-bottom:0}
   .rg{width:150px}
   .g-bottom{grid-template-columns:minmax(0,1fr)}
   .login{border-left:0;border-top:1px solid var(--rule-2);min-height:34px}
-  .navbar a{padding:10px 2px;letter-spacing:.05em;font-size:11px;flex:1 1 auto;justify-content:center}
+  .navbar a{padding:10px 2px;letter-spacing:.05em;font-size:11px;flex:1 1 auto;justify-content:center;min-height:44px}
   .navbar a .dot{display:none}
   .log-more{grid-template-columns:1fr 1fr}
   .log-more .lm{padding:9px 12px 10px}
@@ -337,6 +337,9 @@ body{padding-bottom:0}
 }
 .seal-maint:focus{outline:none}
 .seal-maint:focus-visible{outline:1px solid var(--zhu);outline-offset:2px}
+@media (max-width:900px){
+  .seal-maint{width:44px;height:44px;font-size:18px}
+}
 
 /* —— 通用卷（密库/同门/畦） —— */
 .qt-sheet{position:fixed;inset:0;z-index:110;display:grid;place-items:center;

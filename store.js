@@ -7,6 +7,10 @@
   'use strict';
 
   var KEY = 'qt.save.v1';
+  var KEY_BAD = KEY + '.bad';   /* 损坏存档的备份位，不再参与读取 */
+  var SAVE_V = 2;               /* 存档结构版本：读档时以上限为准，超出即视为不认 */
+  /* 神识 / 体力回复：75 秒一点（约 48 点/小时），不带后台计时器，按时间戳折算 */
+  var SHEN_IV = 75000, TI_IV = 75000;
 
   /* —— 茧的五种品类：底色 / 亮面 / 暗面 / 纹理 / 纹路编号 —— */
   var KINDS = [
@@ -73,8 +77,8 @@
   var PRICE = [0, 12, 30, 65, 120, 220];
   /* 同门建议价 */
   var SUGGEST = [0, 18, 42, 90, 168, 300];
-  /* 同门基础成交率（按建议价挂出时） */
-  var BASE_P = [0, .90, .82, .72, .62, .50];
+  /* 同门基础成交率（按建议价挂出时）；四、五品须高于宗门价的期望，否则挂单无人问 */
+  var BASE_P = [0, .90, .82, .72, .78, .76];
 
   /* —— 缝势四段：增速（点/分钟）与区间名 —— */
   var RIFT = [
@@ -128,8 +132,8 @@
   function seed() {
     var t = now(), D = 90 * 60000;
     S = {
-      v: 2, seq: 0,
-      stone: 480, shen: 72, shenMax: 100, ti: 64, tiMax: 100,
+      v: SAVE_V, seq: 0, savedAt: t,
+      stone: 480, shen: 72, shenMax: 100, shenAt: t, ti: 64, tiMax: 100, tiAt: t,
       rank: 3, will: 62, willMax: 75, willAt: t,
       rift: { r: 34.2, at: t, tainted: false },
       clarity: 100, clarityMax: 100,
@@ -162,11 +166,13 @@
   }
 
   function migrate(d) {
-    d.v = 2;
+    d.v = SAVE_V;
     d.rank = d.rank || 3;
     d.willMax = RANKS[d.rank].willMax;
     if (typeof d.will !== 'number') d.will = 62;
     if (!d.willAt) d.willAt = now();
+    if (!d.shenAt) d.shenAt = now();
+    if (!d.tiAt) d.tiAt = now();
     if (!d.rift) d.rift = { r: 34.2, at: now(), tainted: false };
     if (typeof d.clarity !== 'number') d.clarity = 100;
     if (!d.secrets) d.secrets = { p: 0, stolen: 0, hidden: 0, hiddenW: 0, fines: 0, off: 0 };
@@ -189,26 +195,137 @@
     return d;
   }
 
+  /* —— 神识 / 体力：按时间戳折回复，页面不跑后台计时器 —— */
+  function vitals() {
+    var dm = demo(), t = now();
+    var gs = Math.floor((t - (S.shenAt || t)) / (SHEN_IV / dm));
+    if (gs > 0) {
+      S.shen = Math.min(S.shenMax, S.shen + gs);
+      S.shenAt = Math.min(t, (S.shenAt || t) + gs * SHEN_IV / dm);
+    }
+    var gt = Math.floor((t - (S.tiAt || t)) / (TI_IV / dm));
+    if (gt > 0) {
+      S.ti = Math.min(S.tiMax, S.ti + gt);
+      S.tiAt = Math.min(t, (S.tiAt || t) + gt * TI_IV / dm);
+    }
+    if (S.shen >= S.shenMax) S.shenAt = t;
+    if (S.ti >= S.tiMax) S.tiAt = t;
+  }
+  function shenNow() {
+    if (S.shen >= S.shenMax) return S.shenMax;
+    var g = Math.floor((now() - (S.shenAt || now())) / (SHEN_IV / demo()));
+    return Math.min(S.shenMax, S.shen + Math.max(0, g));
+  }
+  function tiNow() {
+    if (S.ti >= S.tiMax) return S.tiMax;
+    var g = Math.floor((now() - (S.tiAt || now())) / (TI_IV / demo()));
+    return Math.min(S.tiMax, S.ti + Math.max(0, g));
+  }
+
+  /* —— 读档体检：版本、类型、缺字段、坏条目，全在这一处补齐或丢弃 —— */
+  function num(v, def) { return (typeof v === 'number' && isFinite(v)) ? v : def; }
+  function goodCocoon(c) {
+    return !!c && typeof c === 'object' && typeof c.id === 'string'
+      && typeof c.kind === 'number' && c.kind >= 0 && c.kind <= 4
+      && typeof c.r === 'number' && c.r >= 1 && c.r <= 5;
+  }
+  function fit(d) {
+    if (!d || typeof d !== 'object' || Object.prototype.toString.call(d) === '[object Array]') return null;
+    var t = now();
+    d.v = SAVE_V;
+    d.seq = num(d.seq, 0);
+    d.stone = Math.max(0, num(d.stone, 480));
+    d.shenMax = Math.max(1, num(d.shenMax, 100));
+    d.shen = clamp(num(d.shen, 72), 0, d.shenMax);
+    d.tiMax = Math.max(1, num(d.tiMax, 100));
+    d.ti = clamp(num(d.ti, 64), 0, d.tiMax);
+    d.shenAt = num(d.shenAt, t);
+    d.tiAt = num(d.tiAt, t);
+    d.rank = clamp(Math.round(num(d.rank, 3)), 1, 6);
+    d.willMax = RANKS[d.rank].willMax;
+    d.will = clamp(num(d.will, 62), 0, d.willMax);
+    d.willAt = num(d.willAt, t);
+    d.clarityMax = Math.max(20, num(d.clarityMax, 100));
+    d.clarity = clamp(num(d.clarity, 100), 0, d.clarityMax);
+    if (!d.rift || typeof d.rift !== 'object') d.rift = { r: 34.2, at: t, tainted: false };
+    d.rift.r = clamp(num(d.rift.r, 34.2), 0, 100);
+    d.rift.at = num(d.rift.at, t);
+    d.rift.tainted = !!d.rift.tainted;
+    d.path = d.path === 'rift' || d.path === 'bond' ? d.path : null;
+    d.debt = Math.max(0, num(d.debt, 0));
+    d.incident = d.incident && typeof d.incident === 'object' && isFinite(d.incident.fine) ? d.incident : null;
+    d.whispers = Math.max(0, num(d.whispers, 0));
+    d.heard = Object.prototype.toString.call(d.heard) === '[object Array]' ? d.heard.slice(0, 40) : [];
+    d.seen = d.seen && typeof d.seen === 'object' && Object.prototype.toString.call(d.seen) !== '[object Array]' ? d.seen : {};
+    d.mends = Math.max(0, num(d.mends, 0));
+    d.hadRift = !!d.hadRift;
+    d.hadBond = !!d.hadBond;
+    d.steals = Math.max(0, num(d.steals, 0));
+    d.taints = Math.max(0, num(d.taints, 0));
+    d.secrets = d.secrets && typeof d.secrets === 'object' ? d.secrets : {};
+    ['stolen', 'hidden', 'hiddenW', 'fines', 'off'].forEach(function (k) {
+      d.secrets[k] = Math.max(0, num(d.secrets[k], 0));
+    });
+    d.secrets.p = +(Math.max(0, d.secrets.hiddenW + 1.5 * d.secrets.stolen - d.secrets.off)).toFixed(1);
+    d.gods = d.gods && typeof d.gods === 'object' ? d.gods : {};
+    ['g1', 'g2', 'g3'].forEach(function (k) {
+      var g = d.gods[k] && typeof d.gods[k] === 'object' ? d.gods[k] : {};
+      g.favor = Math.max(0, num(g.favor, 0));
+      g.kin = !!g.kin;
+      g.ask = g.ask !== false;
+      d.gods[k] = g;
+    });
+    d.pick = Math.max(0, num(d.pick, 0));
+    d.codex = Object.prototype.toString.call(d.codex) === '[object Array]' ? d.codex.slice(0, 60) : [];
+    d.bag = Object.prototype.toString.call(d.bag) === '[object Array]' ? d.bag.filter(goodCocoon) : [];
+    d.plots = Object.prototype.toString.call(d.plots) === '[object Array]'
+      ? d.plots.filter(function (p) { return p && goodCocoon(p.c) && isFinite(p.ripeAt); }) : [];
+    d.house = Object.prototype.toString.call(d.house) === '[object Array]'
+      ? d.house.filter(function (h) { return h && goodCocoon(h.c) && isFinite(h.at) && isFinite(h.dur); }) : [];
+    d.listings = Object.prototype.toString.call(d.listings) === '[object Array]'
+      ? d.listings.filter(function (l) { return l && goodCocoon(l.c) && isFinite(l.price) && isFinite(l.resolveAt); }) : [];
+    d.vault = d.vault && typeof d.vault === 'object' ? d.vault : {};
+    ['edge', 'shell', 'dan'].forEach(function (k) { d.vault[k] = Math.max(0, num(d.vault[k], 0)); });
+    d.savedAt = t;
+    return d;
+  }
+
   function load() {
     if (S) return S;
-    try {
-      var raw = w.localStorage.getItem(KEY);
-      if (raw) {
-        var d = JSON.parse(raw);
-        if (d && d.v === 2) { S = d; return S; }
-        if (d && d.v === 1) { S = migrate(d); return S; }
+    var raw = null;
+    try { raw = w.localStorage.getItem(KEY); } catch (e) { raw = null; }
+    if (raw) {
+      var d = null;
+      try { d = JSON.parse(raw); } catch (e) { d = null; }
+      if (d && typeof d === 'object') {
+        if (d.v === 1) d = migrate(d);
+        if (typeof d.v !== 'number' || d.v <= SAVE_V) {
+          d = fit(d);
+          if (d) { S = d; return S; }
+        }
       }
-    } catch (e) {}
+      /* 解析失败 / 结构不认：留一份坏档，回初始，并把好档写回去，下次不再撞坏 */
+      try { w.localStorage.setItem(KEY_BAD, raw); } catch (e) {}
+      try { w.localStorage.removeItem(KEY); } catch (e) {}
+      S = seed();
+      save();
+      return S;
+    }
     return seed();
   }
 
   function save() {
-    if (S) { riftSync(); willSync(); }
+    if (!S) return;
+    S.v = SAVE_V;
+    S.savedAt = now();
+    vitals();
+    riftSync();
+    willSync();
     try { w.localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
   }
 
   function reset() {
-    try { w.localStorage.removeItem(KEY); } catch (e) {}
+    try { w.localStorage.removeItem(KEY); w.localStorage.removeItem(KEY_BAD); } catch (e) {}
     S = null; return load(), save(), S;
   }
 
@@ -746,6 +863,7 @@
     RIFT: RIFT, RANKS: RANKS,
     COCOON: COCOON, phase: phase, cocoonOmen: cocoonOmen, cocoonName: cocoonName,
     load: load, save: save, reset: reset, seed: seed,
+    SAVE_V: SAVE_V, vitals: vitals, shenNow: shenNow, tiNow: tiNow,
     mk: mk, prog: prog, stageOf: stageOf, fmt: fmt, riskOf: riskOf,
     quote: quote, svg: svg,
     isLocal: isLocal, demo: demo, setDemo: setDemo,
