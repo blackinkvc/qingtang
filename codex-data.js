@@ -12,10 +12,12 @@
   for (var g = 1; g <= 5; g++) {
     for (var k = 0; k < 5; k++) {
       var ph = QT.phase(k, g);
+      var kk = 'k-' + ('0' + (k * 5 + g)).slice(-2);
       cocoon.push({
-        t: ph.name, r: g, no: 'k-' + ('0' + (k * 5 + g)).slice(-2),
+        t: ph.name, r: g, no: kk,
         m: ['偏' + C.kinds[k].y, C.grades[g].n + '品', ph.omen, ph.dur + ' min'],
         d: ph.text,
+        img: kk === 'k-01' ? 'assets/gen/k-01-qingpi.jpg' : null,
         need: 'c:' + k + ':' + g
       });
     }
