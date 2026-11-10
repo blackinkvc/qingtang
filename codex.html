@@ -62,6 +62,7 @@
 
 <script src="store.js"></script>
 <script src="codex-data.js"></script>
+<script src="assets-ledger.js"></script>
 <script>
 var S = QT.load();
 var DATA = CODEX;
@@ -140,6 +141,9 @@ function pic(x){
     return '<div class="pic"><img src="' + x.img + '" alt="' + x.t + '" loading="lazy"'
       + ' onerror="var p=this.parentNode;p.className=\'pic ph\';p.textContent=\'' + x.no + ' · 待出\'"></div>';
   }
+  /* 缺图槽位：走素材台账的占位卡，点开有完整说明 */
+  var r = window.QTLedger && QTLedger.ready() ? QTLedger.byCodex(x.no) : null;
+  if (r) return QTLedger.placeholder(r);
   return '<div class="pic ph">' + x.no + ' · 待出</div>';
 }
 
@@ -163,6 +167,9 @@ function renderCards(){
 }
 
 renderTabs(); renderCards();
+
+/* 台账是异步加载的，到位后重绘一次，把缺图槽位换成占位卡 */
+document.addEventListener('qtledger:ready', function(){ renderTabs(); renderCards(); });
 
 /* 茧谱：二十五格，按三维规则现画 */
 (function(){

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>青棠宗 · 素材台账</title>
+<link rel="stylesheet" href="qt-ink.css">
+<style>
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);margin:0;padding-bottom:60px}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 18px}
+  .top{border-bottom:1px solid var(--rule);padding:22px 0 14px;display:flex;flex-wrap:wrap;
+       align-items:flex-end;justify-content:space-between;gap:14px}
+  .top h1{margin:0;font-family:var(--serif);font-weight:400;font-size:30px;letter-spacing:.06em}
+  .top .sub{margin-top:6px;font-family:var(--kai);font-size:12.5px;color:var(--ink-4);letter-spacing:.06em}
+  .nav{display:flex;flex-wrap:wrap;gap:6px}
+  .nav a{font-size:12px;color:var(--ink-3);text-decoration:none;border:1px solid var(--rule);
+         padding:5px 11px;transition:.15s}
+  .nav a:hover{color:var(--ink);border-color:var(--ink-3)}
+  .nav a.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .stats{display:flex;flex-wrap:wrap;gap:22px;padding:16px 0;border-bottom:1px solid var(--rule-2)}
+  .stat b{display:block;font-family:var(--serif);font-size:24px;font-weight:400}
+  .stat span{font-size:11px;color:var(--ink-4);letter-spacing:.1em}
+  .stat.p0 b{color:var(--zhu)}
+  .filters{display:flex;flex-wrap:wrap;gap:16px;padding:14px 0;border-bottom:1px solid var(--rule-2);align-items:center}
+  .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .grp>lbl{font-size:11px;color:var(--ink-4);letter-spacing:.1em;margin-right:2px}
+  .chip{font-size:11.5px;border:1px solid var(--rule);background:none;color:var(--ink-3);
+        padding:4px 10px;cursor:pointer;transition:.15s;font-family:var(--sans)}
+  .chip:hover{border-color:var(--ink-4);color:var(--ink)}
+  .chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .chip.p0.on{background:var(--zhu);border-color:var(--zhu)}
+  input[type=search]{font-family:var(--sans);font-size:12px;border:1px solid var(--rule);
+        background:var(--paper-hi);color:var(--ink);padding:5px 10px;width:180px;outline:none}
+  input[type=search]:focus{border-color:var(--ink-4)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:10px;padding:18px 0 40px}
+  .grid .qph{min-height:126px}
+  .empty-note{padding:60px 0;text-align:center;color:var(--ink-4);font-size:13px}
+  .legend{font-size:11.5px;color:var(--ink-4);line-height:1.9;padding:12px 0 0;border-top:1px solid var(--rule-2);margin-top:8px}
+  .legend code{font-family:var(--mono);font-size:10.5px;background:var(--paper-lo);padding:1px 5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>素材台账</h1>
+      <div class="sub">Missing assets ledger · 全部条目由 <code style="font-family:var(--mono);font-size:11px">assets-ledger.csv</code> 驱动，页面不写死数据</div>
+    </div>
+    <nav class="nav">
+      <a href="index.html">裂缝</a>
+      <a href="codex.html">图鉴</a>
+      <a href="hatchery.html">孵房</a>
+      <a href="market.html">贩卖</a>
+      <a href="roster.html">档案</a>
+      <a href="sect-map.html">地图</a>
+      <a href="assets.html" class="on">素材</a>
+    </nav>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="filters">
+    <div class="grp" id="fCat"><lbl>分类</lbl></div>
+    <div class="grp" id="fPri"><lbl>优先级</lbl></div>
+    <div class="grp"><input type="search" id="q" placeholder="搜编号 / 名称 / 位置"></div>
+  </div>
+
+  <div class="grid" id="grid"><div class="empty-note">台账加载中…</div></div>
+
+  <div class="legend">
+    占位卡说明：灰底虚线框代表该位置尚无成品图，点开可看用途、尺寸、画面要求与计划批次。
+    状态取值 <code>待生成</code> → <code>已生成</code>；每生成一张，只改 CSV 对应行的「状态」「图名」，编号不复用。
+  </div>
+</div>
+
+<script src="assets-ledger.js"></script>
+<script>
+(function(){
+  var state={cat:'全部',pri:'全部',q:''};
+  var CATS=['全部','角色','场景地图','道具与卡面','UI 图标','背景'];
+  var PRIS=['全部','P0','P1','P2'];
+
+  function chip(text,on,cls,fn){
+    var b=document.createElement('button');
+    b.className='chip'+(cls?' '+cls:'')+(on?' on':'');
+    b.textContent=text; b.onclick=fn; return b;
+  }
+  function buildFilters(){
+    var fc=document.getElementById('fCat'); fc.innerHTML='<lbl>分类</lbl>';
+    CATS.forEach(function(c){
+      fc.appendChild(chip(c,state.cat===c,'',function(){state.cat=c;render();buildFilters();buildPri();}));
+    });
+    buildPri();
+  }
+  function buildPri(){
+    var fp=document.getElementById('fPri'); fp.innerHTML='<lbl>优先级</lbl>';
+    PRIS.forEach(function(p){
+      fp.appendChild(chip(p,state.pri===p,p==='P0'?'p0':'',function(){state.pri=p;render();buildFilters();}));
+    });
+  }
+  function render(){
+    var rows=QTLedger.all().filter(function(r){
+      if(state.cat!=='全部'&&r['分类']!==state.cat) return false;
+      if(state.pri!=='全部'&&r['优先级']!==state.pri) return false;
+      if(state.q){
+        var k=state.q.toLowerCase();
+        var hay=(r['素材编号']+' '+r['名称']+' '+r['用在哪']).toLowerCase();
+        if(hay.indexOf(k)<0) return false;
+      }
+      return true;
+    });
+    var g=document.getElementById('grid');
+    if(!rows.length){ g.innerHTML='<div class="empty-note">没有匹配的条目</div>'; return; }
+    g.innerHTML=rows.map(function(r){
+      var sq=(r['分类']==='UI 图标');
+      return QTLedger.placeholder(r,{square:sq});
+    }).join('');
+    var all=QTLedger.all();
+    document.getElementById('stats').innerHTML=
+      '<div class="stat"><b>'+all.length+'</b><span>缺口总数</span></div>'+
+      '<div class="stat p0"><b>'+all.filter(function(r){return r['优先级']==='P0'}).length+'</b><span>P0 首批</span></div>'+
+      '<div class="stat"><b>'+all.filter(function(r){return r['优先级']==='P1'}).length+'</b><span>P1 第二批</span></div>'+
+      '<div class="stat"><b>'+all.filter(function(r){return r['优先级']==='P2'}).length+'</b><span>P2 备选</span></div>'+
+      '<div class="stat"><b>'+all.filter(function(r){return r['状态']==='已生成'}).length+'</b><span>已生成</span></div>'+
+      '<div class="stat"><b>'+rows.length+'</b><span>当前筛选</span></div>';
+  }
+
+  document.getElementById('q').addEventListener('input',function(e){
+    state.q=e.target.value.trim(); render();
+  });
+  buildFilters();
+  QTLedger.load(function(){ render(); });
+  if(!QTLedger.ready()) document.addEventListener('qtledger:ready',render);
+})();
+</script>
+</body>
+</html>
